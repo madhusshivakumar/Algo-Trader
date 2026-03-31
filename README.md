@@ -519,8 +519,3 @@ The system is designed to **never fail due to a missing AI component**:
 | `convictions.json` missing/corrupt | `apply_llm_conviction()` returns signal unchanged |
 | Any feature flag set to `false` | Modifier is never called, zero overhead |
 
----
-
-## License
-
-MIT
