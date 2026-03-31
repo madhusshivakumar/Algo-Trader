@@ -1,0 +1,41 @@
+# Secrets
+.env
+
+# Database
+trades.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Logs
+logs/
+
+# Data (agent runtime state — not source code)
+data/sentiment/scores.json
+data/llm_analyst/convictions.json
+data/llm_analyst/spend_log.json
+data/rl_models/*.zip
+data/agent_state.json
+data/health_report.json
+data/analyzer/reports/
+data/history/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+
+# Bot PID files
+.bot.pid
+.dashboard.pid
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/

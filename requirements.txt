@@ -1,0 +1,18 @@
+alpaca-py>=0.21.0
+pandas>=2.0.0
+ta>=0.11.0
+websockets>=12.0
+python-dotenv>=1.0.0
+rich>=13.0.0
+pytz>=2024.1
+
+# v2: NLP Sentiment (Phase 1B)
+transformers>=4.35.0
+torch>=2.0.0
+
+# v2: LLM Analyst (Phase 1C)
+anthropic>=0.39.0
+
+# v2: RL Strategy Selector (Phase 1D)
+stable-baselines3>=2.3.0
+gymnasium>=0.29.0

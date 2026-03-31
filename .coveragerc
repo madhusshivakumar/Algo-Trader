@@ -1,0 +1,18 @@
+[run]
+source = .
+omit =
+    tests/*
+    .venv/*
+    dashboard.py
+    main.py
+    backtest.py
+    */conftest.py
+    agents/health_check.py
+    compare_strategies.py
+
+[report]
+exclude_lines =
+    if __name__ == .__main__.
+    pragma: no cover
+    console\.print
+    log\.(info|success|warning|error)

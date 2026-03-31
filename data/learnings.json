@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "date": "2026-03-30",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [
+          "AMD",
+          "ETH/USD"
+        ],
+        "worst_performing_symbols": [
+          "AAPL",
+          "BTC/USD"
+        ],
+        "strategy_notes": {
+          "test": "Strong: 100% win rate, $250.00 P&L",
+          "mean_reversion_aggressive": "Weak: 0% win rate, $-500.00 P&L",
+          "Mean Rev Aggressive": "Weak: 30% win rate, $109.89 P&L",
+          "Volume Profile": "Strong: 67% win rate, $4.15 P&L"
+        },
+        "risk_observations": {
+          "avg_drawdown_pct": 1.0,
+          "max_single_loss": -100.0,
+          "overall_win_rate": 43.5,
+          "total_pnl": -135.96
+        },
+        "patterns": [
+          "BTC/USD overtrading: 28 trades, 22% win rate, $-73.37 P&L",
+          "Had 4 consecutive losing trades",
+          "Strategy 'test' performing well: 100% win rate on 5 sells",
+          "Strategy 'mean_reversion_aggressive' underperforming: 0% win rate on 5 sells",
+          "Strategy 'Mean Rev Aggressive' underperforming: 30% win rate on 10 sells",
+          "Strategy 'Volume Profile' performing well: 67% win rate on 3 sells",
+          "Large loss: AAPL lost $100.00 (trailing stop)",
+          "Large loss: AAPL lost $100.00 (trailing stop)",
+          "Large loss: AAPL lost $100.00 (trailing stop)",
+          "Large loss: AAPL lost $100.00 (trailing stop)",
+          "Large loss: AAPL lost $100.00 (trailing stop)"
+        ],
+        "symbols_to_avoid": [
+          "AAPL",
+          "BTC/USD"
+        ],
+        "symbols_to_favor": [
+          "AMD",
+          "ETH/USD"
+        ]
+      }
+    }
+  ]
+}

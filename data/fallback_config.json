@@ -1,0 +1,20 @@
+{
+  "updated": "2026-03-27T17:00:00",
+  "equity_symbols": ["TSLA", "NVDA", "AMD", "AAPL", "META", "SPY"],
+  "strategy_map": {
+    "BTC/USD": "mean_reversion_aggressive",
+    "ETH/USD": "volume_profile",
+    "TSLA": "mean_reversion_aggressive",
+    "NVDA": "mean_reversion_aggressive",
+    "AMD": "mean_reversion_aggressive",
+    "AAPL": "mean_reversion_aggressive",
+    "META": "mean_reversion_aggressive",
+    "SPY": "mean_reversion_aggressive"
+  },
+  "risk_params": {
+    "stop_loss_pct": 0.025,
+    "max_position_pct": 0.50,
+    "daily_drawdown_limit": 0.10,
+    "cooldown_equity": 300
+  }
+}
