@@ -17,6 +17,7 @@ When LLM_PATTERN_DISCOVERY_ENABLED: injects learned patterns from feedback data.
 import json
 import os
 import sys
+import tempfile
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -718,32 +719,40 @@ def run_analysis(symbols: list[str] | None = None,
     }
 
 
+def _atomic_json_write(path: str, data: dict):
+    """Write JSON atomically: temp file + rename to prevent partial reads."""
+    dir_path = os.path.dirname(path)
+    fd, tmp_path = tempfile.mkstemp(dir=dir_path, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w") as f:
+            json.dump(data, f, indent=2)
+        os.replace(tmp_path, path)
+    except Exception:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
+
+
 def write_outputs(data: dict, macro_context: dict,
                   sector_contexts: dict[str, dict]):
-    """Write all output files."""
+    """Write all output files (atomic writes to prevent partial reads)."""
     _ensure_data_dir()
+    ts = datetime.now().isoformat()
 
     # Convictions (same path as v1 — signal_modifiers reads this)
-    with open(_CONVICTIONS_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+    _atomic_json_write(_CONVICTIONS_FILE, data)
     log.success(f"Wrote convictions for {len(data.get('convictions', {}))} symbols")
 
     # Macro report (bonus output for observability)
-    macro_report = {
-        "timestamp": datetime.now().isoformat(),
-        **macro_context,
-    }
-    with open(_MACRO_FILE, "w") as f:
-        json.dump(macro_report, f, indent=2)
+    macro_report = {"timestamp": ts, **macro_context}
+    _atomic_json_write(_MACRO_FILE, macro_report)
     log.success("Wrote macro report")
 
     # Sector report (bonus output for observability)
-    sector_report = {
-        "timestamp": datetime.now().isoformat(),
-        "sectors": sector_contexts,
-    }
-    with open(_SECTOR_FILE, "w") as f:
-        json.dump(sector_report, f, indent=2)
+    sector_report = {"timestamp": ts, "sectors": sector_contexts}
+    _atomic_json_write(_SECTOR_FILE, sector_report)
     log.success("Wrote sector report")
 
     # Archive predictions for feedback loop (if enabled)

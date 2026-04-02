@@ -2,6 +2,7 @@
 
 import time
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Optional
 
 import numpy as np
@@ -36,6 +37,7 @@ class RiskManager:
     trailing_stops: dict[str, TrailingStop] = field(default_factory=dict)
     halted: bool = False
     halt_reason: str = ""
+    daily_drawdown: float = 0.0
     _last_daily_reset: float = 0.0
 
     def initialize(self, equity: float):
@@ -44,13 +46,16 @@ class RiskManager:
         self._last_daily_reset = time.time()
 
     def check_daily_reset(self, current_equity: float):
-        """Reset daily tracking every 24h."""
-        if time.time() - self._last_daily_reset > 86400:
+        """Reset daily tracking at calendar day boundary (market timezone)."""
+        now = datetime.now(Config.MARKET_TZ)
+        last_reset_dt = datetime.fromtimestamp(self._last_daily_reset, tz=Config.MARKET_TZ) if self._last_daily_reset else now
+        if now.date() > last_reset_dt.date():
             self.daily_start_equity = current_equity
             self._last_daily_reset = time.time()
+            self.daily_drawdown = 0.0
             self.halted = False
             self.halt_reason = ""
-            log.info("Daily risk counters reset")
+            log.info("Daily risk counters reset (new trading day)")
 
     def check_drawdown(self, current_equity: float) -> bool:
         """Check if daily drawdown limit is hit. Returns True if trading should stop."""
@@ -60,6 +65,7 @@ class RiskManager:
             return False
 
         drawdown = (self.daily_start_equity - current_equity) / self.daily_start_equity
+        self.daily_drawdown = drawdown
 
         if drawdown >= Config.DAILY_DRAWDOWN_LIMIT:
             self.halted = True

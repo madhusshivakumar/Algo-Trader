@@ -4,7 +4,7 @@ Uses ThreadPoolExecutor since the Alpaca SDK is synchronous.
 Default 5 workers keeps us under Alpaca's rate limits (~200 req/min).
 """
 
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
 
 import pandas as pd
 
@@ -12,9 +12,10 @@ from utils.logger import log
 
 
 class DataFetcher:
-    def __init__(self, broker, max_workers: int = 5):
+    def __init__(self, broker, max_workers: int = 5, timeout: int = 30):
         self.broker = broker
         self.max_workers = max_workers
+        self.timeout = timeout
 
     def fetch_recent_bars_batch(self, symbols: list[str],
                                 limit: int = 100) -> dict[str, pd.DataFrame]:
@@ -26,18 +27,22 @@ class DataFetcher:
             return {}
 
         results = {}
+        deduped = list(dict.fromkeys(symbols))
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             futures = {
                 executor.submit(self._fetch_recent, symbol, limit): symbol
-                for symbol in symbols
+                for symbol in deduped
             }
-            for future in as_completed(futures):
-                symbol = futures[future]
-                try:
-                    results[symbol] = future.result()
-                except Exception as e:
-                    log.error(f"Failed to fetch bars for {symbol}: {e}")
-                    results[symbol] = pd.DataFrame()
+            try:
+                for future in as_completed(futures, timeout=self.timeout):
+                    symbol = futures[future]
+                    try:
+                        results[symbol] = future.result()
+                    except Exception as e:
+                        log.error(f"Failed to fetch bars for {symbol}: {e}")
+                        results[symbol] = pd.DataFrame()
+            except TimeoutError:
+                log.warning("Batch fetch timed out, some symbols may be missing")
 
         return results
 
@@ -51,18 +56,22 @@ class DataFetcher:
             return {}
 
         results = {}
+        deduped = list(dict.fromkeys(symbols))
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             futures = {
                 executor.submit(self._fetch_historical, symbol, days): symbol
-                for symbol in symbols
+                for symbol in deduped
             }
-            for future in as_completed(futures):
-                symbol = futures[future]
-                try:
-                    results[symbol] = future.result()
-                except Exception as e:
-                    log.error(f"Failed to fetch historical bars for {symbol}: {e}")
-                    results[symbol] = pd.DataFrame()
+            try:
+                for future in as_completed(futures, timeout=self.timeout):
+                    symbol = futures[future]
+                    try:
+                        results[symbol] = future.result()
+                    except Exception as e:
+                        log.error(f"Failed to fetch historical bars for {symbol}: {e}")
+                        results[symbol] = pd.DataFrame()
+            except TimeoutError:
+                log.warning("Historical batch fetch timed out, some symbols may be missing")
 
         return results
 

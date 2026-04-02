@@ -72,6 +72,10 @@ def apply_sentiment(signal: dict, symbol: str, weight: float = 0.15) -> dict:
 
     modifier = sent_score * weight
 
+    if signal["action"] == "hold":
+        signal["sentiment_score"] = round(sent_score, 3)
+        return signal
+
     if signal["action"] == "buy":
         signal["strength"] = signal.get("strength", 0.5) + modifier
         if sent_score < -0.6:
@@ -100,7 +104,7 @@ def apply_llm_conviction(signal: dict, symbol: str, weight: float = 0.2) -> dict
     data = _load_json(_LLM_FILE)
 
     # v3: Skip stale data when freshness check is enabled
-    if Config.SENTIMENT_FRESHNESS_CHECK and not validate_data_freshness(data, Config.SENTIMENT_MAX_AGE_HOURS):
+    if Config.LLM_FRESHNESS_CHECK and not validate_data_freshness(data, Config.LLM_MAX_AGE_HOURS):
         return signal
 
     sym_data = data.get("convictions", {}).get(symbol)
@@ -112,6 +116,10 @@ def apply_llm_conviction(signal: dict, symbol: str, weight: float = 0.2) -> dict
         return signal
 
     modifier = conviction * weight
+
+    if signal["action"] == "hold":
+        signal["llm_conviction"] = round(conviction, 3)
+        return signal
 
     if signal["action"] == "buy":
         signal["strength"] = signal.get("strength", 0.5) + modifier

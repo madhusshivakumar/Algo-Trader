@@ -94,6 +94,8 @@ class Config:
     CORRELATION_THRESHOLD = float(os.getenv("CORRELATION_THRESHOLD", "0.7"))
     SENTIMENT_FRESHNESS_CHECK = os.getenv("SENTIMENT_FRESHNESS_CHECK", "false").lower() == "true"
     SENTIMENT_MAX_AGE_HOURS = float(os.getenv("SENTIMENT_MAX_AGE_HOURS", "24.0"))
+    LLM_FRESHNESS_CHECK = os.getenv("LLM_FRESHNESS_CHECK", "false").lower() == "true"
+    LLM_MAX_AGE_HOURS = float(os.getenv("LLM_MAX_AGE_HOURS", "24.0"))
 
     # Sprint 3: Execution & performance
     PARALLEL_FETCH_ENABLED = os.getenv("PARALLEL_FETCH_ENABLED", "false").lower() == "true"
@@ -107,6 +109,13 @@ class Config:
     DRIFT_DETECTION_ENABLED = os.getenv("DRIFT_DETECTION_ENABLED", "false").lower() == "true"
     DRIFT_LOOKBACK_DAYS = int(os.getenv("DRIFT_LOOKBACK_DAYS", "7"))
     DRIFT_MIN_TRADES = int(os.getenv("DRIFT_MIN_TRADES", "5"))
+
+    # ── Alerting ──────────────────────────────────────────────────────
+    ALERTING_ENABLED = os.getenv("ALERTING_ENABLED", "false").lower() == "true"
+    SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")
+    DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL", "")
+    ALERT_ON_TRADE = os.getenv("ALERT_ON_TRADE", "true").lower() == "true"
+    ALERT_ON_ERROR = os.getenv("ALERT_ON_ERROR", "true").lower() == "true"
 
     @classmethod
     def is_paper(cls) -> bool:

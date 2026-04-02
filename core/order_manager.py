@@ -119,11 +119,18 @@ class ManagedOrder:
 
 
 class OrderManager:
+    _failed_counter: int = 0
+
     def __init__(self, broker, state_store=None):
         self.broker = broker
         self.state_store = state_store
         self._orders: dict[str, ManagedOrder] = {}
         self._load_persisted_orders()
+
+    def _next_failed_id(self) -> str:
+        """Generate a unique ID for failed orders."""
+        OrderManager._failed_counter += 1
+        return f"failed-{datetime.now().timestamp():.0f}-{OrderManager._failed_counter}"
 
     def _load_persisted_orders(self):
         if self.state_store:
@@ -150,7 +157,7 @@ class OrderManager:
             result = self.broker.buy(symbol, notional)
         except Exception as e:
             order = ManagedOrder(
-                order_id=f"failed-{datetime.now().timestamp():.0f}",
+                order_id=self._next_failed_id(),
                 symbol=symbol, side="buy", order_type="market",
                 requested_notional=notional, expected_price=expected_price,
                 state=OrderState.FAILED, error=str(e),
@@ -162,7 +169,7 @@ class OrderManager:
 
         if not result:
             order = ManagedOrder(
-                order_id=f"failed-{datetime.now().timestamp():.0f}",
+                order_id=self._next_failed_id(),
                 symbol=symbol, side="buy", order_type="market",
                 requested_notional=notional, expected_price=expected_price,
                 state=OrderState.FAILED, error="Broker returned None",
@@ -189,7 +196,7 @@ class OrderManager:
             result = self.broker.sell(symbol, qty)
         except Exception as e:
             order = ManagedOrder(
-                order_id=f"failed-{datetime.now().timestamp():.0f}",
+                order_id=self._next_failed_id(),
                 symbol=symbol, side="sell", order_type="market",
                 requested_qty=qty, expected_price=expected_price,
                 state=OrderState.FAILED, error=str(e),
@@ -201,7 +208,7 @@ class OrderManager:
 
         if not result:
             order = ManagedOrder(
-                order_id=f"failed-{datetime.now().timestamp():.0f}",
+                order_id=self._next_failed_id(),
                 symbol=symbol, side="sell", order_type="market",
                 requested_qty=qty, expected_price=expected_price,
                 state=OrderState.FAILED, error="Broker returned None",
@@ -228,7 +235,7 @@ class OrderManager:
             result = self.broker.submit_limit_order(symbol, qty, limit_price, side="buy")
         except Exception as e:
             order = ManagedOrder(
-                order_id=f"failed-{datetime.now().timestamp():.0f}",
+                order_id=self._next_failed_id(),
                 symbol=symbol, side="buy", order_type="limit",
                 requested_qty=qty, limit_price=limit_price,
                 expected_price=limit_price,
@@ -240,7 +247,7 @@ class OrderManager:
 
         if not result:
             order = ManagedOrder(
-                order_id=f"failed-{datetime.now().timestamp():.0f}",
+                order_id=self._next_failed_id(),
                 symbol=symbol, side="buy", order_type="limit",
                 requested_qty=qty, limit_price=limit_price,
                 expected_price=limit_price,
@@ -269,7 +276,7 @@ class OrderManager:
             result = self.broker.submit_stop_limit_order(symbol, qty, stop_price, limit_price, side="sell")
         except Exception as e:
             order = ManagedOrder(
-                order_id=f"failed-{datetime.now().timestamp():.0f}",
+                order_id=self._next_failed_id(),
                 symbol=symbol, side="sell", order_type="stop_limit",
                 requested_qty=qty, stop_price=stop_price, limit_price=limit_price,
                 expected_price=stop_price,
@@ -281,7 +288,7 @@ class OrderManager:
 
         if not result:
             order = ManagedOrder(
-                order_id=f"failed-{datetime.now().timestamp():.0f}",
+                order_id=self._next_failed_id(),
                 symbol=symbol, side="sell", order_type="stop_limit",
                 requested_qty=qty, stop_price=stop_price, limit_price=limit_price,
                 expected_price=stop_price,

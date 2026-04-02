@@ -27,7 +27,8 @@ RELOADABLE_KEYS = {
     # Thresholds
     "SENTIMENT_WEIGHT", "LLM_CONVICTION_WEIGHT",
     "ATR_STOP_MULTIPLIER", "CORRELATION_THRESHOLD",
-    "SENTIMENT_MAX_AGE_HOURS", "ORDER_STALE_TIMEOUT_SECONDS",
+    "SENTIMENT_MAX_AGE_HOURS", "LLM_FRESHNESS_CHECK", "LLM_MAX_AGE_HOURS",
+    "ORDER_STALE_TIMEOUT_SECONDS",
     "LLM_BUDGET_DAILY",
 }
 
@@ -73,6 +74,9 @@ class ConfigReloader:
                     key, _, value = line.partition("=")
                     key = key.strip()
                     value = value.strip()
+                    # Strip surrounding quotes (single or double)
+                    if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
+                        value = value[1:-1]
                     if key in RELOADABLE_KEYS:
                         new_values[key] = value
         except OSError:

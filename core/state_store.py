@@ -81,19 +81,23 @@ class StateStore:
 
     def save_scalar(self, key: str, value: Any) -> None:
         conn = self._get_conn()
-        conn.execute(
-            "INSERT OR REPLACE INTO runtime_state (key, value, updated_at) VALUES (?, ?, ?)",
-            (key, json.dumps(value), datetime.now().isoformat()),
-        )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute(
+                "INSERT OR REPLACE INTO runtime_state (key, value, updated_at) VALUES (?, ?, ?)",
+                (key, json.dumps(value), datetime.now().isoformat()),
+            )
+            conn.commit()
+        finally:
+            conn.close()
 
     def load_scalar(self, key: str, default: Any = None) -> Any:
         conn = self._get_conn()
-        row = conn.execute(
-            "SELECT value FROM runtime_state WHERE key = ?", (key,)
-        ).fetchone()
-        conn.close()
+        try:
+            row = conn.execute(
+                "SELECT value FROM runtime_state WHERE key = ?", (key,)
+            ).fetchone()
+        finally:
+            conn.close()
         if row is None:
             return default
         return json.loads(row[0])
@@ -103,21 +107,28 @@ class StateStore:
     def save_trailing_stops(self, stops: dict) -> None:
         """Save trailing stops. stops = {symbol: {entry_price, highest_price, stop_pct}}"""
         conn = self._get_conn()
-        conn.execute("DELETE FROM persisted_trailing_stops")
-        for symbol, data in stops.items():
-            conn.execute(
-                "INSERT INTO persisted_trailing_stops (symbol, entry_price, highest_price, stop_pct) "
-                "VALUES (?, ?, ?, ?)",
-                (symbol, data["entry_price"], data["highest_price"], data["stop_pct"]),
-            )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute("DELETE FROM persisted_trailing_stops")
+            for symbol, data in stops.items():
+                conn.execute(
+                    "INSERT INTO persisted_trailing_stops (symbol, entry_price, highest_price, stop_pct) "
+                    "VALUES (?, ?, ?, ?)",
+                    (symbol, data["entry_price"], data["highest_price"], data["stop_pct"]),
+                )
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
 
     def load_trailing_stops(self) -> dict:
         """Returns {symbol: {entry_price, highest_price, stop_pct}}"""
         conn = self._get_conn()
-        rows = conn.execute("SELECT symbol, entry_price, highest_price, stop_pct FROM persisted_trailing_stops").fetchall()
-        conn.close()
+        try:
+            rows = conn.execute("SELECT symbol, entry_price, highest_price, stop_pct FROM persisted_trailing_stops").fetchall()
+        finally:
+            conn.close()
         return {
             row[0]: {"entry_price": row[1], "highest_price": row[2], "stop_pct": row[3]}
             for row in rows
@@ -128,19 +139,26 @@ class StateStore:
     def save_cooldowns(self, cooldowns: dict[str, float]) -> None:
         """Save cooldown timestamps. cooldowns = {symbol: last_trade_time_epoch}"""
         conn = self._get_conn()
-        conn.execute("DELETE FROM persisted_cooldowns")
-        for symbol, ts in cooldowns.items():
-            conn.execute(
-                "INSERT INTO persisted_cooldowns (symbol, last_trade_time) VALUES (?, ?)",
-                (symbol, ts),
-            )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute("DELETE FROM persisted_cooldowns")
+            for symbol, ts in cooldowns.items():
+                conn.execute(
+                    "INSERT INTO persisted_cooldowns (symbol, last_trade_time) VALUES (?, ?)",
+                    (symbol, ts),
+                )
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
 
     def load_cooldowns(self) -> dict[str, float]:
         conn = self._get_conn()
-        rows = conn.execute("SELECT symbol, last_trade_time FROM persisted_cooldowns").fetchall()
-        conn.close()
+        try:
+            rows = conn.execute("SELECT symbol, last_trade_time FROM persisted_cooldowns").fetchall()
+        finally:
+            conn.close()
         return {row[0]: row[1] for row in rows}
 
     # ── PDT buy records ─────────────────────────────────────────────
@@ -148,19 +166,26 @@ class StateStore:
     def save_pdt_buys(self, buys: dict[str, str]) -> None:
         """Save PDT records. buys = {symbol: iso_datetime_string}"""
         conn = self._get_conn()
-        conn.execute("DELETE FROM persisted_pdt_buys")
-        for symbol, dt_str in buys.items():
-            conn.execute(
-                "INSERT INTO persisted_pdt_buys (symbol, buy_datetime) VALUES (?, ?)",
-                (symbol, dt_str),
-            )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute("DELETE FROM persisted_pdt_buys")
+            for symbol, dt_str in buys.items():
+                conn.execute(
+                    "INSERT INTO persisted_pdt_buys (symbol, buy_datetime) VALUES (?, ?)",
+                    (symbol, dt_str),
+                )
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
 
     def load_pdt_buys(self) -> dict[str, str]:
         conn = self._get_conn()
-        rows = conn.execute("SELECT symbol, buy_datetime FROM persisted_pdt_buys").fetchall()
-        conn.close()
+        try:
+            rows = conn.execute("SELECT symbol, buy_datetime FROM persisted_pdt_buys").fetchall()
+        finally:
+            conn.close()
         return {row[0]: row[1] for row in rows}
 
     # ── Managed orders ──────────────────────────────────────────────
@@ -168,37 +193,42 @@ class StateStore:
     def save_order(self, order: dict) -> None:
         """Upsert a managed order record."""
         conn = self._get_conn()
-        conn.execute(
-            """INSERT OR REPLACE INTO managed_orders
-            (order_id, symbol, side, order_type, requested_notional, requested_qty,
-             limit_price, stop_price, expected_price, state, filled_qty, filled_avg_price,
-             slippage, submitted_at, filled_at, last_checked, error)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (
-                order["order_id"], order["symbol"], order["side"], order["order_type"],
-                order.get("requested_notional"), order.get("requested_qty"),
-                order.get("limit_price"), order.get("stop_price"),
-                order.get("expected_price", 0), order["state"],
-                order.get("filled_qty", 0), order.get("filled_avg_price", 0),
-                order.get("slippage", 0), order.get("submitted_at"),
-                order.get("filled_at"), order.get("last_checked"),
-                order.get("error", ""),
-            ),
-        )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute(
+                """INSERT OR REPLACE INTO managed_orders
+                (order_id, symbol, side, order_type, requested_notional, requested_qty,
+                 limit_price, stop_price, expected_price, state, filled_qty, filled_avg_price,
+                 slippage, submitted_at, filled_at, last_checked, error)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    order["order_id"], order["symbol"], order["side"], order["order_type"],
+                    order.get("requested_notional"), order.get("requested_qty"),
+                    order.get("limit_price"), order.get("stop_price"),
+                    order.get("expected_price", 0), order["state"],
+                    order.get("filled_qty", 0), order.get("filled_avg_price", 0),
+                    order.get("slippage", 0), order.get("submitted_at"),
+                    order.get("filled_at"), order.get("last_checked"),
+                    order.get("error", ""),
+                ),
+            )
+            conn.commit()
+        finally:
+            conn.close()
 
     def load_active_orders(self) -> list[dict]:
         """Load non-terminal orders."""
         terminal = ("filled", "canceled", "rejected", "expired", "failed")
         conn = self._get_conn()
-        placeholders = ",".join("?" for _ in terminal)
-        rows = conn.execute(
-            f"SELECT * FROM managed_orders WHERE state NOT IN ({placeholders})",
-            terminal,
-        ).fetchall()
-        columns = [desc[0] for desc in conn.execute("SELECT * FROM managed_orders LIMIT 0").description]
-        conn.close()
+        try:
+            placeholders = ",".join("?" for _ in terminal)
+            cursor = conn.execute(
+                f"SELECT * FROM managed_orders WHERE state NOT IN ({placeholders})",
+                terminal,
+            )
+            columns = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+        finally:
+            conn.close()
         return [dict(zip(columns, row)) for row in rows]
 
     # ── Bulk engine state ───────────────────────────────────────────

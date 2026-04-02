@@ -41,7 +41,7 @@ def compute_signals(df: pd.DataFrame) -> dict:
         return {
             "action": "buy",
             "reason": f"RSI={current_rsi:.0f} oversold + price at lower BB ${lower_band:.2f}",
-            "strength": min(strength, 1.0),
+            "strength": max(0.3, min(strength, 1.0)),
         }
 
     # Sell signal: RSI overbought OR price at upper band
@@ -50,7 +50,7 @@ def compute_signals(df: pd.DataFrame) -> dict:
         return {
             "action": "sell",
             "reason": f"RSI={current_rsi:.0f} overbought + price at upper BB ${upper_band:.2f}",
-            "strength": min(strength, 1.0),
+            "strength": max(0.3, min(strength, 1.0)),
         }
 
     # Mild sell if just RSI overbought

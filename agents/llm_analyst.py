@@ -162,16 +162,21 @@ def extract_indicators(df) -> dict:
         indicators["Price"] = round(float(latest["close"]), 2)
         # Simple momentum
         if len(df) >= 20:
-            indicators["5d_change"] = round(
-                float((latest["close"] - df.iloc[-5]["close"]) / df.iloc[-5]["close"] * 100), 2
-            )
-            indicators["20d_change"] = round(
-                float((latest["close"] - df.iloc[-20]["close"]) / df.iloc[-20]["close"] * 100), 2
-            )
+            close_5 = df.iloc[-5]["close"]
+            close_20 = df.iloc[-20]["close"]
+            if close_5 != 0:
+                indicators["5d_change"] = round(
+                    float((latest["close"] - close_5) / close_5 * 100), 2
+                )
+            if close_20 != 0:
+                indicators["20d_change"] = round(
+                    float((latest["close"] - close_20) / close_20 * 100), 2
+                )
 
     if "volume" in df.columns and len(df) >= 20:
         avg_vol = df["volume"].tail(20).mean()
-        indicators["Volume_vs_avg"] = round(float(latest["volume"] / avg_vol), 2)
+        if avg_vol > 0:
+            indicators["Volume_vs_avg"] = round(float(latest["volume"] / avg_vol), 2)
 
     return indicators
 

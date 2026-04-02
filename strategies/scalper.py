@@ -28,6 +28,8 @@ def compute_signals(df: pd.DataFrame) -> dict:
     typical_price = (high + low + close) / 3
     cum_tp_vol = (typical_price * volume).cumsum()
     cum_vol = volume.cumsum()
+    if cum_vol.iloc[-1] == 0:
+        return {"action": "hold", "reason": "no volume data for VWAP", "strength": 0}
     vwap = cum_tp_vol / cum_vol
 
     current_vwap = vwap.iloc[-1]

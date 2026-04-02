@@ -144,6 +144,9 @@ def compute_signals(symbol: str, df):
     else:
         name, fn = get_strategy(symbol)
 
+    if df is None:
+        return {"action": "hold", "reason": "no data", "strength": 0, "strategy": name}
+
     signal = fn(df)
     signal["strategy"] = name
     if rl_selected:

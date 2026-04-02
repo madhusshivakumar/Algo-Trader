@@ -39,7 +39,14 @@ def _isolate_db(tmp_path):
 
 @pytest.fixture
 def engine(mock_broker):
-    engine = TradingEngine()
+    # Ensure optional v3 features are disabled for base engine tests
+    with patch.object(Config, "ORDER_MANAGEMENT_ENABLED", False), \
+         patch.object(Config, "STATE_PERSISTENCE_ENABLED", False), \
+         patch.object(Config, "PARALLEL_FETCH_ENABLED", False), \
+         patch.object(Config, "HOT_RELOAD_ENABLED", False), \
+         patch.object(Config, "DRIFT_DETECTION_ENABLED", False), \
+         patch.object(Config, "ALERTING_ENABLED", False):
+        engine = TradingEngine()
     return engine
 
 

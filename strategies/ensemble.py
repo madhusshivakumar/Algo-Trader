@@ -42,7 +42,7 @@ def compute_signals(df: pd.DataFrame) -> dict:
             return {
                 "action": "buy",
                 "reason": f"[ensemble] {signal['reason']}",
-                "strength": signal["strength"] * 0.8,  # reduce confidence
+                "strength": max(signal["strength"] * 0.8, 0.3),  # reduce confidence
             }
 
     return {"action": "hold", "reason": "[ensemble] no consensus", "strength": 0}

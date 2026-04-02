@@ -36,11 +36,11 @@ def compute_signals(df: pd.DataFrame) -> dict:
 
     # EMA trend filter — only buy if price is above 50-period EMA
     ema_50 = ta.trend.ema_indicator(close, window=50)
-    above_ema = current_close > ema_50.iloc[-1] if len(ema_50) > 50 else True
+    above_ema = current_close > ema_50.iloc[-1] if len(df) > 50 else True
 
     # MACD for momentum confirmation
     macd = ta.trend.macd_diff(close)
-    macd_positive = macd.iloc[-1] > 0 if len(macd) > 26 else True
+    macd_positive = macd.iloc[-1] > 0 if len(df) > 26 else True
 
     # Breakout condition
     breakout = current_close > lookback_high and prev_close <= lookback_high

@@ -113,8 +113,9 @@ class TestApplySentiment:
         signal = self._make_signal(action="hold", strength=0)
         with patch("core.signal_modifiers._SENTIMENT_FILE", str(f)):
             result = apply_sentiment(signal, "AAPL")
-        # Hold signals keep strength at 0 -> clamped to 0.3
-        assert result["strength"] == 0.3
+        # Hold signals pass through with unchanged strength
+        assert result["strength"] == 0
+        assert result["sentiment_score"] == 0.9
 
     def test_strength_clamped_high(self, tmp_path):
         from core.signal_modifiers import apply_sentiment
@@ -405,8 +406,8 @@ class TestLLMFreshness:
         signal = {"action": "buy", "strength": 0.5, "reason": "test"}
         with patch("core.signal_modifiers._LLM_FILE", str(lf)), \
              patch("core.signal_modifiers.Config") as mock_config:
-            mock_config.SENTIMENT_FRESHNESS_CHECK = True
-            mock_config.SENTIMENT_MAX_AGE_HOURS = 24.0
+            mock_config.LLM_FRESHNESS_CHECK = True
+            mock_config.LLM_MAX_AGE_HOURS = 24.0
             result = apply_llm_conviction(signal, "AAPL")
         assert result["strength"] == 0.5  # unchanged
         assert "llm_conviction" not in result
@@ -422,7 +423,7 @@ class TestLLMFreshness:
         signal = {"action": "buy", "strength": 0.5, "reason": "test"}
         with patch("core.signal_modifiers._LLM_FILE", str(lf)), \
              patch("core.signal_modifiers.Config") as mock_config:
-            mock_config.SENTIMENT_FRESHNESS_CHECK = True
-            mock_config.SENTIMENT_MAX_AGE_HOURS = 24.0
+            mock_config.LLM_FRESHNESS_CHECK = True
+            mock_config.LLM_MAX_AGE_HOURS = 24.0
             result = apply_llm_conviction(signal, "AAPL")
         assert "llm_conviction" in result

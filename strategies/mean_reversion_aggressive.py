@@ -28,6 +28,14 @@ def compute_signals(df: pd.DataFrame) -> dict:
     # %B — where price is relative to bands (0 = lower, 1 = upper)
     pct_b = bb.bollinger_pband().iloc[-1]
 
+    # Extreme buy: RSI < 30 or %B < 0.05 (check extreme first)
+    if current_rsi < 30 or pct_b < 0.05:
+        return {
+            "action": "buy",
+            "reason": f"Extreme oversold: RSI={current_rsi:.0f}, %B={pct_b:.2f}",
+            "strength": 0.7,
+        }
+
     # Buy: RSI < 40 and price in lower 20% of BB
     if current_rsi < 40 and pct_b < 0.2:
         strength = min((40 - current_rsi) / 30 + (0.2 - pct_b), 1.0)
@@ -37,11 +45,11 @@ def compute_signals(df: pd.DataFrame) -> dict:
             "strength": max(strength, 0.5),
         }
 
-    # Stronger buy at extremes
-    if current_rsi < 30 or pct_b < 0.05:
+    # Extreme sell: RSI > 75 or %B > 0.95 (check extreme first)
+    if current_rsi > 75 or pct_b > 0.95:
         return {
-            "action": "buy",
-            "reason": f"Extreme oversold: RSI={current_rsi:.0f}, %B={pct_b:.2f}",
+            "action": "sell",
+            "reason": f"Extreme overbought: RSI={current_rsi:.0f}, %B={pct_b:.2f}",
             "strength": 0.7,
         }
 
@@ -52,13 +60,6 @@ def compute_signals(df: pd.DataFrame) -> dict:
             "action": "sell",
             "reason": f"Mean rev sell: RSI={current_rsi:.0f}, %B={pct_b:.2f}",
             "strength": max(strength, 0.5),
-        }
-
-    if current_rsi > 75 or pct_b > 0.95:
-        return {
-            "action": "sell",
-            "reason": f"Extreme overbought: RSI={current_rsi:.0f}, %B={pct_b:.2f}",
-            "strength": 0.7,
         }
 
     return {"action": "hold", "reason": f"RSI={current_rsi:.0f}, neutral zone", "strength": 0}

@@ -6,8 +6,10 @@ Provides a thin wrapper around the Anthropic SDK with:
   - Cost tracking per call
 """
 
+import fcntl
 import json
 import os
+import tempfile
 import time
 from datetime import datetime, date
 
@@ -45,8 +47,18 @@ def _load_spend_log() -> dict:
 
 def _save_spend_log(data: dict):
     _ensure_data_dir()
-    with open(_SPEND_LOG, "w") as f:
-        json.dump(data, f, indent=2)
+    # Atomic write: write to temp file then rename (POSIX atomic)
+    fd, tmp_path = tempfile.mkstemp(dir=_DATA_DIR, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w") as f:
+            json.dump(data, f, indent=2)
+        os.replace(tmp_path, _SPEND_LOG)
+    except Exception:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
 
 
 def get_daily_spend() -> float:
@@ -64,23 +76,36 @@ def _estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float:
             output_tokens / 1000 * rates["output"])
 
 
+_SPEND_LOCK = os.path.join(_DATA_DIR, ".spend_log.lock")
+
+
 def _record_spend(model: str, input_tokens: int, output_tokens: int, cost: float):
-    """Record a spend entry in the daily log."""
-    log_data = _load_spend_log()
-    today = str(date.today())
+    """Record a spend entry in the daily log (file-locked for concurrency)."""
+    _ensure_data_dir()
+    lock_fd = open(_SPEND_LOCK, "w")
+    try:
+        fcntl.flock(lock_fd, fcntl.LOCK_EX)
+        log_data = _load_spend_log()
+        today = str(date.today())
 
-    if log_data.get("date") != today:
-        log_data = {"date": today, "total_usd": 0.0, "calls": []}
+        if log_data.get("date") != today:
+            log_data = {"date": today, "total_usd": 0.0, "calls": []}
 
-    log_data["total_usd"] += cost
-    log_data["calls"].append({
-        "timestamp": datetime.now().isoformat(),
-        "model": model,
-        "input_tokens": input_tokens,
-        "output_tokens": output_tokens,
-        "cost_usd": round(cost, 6),
-    })
-    _save_spend_log(log_data)
+        log_data["total_usd"] += cost
+        log_data["calls"].append({
+            "timestamp": datetime.now().isoformat(),
+            "model": model,
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "cost_usd": round(cost, 6),
+        })
+        # Cap call log to prevent unbounded growth
+        if len(log_data["calls"]) > 500:
+            log_data["calls"] = log_data["calls"][-500:]
+        _save_spend_log(log_data)
+    finally:
+        fcntl.flock(lock_fd, fcntl.LOCK_UN)
+        lock_fd.close()
 
 
 def call_llm(prompt: str, model: str | None = None,

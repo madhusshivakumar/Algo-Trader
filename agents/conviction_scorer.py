@@ -15,7 +15,6 @@ import json
 import os
 import sys
 from datetime import datetime, timedelta, date
-from math import copysign
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -255,7 +254,7 @@ def update_summary():
             for sector, stats in f.get("sector_summary", {}).items():
                 if sector not in sector_agg:
                     sector_agg[sector] = {"correct": 0, "total": 0}
-                sector_agg[sector]["correct"] += int(stats.get("direction_accuracy", 0) * stats.get("num_symbols", 0))
+                sector_agg[sector]["correct"] += round(stats.get("direction_accuracy", 0) * stats.get("num_symbols", 0))
                 sector_agg[sector]["total"] += stats.get("num_symbols", 0)
 
         sector_accuracy = {

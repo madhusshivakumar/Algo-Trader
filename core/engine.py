@@ -58,6 +58,12 @@ class TradingEngine:
                 min_trades=Config.DRIFT_MIN_TRADES,
             )
 
+        # Alerting (optional)
+        self.alert_manager = None
+        if Config.ALERTING_ENABLED:
+            from core.alerting import AlertManager
+            self.alert_manager = AlertManager()
+
     def _load_persisted_state(self):
         """Restore runtime state from SQLite (if state persistence enabled)."""
         if not self.state_store:
@@ -167,7 +173,8 @@ class TradingEngine:
         # v3: Poll pending orders for status updates
         if self.order_manager:
             try:
-                self.order_manager.poll_pending_orders()
+                newly_terminal = self.order_manager.poll_pending_orders()
+                self._handle_filled_orders(newly_terminal)
             except Exception as e:
                 log.error(f"Error polling orders: {e}")
 
@@ -207,6 +214,10 @@ class TradingEngine:
         if not self.risk.can_trade(equity):
             if self.cycle_count % 60 == 0:
                 log.warning(f"Trading halted: {self.risk.halt_reason}")
+            # Alert on first detection and every 60 cycles after
+            if self.alert_manager and self.risk.halted and (self.cycle_count % 60 == 1):
+                self.alert_manager.drawdown_halt(
+                    self.risk.daily_drawdown, Config.DAILY_DRAWDOWN_LIMIT)
             return
 
         # Determine which symbols to process this cycle
@@ -297,6 +308,9 @@ class TradingEngine:
                     return
 
                 log.info(f"Closing {symbol} — trailing stop hit")
+                # Capture entry price BEFORE unregister removes it
+                stop_entry = self.risk.trailing_stops.get(symbol)
+                entry_price = stop_entry.entry_price if stop_entry else current_price
                 result = self.broker.close_position(symbol)
                 if result:
                     pnl = position["unrealized_pl"]
@@ -304,6 +318,10 @@ class TradingEngine:
                               "trailing stop", pnl, strategy=get_strategy_key(symbol))
                     self.risk.unregister(symbol)
                     self._clear_buy_record(symbol)
+                    if self.alert_manager:
+                        market_val = abs(position["market_value"]) if position["market_value"] else 0
+                        loss_pct = abs(pnl / market_val) if market_val > 0 else 0
+                        self.alert_manager.stop_loss_hit(symbol, entry_price, current_price, loss_pct)
                 return
 
         # Compute strategy signals (routed per symbol)
@@ -364,13 +382,18 @@ class TradingEngine:
             # v3: Route through OrderManager when enabled
             if self.order_manager:
                 order = self.order_manager.submit_market_buy(symbol, size, current_price)
-                if order and order.state.value != "failed":
+                if order and order.state.value == "filled":
                     log.trade(symbol, "buy", size, current_price, signal["reason"],
                               strategy=signal.get("strategy", ""))
                     self.risk.register_entry(symbol, current_price, df)
                     self._record_trade(symbol)
                     if is_equity:
                         self._record_buy(symbol)
+                    if self.alert_manager and Config.ALERT_ON_TRADE:
+                        self.alert_manager.trade_executed(symbol, "buy", size, current_price, signal.get("reason", ""))
+                elif order and order.state.value == "submitted":
+                    # Order submitted but not yet filled — will be handled by poll_pending_orders
+                    log.info(f"  {symbol}: Market buy submitted (order {order.order_id[:8]}), awaiting fill")
             else:
                 result = self.broker.buy(symbol, size)
                 if result:
@@ -380,6 +403,8 @@ class TradingEngine:
                     self._record_trade(symbol)
                     if is_equity:
                         self._record_buy(symbol)
+                    if self.alert_manager and Config.ALERT_ON_TRADE:
+                        self.alert_manager.trade_executed(symbol, "buy", size, current_price, signal.get("reason", ""))
 
         elif signal["action"] == "sell" and position:
             # PDT check
@@ -396,6 +421,29 @@ class TradingEngine:
                 self.risk.unregister(symbol)
                 self._record_trade(symbol)
                 self._clear_buy_record(symbol)
+                if self.alert_manager and Config.ALERT_ON_TRADE:
+                    self.alert_manager.trade_executed(symbol, "sell", position["market_value"], current_price, signal.get("reason", ""))
+
+    def _handle_filled_orders(self, newly_terminal: list):
+        """Process orders that just transitioned to a terminal state."""
+        from core.order_manager import OrderState
+        for order in newly_terminal:
+            if order.state != OrderState.FILLED:
+                continue
+            symbol = order.symbol
+            is_equity = not Config.is_crypto(symbol)
+            if order.side == "buy":
+                log.trade(symbol, "buy", order.requested_notional or 0,
+                          order.filled_avg_price, "filled via poll",
+                          strategy=get_strategy_key(symbol))
+                self.risk.register_entry(symbol, order.filled_avg_price)
+                self._record_trade(symbol)
+                if is_equity:
+                    self._record_buy(symbol)
+                if self.alert_manager and Config.ALERT_ON_TRADE:
+                    self.alert_manager.trade_executed(
+                        symbol, "buy", order.requested_notional or 0,
+                        order.filled_avg_price, "filled via poll")
 
     def _get_existing_position_dfs(self) -> dict[str, "pd.DataFrame"]:
         """Fetch recent bars for all open positions (for correlation checks)."""
