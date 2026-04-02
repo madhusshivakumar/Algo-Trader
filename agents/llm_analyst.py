@@ -238,6 +238,11 @@ def write_convictions(data: dict):
 
 def main():
     """Main entry point — run full LLM analysis pipeline."""
+    # Delegate to v2 if enabled (big-picture macro → sector → symbol pipeline)
+    if Config.LLM_ANALYST_V2_ENABLED:
+        from agents.llm_analyst_v2 import main as main_v2
+        return main_v2()
+
     log.info("=" * 50)
     log.info("LLM Analyst Agent starting")
     log.info("=" * 50)

@@ -5,6 +5,13 @@ from unittest.mock import patch, MagicMock
 from datetime import datetime
 
 
+def _make_response(articles):
+    """Build a mock NewsSet response with response.data = {'news': articles}."""
+    mock_response = MagicMock()
+    mock_response.data = {"news": articles}
+    return mock_response
+
+
 class TestFetchNews:
     def _mock_article(self, headline="Test headline", summary="Test summary",
                       source="reuters", created_at="2024-01-01T12:00:00Z"):
@@ -18,12 +25,10 @@ class TestFetchNews:
     @patch("core.news_client.NewsClient")
     def test_returns_articles(self, mock_cls):
         from core.news_client import fetch_news
-        mock_response = MagicMock()
-        mock_response.news = [
+        mock_cls.return_value.get_news.return_value = _make_response([
             self._mock_article("AAPL beats earnings"),
             self._mock_article("Apple launches new product"),
-        ]
-        mock_cls.return_value.get_news.return_value = mock_response
+        ])
 
         result = fetch_news("AAPL")
         assert len(result) == 2
@@ -33,9 +38,7 @@ class TestFetchNews:
     @patch("core.news_client.NewsClient")
     def test_article_dict_keys(self, mock_cls):
         from core.news_client import fetch_news
-        mock_response = MagicMock()
-        mock_response.news = [self._mock_article()]
-        mock_cls.return_value.get_news.return_value = mock_response
+        mock_cls.return_value.get_news.return_value = _make_response([self._mock_article()])
 
         result = fetch_news("AAPL")
         assert "headline" in result[0]
@@ -46,9 +49,7 @@ class TestFetchNews:
     @patch("core.news_client.NewsClient")
     def test_empty_response(self, mock_cls):
         from core.news_client import fetch_news
-        mock_response = MagicMock()
-        mock_response.news = []
-        mock_cls.return_value.get_news.return_value = mock_response
+        mock_cls.return_value.get_news.return_value = _make_response([])
 
         result = fetch_news("AAPL")
         assert result == []
@@ -62,23 +63,29 @@ class TestFetchNews:
         assert result == []
 
     @patch("core.news_client.NewsClient")
+    def test_credentials_passed_to_client(self, mock_cls):
+        from core.news_client import fetch_news
+        mock_cls.return_value.get_news.return_value = _make_response([])
+
+        fetch_news("AAPL")
+        mock_cls.assert_called_once()
+        _, kwargs = mock_cls.call_args
+        assert "api_key" in kwargs
+        assert "secret_key" in kwargs
+
+    @patch("core.news_client.NewsClient")
     def test_crypto_symbol_stripped(self, mock_cls):
         from core.news_client import fetch_news
-        mock_response = MagicMock()
-        mock_response.news = []
-        mock_cls.return_value.get_news.return_value = mock_response
+        mock_cls.return_value.get_news.return_value = _make_response([])
 
         fetch_news("BTC/USD")
         call_args = mock_cls.return_value.get_news.call_args[0][0]
-        # The symbol should have "/" removed
         assert call_args.symbols == "BTCUSD"
 
     @patch("core.news_client.NewsClient")
     def test_custom_lookback(self, mock_cls):
         from core.news_client import fetch_news
-        mock_response = MagicMock()
-        mock_response.news = []
-        mock_cls.return_value.get_news.return_value = mock_response
+        mock_cls.return_value.get_news.return_value = _make_response([])
 
         fetch_news("AAPL", lookback_hours=48)
         call_args = mock_cls.return_value.get_news.call_args[0][0]
@@ -87,9 +94,7 @@ class TestFetchNews:
     @patch("core.news_client.NewsClient")
     def test_custom_limit(self, mock_cls):
         from core.news_client import fetch_news
-        mock_response = MagicMock()
-        mock_response.news = []
-        mock_cls.return_value.get_news.return_value = mock_response
+        mock_cls.return_value.get_news.return_value = _make_response([])
 
         fetch_news("AAPL", limit=10)
         call_args = mock_cls.return_value.get_news.call_args[0][0]
@@ -99,13 +104,22 @@ class TestFetchNews:
     def test_missing_article_attributes(self, mock_cls):
         from core.news_client import fetch_news
         article = MagicMock(spec=[])  # no attributes
-        mock_response = MagicMock()
-        mock_response.news = [article]
-        mock_cls.return_value.get_news.return_value = mock_response
+        mock_cls.return_value.get_news.return_value = _make_response([article])
 
         result = fetch_news("AAPL")
         assert len(result) == 1
         assert result[0]["headline"] == ""
+
+    @patch("core.news_client.NewsClient")
+    def test_missing_news_key_in_data(self, mock_cls):
+        """Gracefully handles response.data with no 'news' key."""
+        from core.news_client import fetch_news
+        mock_response = MagicMock()
+        mock_response.data = {}
+        mock_cls.return_value.get_news.return_value = mock_response
+
+        result = fetch_news("AAPL")
+        assert result == []
 
 
 class TestFetchHeadlines:

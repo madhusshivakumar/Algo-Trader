@@ -4,6 +4,7 @@ import json
 import numpy as np
 import pandas as pd
 import pytest
+from datetime import datetime
 from unittest.mock import patch, MagicMock
 
 
@@ -58,6 +59,7 @@ class TestFullSignalChain:
         # Write sentiment data
         scores_file = tmp_path / "scores.json"
         scores_file.write_text(json.dumps({
+            "timestamp": datetime.now().isoformat(),
             "scores": {"AAPL": {"sentiment_score": 0.8}}
         }))
 
@@ -86,6 +88,7 @@ class TestFullSignalChain:
 
         conv_file = tmp_path / "convictions.json"
         conv_file.write_text(json.dumps({
+            "timestamp": datetime.now().isoformat(),
             "convictions": {"AAPL": {"score": 0.7}}
         }))
 
@@ -112,12 +115,15 @@ class TestFullSignalChain:
         mock_config.LLM_CONVICTION_WEIGHT = 0.2
         mock_config.RL_STRATEGY_ENABLED = False
 
+        ts = datetime.now().isoformat()
         scores_file = tmp_path / "scores.json"
         scores_file.write_text(json.dumps({
+            "timestamp": ts,
             "scores": {"AAPL": {"sentiment_score": 0.5}}
         }))
         conv_file = tmp_path / "convictions.json"
         conv_file.write_text(json.dumps({
+            "timestamp": ts,
             "convictions": {"AAPL": {"score": 0.6}}
         }))
 

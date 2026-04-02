@@ -173,6 +173,65 @@ class TestBrokerOrders:
         mock_alpaca["trading"].close_position.assert_called_with("ETHUSD")
 
 
+class TestBrokerNewOrderTypes:
+    """Tests for Sprint 1 broker additions: limit, stop-limit, order query, cancel."""
+
+    def test_submit_limit_order_buy(self, broker, mock_alpaca):
+        mock_alpaca["trading"].submit_order.return_value = MockOrder()
+        result = broker.submit_limit_order("AAPL", 10.0, 148.0, side="buy")
+        assert result is not None
+        assert result["id"] == "test-order-123"
+
+    def test_submit_limit_order_sell(self, broker, mock_alpaca):
+        mock_alpaca["trading"].submit_order.return_value = MockOrder()
+        result = broker.submit_limit_order("AAPL", 10.0, 155.0, side="sell")
+        assert result is not None
+
+    def test_submit_limit_order_failure(self, broker, mock_alpaca):
+        mock_alpaca["trading"].submit_order.side_effect = Exception("insufficient qty")
+        result = broker.submit_limit_order("AAPL", 10.0, 148.0)
+        assert result is None
+
+    def test_submit_stop_limit_order(self, broker, mock_alpaca):
+        mock_alpaca["trading"].submit_order.return_value = MockOrder()
+        result = broker.submit_stop_limit_order("AAPL", 10.0, 145.0, 144.50, side="sell")
+        assert result is not None
+        assert result["id"] == "test-order-123"
+
+    def test_submit_stop_limit_order_failure(self, broker, mock_alpaca):
+        mock_alpaca["trading"].submit_order.side_effect = Exception("fail")
+        result = broker.submit_stop_limit_order("AAPL", 10.0, 145.0, 144.50)
+        assert result is None
+
+    def test_get_order_by_id_found(self, broker, mock_alpaca):
+        mock_order = MockOrder()
+        mock_order.filled_qty = "10"
+        mock_alpaca["trading"].get_order_by_id.return_value = mock_order
+        result = broker.get_order_by_id("test-order-123")
+        assert result is not None
+        assert result["id"] == "test-order-123"
+        assert result["status"] == "filled"
+        assert result["filled_avg_price"] == 250.0
+
+    def test_get_order_by_id_not_found(self, broker, mock_alpaca):
+        mock_alpaca["trading"].get_order_by_id.side_effect = Exception("not found")
+        result = broker.get_order_by_id("bad-id")
+        assert result is None
+
+    def test_cancel_order_success(self, broker, mock_alpaca):
+        mock_alpaca["trading"].cancel_order_by_id.return_value = None
+        assert broker.cancel_order("test-order-123") is True
+
+    def test_cancel_order_failure(self, broker, mock_alpaca):
+        mock_alpaca["trading"].cancel_order_by_id.side_effect = Exception("already filled")
+        assert broker.cancel_order("test-order-123") is False
+
+    def test_check_buying_power(self, broker, mock_alpaca):
+        mock_alpaca["trading"].get_account.return_value = MockAccount()
+        bp = broker.check_buying_power()
+        assert bp == 200000.0
+
+
 class TestBrokerMarketData:
     def test_get_historical_bars_stock(self, broker, mock_alpaca, sample_bars_df):
         mock_alpaca["stock"].get_stock_bars.return_value = MockBarsResponse(sample_bars_df)

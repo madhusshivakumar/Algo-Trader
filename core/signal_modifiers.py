@@ -6,6 +6,9 @@ If the data file is missing or the feature is disabled, the signal passes throug
 
 import json
 import os
+from datetime import datetime
+
+from config import Config
 
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 _SENTIMENT_FILE = os.path.join(_DATA_DIR, "sentiment", "scores.json")
@@ -27,6 +30,22 @@ def _load_json(path: str) -> dict:
         return {}
 
 
+def validate_data_freshness(data: dict, max_age_hours: float = 24.0) -> bool:
+    """Check if data has a recent timestamp. Returns True if fresh, False if stale/missing."""
+    timestamp_str = data.get("timestamp") or data.get("updated_at")
+    if not timestamp_str:
+        return False
+    try:
+        ts = datetime.fromisoformat(str(timestamp_str).replace("Z", "+00:00"))
+        # Make naive for comparison if needed
+        if ts.tzinfo is not None:
+            ts = ts.replace(tzinfo=None)
+        age_hours = (datetime.now() - ts).total_seconds() / 3600
+        return age_hours <= max_age_hours
+    except (ValueError, TypeError):
+        return False
+
+
 def apply_sentiment(signal: dict, symbol: str, weight: float = 0.15) -> dict:
     """Adjust signal strength based on FinBERT sentiment score.
 
@@ -38,6 +57,11 @@ def apply_sentiment(signal: dict, symbol: str, weight: float = 0.15) -> dict:
     - If sentiment strongly opposes the signal direction, strength is reduced by 30%
     """
     data = _load_json(_SENTIMENT_FILE)
+
+    # v3: Skip stale data when freshness check is enabled
+    if Config.SENTIMENT_FRESHNESS_CHECK and not validate_data_freshness(data, Config.SENTIMENT_MAX_AGE_HOURS):
+        return signal
+
     sym_data = data.get("scores", {}).get(symbol)
     if sym_data is None:
         return signal
@@ -74,6 +98,11 @@ def apply_llm_conviction(signal: dict, symbol: str, weight: float = 0.2) -> dict
     - If conviction strongly opposes the signal direction, strength is reduced by 30%
     """
     data = _load_json(_LLM_FILE)
+
+    # v3: Skip stale data when freshness check is enabled
+    if Config.SENTIMENT_FRESHNESS_CHECK and not validate_data_freshness(data, Config.SENTIMENT_MAX_AGE_HOURS):
+        return signal
+
     sym_data = data.get("convictions", {}).get(symbol)
     if sym_data is None:
         return signal

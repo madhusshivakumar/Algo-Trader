@@ -17,11 +17,26 @@ logs/
 data/sentiment/scores.json
 data/llm_analyst/convictions.json
 data/llm_analyst/spend_log.json
+data/llm_analyst/macro_report.json
+data/llm_analyst/sector_report.json
+data/llm_analyst/prediction_history/
+data/llm_analyst/feedback/
+data/llm_analyst/feedback_summary.json
+data/llm_analyst/patterns.json
 data/rl_models/*.zip
 data/agent_state.json
 data/health_report.json
 data/analyzer/reports/
 data/history/
+data/optimizer/backtest_results.json
+data/optimizer/strategy_assignments.json
+data/scanner/candidates.json
+data/scanner/selected_symbols.json
+data/fallback_config.json
+data/learnings.json
+
+# Claude
+.claude/
 
 # IDE
 .idea/

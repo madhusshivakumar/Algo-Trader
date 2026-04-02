@@ -2,6 +2,11 @@
 
 import time
 from dataclasses import dataclass, field
+from typing import Optional
+
+import numpy as np
+import pandas as pd
+
 from config import Config
 from utils.logger import log
 
@@ -80,13 +85,17 @@ class RiskManager:
             )
         return triggered
 
-    def register_entry(self, symbol: str, entry_price: float):
+    def register_entry(self, symbol: str, entry_price: float, df: pd.DataFrame = None):
         """Register a new position for trailing stop tracking."""
-        # Tighter stops for crypto (high frequency), wider for equities
-        if Config.is_crypto(symbol):
-            stop_pct = 0.015  # 1.5% for crypto
+        # v3: ATR-based stops when enabled and data available
+        if Config.ATR_STOPS_ENABLED and df is not None and len(df) >= 15:
+            stop_pct = self.calculate_atr_stop_pct(df, Config.ATR_STOP_MULTIPLIER)
         else:
-            stop_pct = 0.02   # 2.0% for equities
+            # Tighter stops for crypto (high frequency), wider for equities
+            if Config.is_crypto(symbol):
+                stop_pct = 0.015  # 1.5% for crypto
+            else:
+                stop_pct = 0.02   # 2.0% for equities
 
         self.trailing_stops[symbol] = TrailingStop(
             symbol=symbol,
@@ -105,4 +114,108 @@ class RiskManager:
             return False
         if self.check_drawdown(current_equity):
             return False
+        return True
+
+    # ── v3 Sprint 2: ATR-based stops ────────────────────────────────
+
+    @staticmethod
+    def calculate_atr(df: pd.DataFrame, period: int = 14) -> float:
+        """Compute Average True Range from OHLC data."""
+        if df is None or len(df) < period + 1:
+            return 0.0
+        high = df["high"].values
+        low = df["low"].values
+        close = df["close"].values
+        tr = np.maximum(
+            high[1:] - low[1:],
+            np.maximum(
+                np.abs(high[1:] - close[:-1]),
+                np.abs(low[1:] - close[:-1]),
+            ),
+        )
+        if len(tr) < period:
+            return float(np.mean(tr)) if len(tr) > 0 else 0.0
+        return float(np.mean(tr[-period:]))
+
+    @staticmethod
+    def calculate_atr_stop_pct(df: pd.DataFrame, multiplier: float = 2.0) -> float:
+        """Compute ATR-based stop-loss percentage.
+
+        Returns a percentage (e.g., 0.03 for 3%) clamped between 0.5% and 5%.
+        """
+        if df is None or len(df) < 15:
+            return 0.02  # fallback to default
+        atr = RiskManager.calculate_atr(df)
+        current_price = float(df["close"].iloc[-1])
+        if current_price <= 0:
+            return 0.02
+        atr_pct = (atr / current_price) * multiplier
+        return max(0.005, min(atr_pct, 0.05))
+
+    # ── v3 Sprint 2: Volatility-adjusted sizing ────────────────────
+
+    @staticmethod
+    def calculate_volatility_adjusted_size(equity: float, df: pd.DataFrame,
+                                           base_pct: float = 0.15) -> float:
+        """Scale position size inversely with recent volatility.
+
+        High volatility → smaller position, low volatility → larger position.
+        Returns dollar amount clamped between 1% and base_pct of equity.
+        """
+        if df is None or len(df) < 20:
+            return equity * base_pct
+
+        returns = df["close"].pct_change().dropna()
+        if len(returns) < 10:
+            return equity * base_pct
+
+        recent_vol = float(returns.tail(20).std())
+        if recent_vol <= 0:
+            return equity * base_pct
+
+        # Baseline: typical daily vol for equities ~1-2%
+        baseline_vol = 0.015
+        vol_ratio = baseline_vol / recent_vol  # >1 if low vol, <1 if high vol
+        vol_ratio = max(0.2, min(vol_ratio, 2.0))  # clamp scaling factor
+
+        adjusted_pct = base_pct * vol_ratio
+        adjusted_pct = max(0.01, min(adjusted_pct, base_pct))
+
+        return equity * adjusted_pct
+
+    # ── v3 Sprint 2: Correlation check ──────────────────────────────
+
+    @staticmethod
+    def check_correlation(new_df: pd.DataFrame, existing_dfs: dict[str, pd.DataFrame],
+                          threshold: float = 0.7) -> bool:
+        """Check if a new position is too correlated with existing positions.
+
+        Returns True if safe to enter (no high correlation found).
+        Returns False if any existing position has correlation >= threshold.
+        """
+        if new_df is None or len(new_df) < 20 or not existing_dfs:
+            return True
+
+        new_returns = new_df["close"].pct_change().dropna().tail(50)
+        if len(new_returns) < 10:
+            return True
+
+        for sym, ex_df in existing_dfs.items():
+            if ex_df is None or len(ex_df) < 20:
+                continue
+            ex_returns = ex_df["close"].pct_change().dropna().tail(50)
+            if len(ex_returns) < 10:
+                continue
+
+            # Align lengths
+            min_len = min(len(new_returns), len(ex_returns))
+            corr = float(np.corrcoef(
+                new_returns.values[-min_len:],
+                ex_returns.values[-min_len:],
+            )[0, 1])
+
+            if abs(corr) >= threshold:
+                log.info(f"Correlation check: blocked — corr with {sym} = {corr:.2f} (threshold: {threshold})")
+                return False
+
         return True

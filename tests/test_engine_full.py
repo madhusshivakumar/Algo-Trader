@@ -27,6 +27,16 @@ def mock_broker():
         yield broker
 
 
+@pytest.fixture(autouse=True)
+def _isolate_db(tmp_path):
+    """Patch DB_PATH so tests never write to the production trades.db."""
+    from utils import logger
+    test_db = str(tmp_path / "test_trades.db")
+    with patch("utils.logger.DB_PATH", test_db):
+        logger.log._init_db()  # re-init tables in the tmp db
+        yield
+
+
 @pytest.fixture
 def engine(mock_broker):
     engine = TradingEngine()
@@ -345,3 +355,172 @@ class TestEngineRunLoop:
         with patch.object(engine, "run_cycle", side_effect=side_effect), \
              patch("time.sleep"):
             engine.run(interval_seconds=1)
+
+
+# ── Sprint 1: Order Management & State Persistence Integration ──────
+
+class TestEngineStatePersistence:
+    """Tests for state load/save integration in engine."""
+
+    def test_state_loaded_on_initialize(self, mock_broker):
+        mock_state_store = MagicMock()
+        mock_state_store.load_engine_state.return_value = {
+            "trailing_stops": {
+                "AAPL": {"entry_price": 150.0, "highest_price": 155.0, "stop_pct": 0.02},
+            },
+            "cooldowns": {"AAPL": time.time() - 10},
+            "pdt_buys": {"TSLA": "2026-03-30T10:00:00"},
+            "scalars": {
+                "halted": False, "halt_reason": "",
+                "daily_start_equity": 99000.0, "cycle_count": 50,
+            },
+        }
+
+        with patch.object(Config, "STATE_PERSISTENCE_ENABLED", True), \
+             patch("core.engine.Broker", return_value=mock_broker), \
+             patch("core.state_store.StateStore.__init__", return_value=None):
+            engine = TradingEngine()
+            engine.state_store = mock_state_store
+            engine.initialize()
+
+            assert "AAPL" in engine.risk.trailing_stops
+            assert engine.risk.trailing_stops["AAPL"].entry_price == 150.0
+            assert "AAPL" in engine._last_trade_time
+            assert "TSLA" in engine._equity_buys_today
+            assert engine.cycle_count == 50
+
+    def test_state_saved_on_shutdown(self, mock_broker):
+        mock_state_store = MagicMock()
+
+        with patch("core.engine.Broker", return_value=mock_broker):
+            engine = TradingEngine()
+            engine.state_store = mock_state_store
+            engine.risk.initialize(100000)
+            engine._shutdown()
+
+            mock_state_store.save_engine_state.assert_called_once()
+
+    def test_state_saved_periodically(self, mock_broker):
+        mock_state_store = MagicMock()
+        mock_broker.get_recent_bars.return_value = pd.DataFrame()
+
+        with patch("core.engine.Broker", return_value=mock_broker):
+            engine = TradingEngine()
+            engine.state_store = mock_state_store
+            engine.risk.initialize(100000)
+
+            # Run 10 cycles to trigger the save (happens at cycle 10)
+            for _ in range(10):
+                engine.run_cycle()
+
+            mock_state_store.save_engine_state.assert_called()
+
+    def test_state_load_failure_graceful(self, mock_broker):
+        mock_state_store = MagicMock()
+        mock_state_store.load_engine_state.side_effect = Exception("DB locked")
+
+        with patch("core.engine.Broker", return_value=mock_broker):
+            engine = TradingEngine()
+            engine.state_store = mock_state_store
+            engine.initialize()  # Should not crash
+
+
+class TestEngineOrderManager:
+    """Tests for order manager integration in engine."""
+
+    def test_order_manager_polls_on_cycle(self, mock_broker, sample_df):
+        mock_order_mgr = MagicMock()
+        mock_order_mgr.poll_pending_orders.return_value = []
+        mock_order_mgr.cancel_stale_orders.return_value = []
+        mock_broker.get_recent_bars.return_value = pd.DataFrame()
+
+        with patch("core.engine.Broker", return_value=mock_broker):
+            engine = TradingEngine()
+            engine.order_manager = mock_order_mgr
+            engine.risk.initialize(100000)
+            engine.run_cycle()
+
+            mock_order_mgr.poll_pending_orders.assert_called_once()
+
+    def test_buying_power_precheck(self, mock_broker, sample_df):
+        mock_order_mgr = MagicMock()
+        mock_order_mgr.poll_pending_orders.return_value = []
+        mock_order_mgr.cancel_stale_orders.return_value = []
+        mock_broker.get_recent_bars.return_value = sample_df
+        mock_broker.get_position.return_value = None
+        mock_broker.get_positions.return_value = []
+        # Set buying power very low
+        mock_broker.check_buying_power.return_value = 50.0
+
+        with patch("core.engine.Broker", return_value=mock_broker):
+            engine = TradingEngine()
+            engine.order_manager = mock_order_mgr
+            engine.risk.initialize(100000)
+
+            buy_signal = {"action": "buy", "reason": "test", "strength": 0.8, "strategy": "test"}
+            with patch("core.engine.route_signals", return_value=buy_signal):
+                engine._process_symbol("AAPL", 100000)
+
+            # Should not have submitted order due to buying power check
+            mock_order_mgr.submit_market_buy.assert_not_called()
+
+    def test_order_manager_submit_used(self, mock_broker, sample_df):
+        from core.order_manager import ManagedOrder, OrderState
+        mock_order = ManagedOrder(
+            order_id="test-001", symbol="AAPL", side="buy", order_type="market",
+            state=OrderState.SUBMITTED,
+        )
+        mock_order_mgr = MagicMock()
+        mock_order_mgr.poll_pending_orders.return_value = []
+        mock_order_mgr.cancel_stale_orders.return_value = []
+        mock_order_mgr.submit_market_buy.return_value = mock_order
+        mock_broker.get_recent_bars.return_value = sample_df
+        mock_broker.get_position.return_value = None
+        mock_broker.get_positions.return_value = []
+        mock_broker.check_buying_power.return_value = 200000.0
+
+        with patch("core.engine.Broker", return_value=mock_broker):
+            engine = TradingEngine()
+            engine.order_manager = mock_order_mgr
+            engine.risk.initialize(100000)
+
+            buy_signal = {"action": "buy", "reason": "test", "strength": 0.8, "strategy": "test"}
+            with patch("core.engine.route_signals", return_value=buy_signal):
+                engine._process_symbol("AAPL", 100000)
+
+            mock_order_mgr.submit_market_buy.assert_called_once()
+            # Direct broker.buy should NOT be called when order manager is active
+            mock_broker.buy.assert_not_called()
+
+    def test_no_order_manager_uses_direct_buy(self, mock_broker, sample_df):
+        mock_broker.get_recent_bars.return_value = sample_df
+        mock_broker.get_position.return_value = None
+        mock_broker.get_positions.return_value = []
+        mock_broker.buy.return_value = {"id": "123", "status": "filled"}
+
+        with patch("core.engine.Broker", return_value=mock_broker):
+            engine = TradingEngine()
+            engine.order_manager = None  # disabled
+            engine.risk.initialize(100000)
+
+            buy_signal = {"action": "buy", "reason": "test", "strength": 0.8, "strategy": "test"}
+            with patch("core.engine.route_signals", return_value=buy_signal):
+                engine._process_symbol("AAPL", 100000)
+
+            mock_broker.buy.assert_called_once()
+
+    def test_stale_orders_canceled_every_5_cycles(self, mock_broker):
+        mock_order_mgr = MagicMock()
+        mock_order_mgr.poll_pending_orders.return_value = []
+        mock_order_mgr.cancel_stale_orders.return_value = []
+        mock_broker.get_recent_bars.return_value = pd.DataFrame()
+
+        with patch("core.engine.Broker", return_value=mock_broker):
+            engine = TradingEngine()
+            engine.order_manager = mock_order_mgr
+            engine.risk.initialize(100000)
+
+            for _ in range(5):
+                engine.run_cycle()
+
+            mock_order_mgr.cancel_stale_orders.assert_called()

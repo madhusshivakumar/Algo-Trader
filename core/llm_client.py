@@ -19,7 +19,7 @@ _SPEND_LOG = os.path.join(_DATA_DIR, "spend_log.json")
 
 # Approximate cost per 1K tokens (input/output) for Claude models
 _COST_PER_1K = {
-    "claude-haiku-4-20250514": {"input": 0.00025, "output": 0.00125},
+    "claude-haiku-4-5-20251001": {"input": 0.00025, "output": 0.00125},
     "claude-sonnet-4-20250514": {"input": 0.003, "output": 0.015},
 }
 _DEFAULT_COST = {"input": 0.003, "output": 0.015}

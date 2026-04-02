@@ -3,6 +3,7 @@
 import json
 import os
 import pytest
+from datetime import datetime
 from unittest.mock import patch
 
 
@@ -68,7 +69,7 @@ class TestApplySentiment:
     def test_buy_positive_sentiment_boosts(self, tmp_path):
         from core.signal_modifiers import apply_sentiment
         f = tmp_path / "scores.json"
-        f.write_text(json.dumps({"scores": {"AAPL": {"sentiment_score": 0.8}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "scores": {"AAPL": {"sentiment_score": 0.8}}}))
         signal = self._make_signal(action="buy", strength=0.6)
         with patch("core.signal_modifiers._SENTIMENT_FILE", str(f)):
             result = apply_sentiment(signal, "AAPL", weight=0.15)
@@ -78,7 +79,7 @@ class TestApplySentiment:
     def test_buy_negative_sentiment_dampens(self, tmp_path):
         from core.signal_modifiers import apply_sentiment
         f = tmp_path / "scores.json"
-        f.write_text(json.dumps({"scores": {"AAPL": {"sentiment_score": -0.8}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "scores": {"AAPL": {"sentiment_score": -0.8}}}))
         signal = self._make_signal(action="buy", strength=0.7)
         with patch("core.signal_modifiers._SENTIMENT_FILE", str(f)):
             result = apply_sentiment(signal, "AAPL", weight=0.15)
@@ -88,7 +89,7 @@ class TestApplySentiment:
     def test_sell_negative_sentiment_boosts(self, tmp_path):
         from core.signal_modifiers import apply_sentiment
         f = tmp_path / "scores.json"
-        f.write_text(json.dumps({"scores": {"AAPL": {"sentiment_score": -0.8}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "scores": {"AAPL": {"sentiment_score": -0.8}}}))
         signal = self._make_signal(action="sell", strength=0.6)
         with patch("core.signal_modifiers._SENTIMENT_FILE", str(f)):
             result = apply_sentiment(signal, "AAPL", weight=0.15)
@@ -98,7 +99,7 @@ class TestApplySentiment:
     def test_sell_positive_sentiment_dampens(self, tmp_path):
         from core.signal_modifiers import apply_sentiment
         f = tmp_path / "scores.json"
-        f.write_text(json.dumps({"scores": {"AAPL": {"sentiment_score": 0.8}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "scores": {"AAPL": {"sentiment_score": 0.8}}}))
         signal = self._make_signal(action="sell", strength=0.7)
         with patch("core.signal_modifiers._SENTIMENT_FILE", str(f)):
             result = apply_sentiment(signal, "AAPL", weight=0.15)
@@ -108,7 +109,7 @@ class TestApplySentiment:
     def test_hold_signal_unchanged(self, tmp_path):
         from core.signal_modifiers import apply_sentiment
         f = tmp_path / "scores.json"
-        f.write_text(json.dumps({"scores": {"AAPL": {"sentiment_score": 0.9}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "scores": {"AAPL": {"sentiment_score": 0.9}}}))
         signal = self._make_signal(action="hold", strength=0)
         with patch("core.signal_modifiers._SENTIMENT_FILE", str(f)):
             result = apply_sentiment(signal, "AAPL")
@@ -136,7 +137,7 @@ class TestApplySentiment:
     def test_reason_appended(self, tmp_path):
         from core.signal_modifiers import apply_sentiment
         f = tmp_path / "scores.json"
-        f.write_text(json.dumps({"scores": {"AAPL": {"sentiment_score": 0.5}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "scores": {"AAPL": {"sentiment_score": 0.5}}}))
         signal = self._make_signal()
         with patch("core.signal_modifiers._SENTIMENT_FILE", str(f)):
             result = apply_sentiment(signal, "AAPL")
@@ -185,7 +186,7 @@ class TestApplyLLMConviction:
     def test_buy_bullish_conviction_boosts(self, tmp_path):
         from core.signal_modifiers import apply_llm_conviction
         f = tmp_path / "convictions.json"
-        f.write_text(json.dumps({"convictions": {"AAPL": {"score": 0.8}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "convictions": {"AAPL": {"score": 0.8}}}))
         signal = self._make_signal(action="buy", strength=0.6)
         with patch("core.signal_modifiers._LLM_FILE", str(f)):
             result = apply_llm_conviction(signal, "AAPL", weight=0.2)
@@ -195,7 +196,7 @@ class TestApplyLLMConviction:
     def test_buy_bearish_conviction_dampens(self, tmp_path):
         from core.signal_modifiers import apply_llm_conviction
         f = tmp_path / "convictions.json"
-        f.write_text(json.dumps({"convictions": {"AAPL": {"score": -0.8}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "convictions": {"AAPL": {"score": -0.8}}}))
         signal = self._make_signal(action="buy", strength=0.7)
         with patch("core.signal_modifiers._LLM_FILE", str(f)):
             result = apply_llm_conviction(signal, "AAPL", weight=0.2)
@@ -204,7 +205,7 @@ class TestApplyLLMConviction:
     def test_sell_bearish_conviction_boosts(self, tmp_path):
         from core.signal_modifiers import apply_llm_conviction
         f = tmp_path / "convictions.json"
-        f.write_text(json.dumps({"convictions": {"AAPL": {"score": -0.8}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "convictions": {"AAPL": {"score": -0.8}}}))
         signal = self._make_signal(action="sell", strength=0.6)
         with patch("core.signal_modifiers._LLM_FILE", str(f)):
             result = apply_llm_conviction(signal, "AAPL", weight=0.2)
@@ -213,7 +214,7 @@ class TestApplyLLMConviction:
     def test_sell_bullish_conviction_dampens(self, tmp_path):
         from core.signal_modifiers import apply_llm_conviction
         f = tmp_path / "convictions.json"
-        f.write_text(json.dumps({"convictions": {"AAPL": {"score": 0.8}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "convictions": {"AAPL": {"score": 0.8}}}))
         signal = self._make_signal(action="sell", strength=0.7)
         with patch("core.signal_modifiers._LLM_FILE", str(f)):
             result = apply_llm_conviction(signal, "AAPL", weight=0.2)
@@ -222,7 +223,7 @@ class TestApplyLLMConviction:
     def test_reason_appended(self, tmp_path):
         from core.signal_modifiers import apply_llm_conviction
         f = tmp_path / "convictions.json"
-        f.write_text(json.dumps({"convictions": {"AAPL": {"score": -0.3}}}))
+        f.write_text(json.dumps({"timestamp": datetime.now().isoformat(), "convictions": {"AAPL": {"score": -0.3}}}))
         signal = self._make_signal()
         with patch("core.signal_modifiers._LLM_FILE", str(f)):
             result = apply_llm_conviction(signal, "AAPL")
@@ -253,10 +254,11 @@ class TestModifierChaining:
     def test_both_modifiers_stack(self, tmp_path):
         from core.signal_modifiers import apply_sentiment, apply_llm_conviction
 
+        ts = datetime.now().isoformat()
         sf = tmp_path / "scores.json"
-        sf.write_text(json.dumps({"scores": {"AAPL": {"sentiment_score": 0.5}}}))
+        sf.write_text(json.dumps({"timestamp": ts, "scores": {"AAPL": {"sentiment_score": 0.5}}}))
         lf = tmp_path / "convictions.json"
-        lf.write_text(json.dumps({"convictions": {"AAPL": {"score": 0.6}}}))
+        lf.write_text(json.dumps({"timestamp": ts, "convictions": {"AAPL": {"score": 0.6}}}))
 
         signal = {"action": "buy", "strength": 0.5, "reason": "test"}
 
@@ -275,10 +277,11 @@ class TestModifierChaining:
     def test_opposing_modifiers_cancel(self, tmp_path):
         from core.signal_modifiers import apply_sentiment, apply_llm_conviction
 
+        ts = datetime.now().isoformat()
         sf = tmp_path / "scores.json"
-        sf.write_text(json.dumps({"scores": {"AAPL": {"sentiment_score": 0.8}}}))
+        sf.write_text(json.dumps({"timestamp": ts, "scores": {"AAPL": {"sentiment_score": 0.8}}}))
         lf = tmp_path / "convictions.json"
-        lf.write_text(json.dumps({"convictions": {"AAPL": {"score": -0.8}}}))
+        lf.write_text(json.dumps({"timestamp": ts, "convictions": {"AAPL": {"score": -0.8}}}))
 
         signal = {"action": "buy", "strength": 0.6, "reason": "test"}
 
@@ -291,3 +294,135 @@ class TestModifierChaining:
 
         # LLM bearish should pull strength back down from sentiment boost
         assert signal["strength"] < after_sentiment
+
+
+# ── Sprint 2: Data freshness validation ────────────────────────────
+
+class TestDataFreshness:
+    def test_fresh_data_passes(self):
+        from core.signal_modifiers import validate_data_freshness
+        from datetime import datetime
+        data = {"timestamp": datetime.now().isoformat()}
+        assert validate_data_freshness(data, max_age_hours=24.0) is True
+
+    def test_stale_data_fails(self):
+        from core.signal_modifiers import validate_data_freshness
+        from datetime import datetime, timedelta
+        old = (datetime.now() - timedelta(hours=48)).isoformat()
+        data = {"timestamp": old}
+        assert validate_data_freshness(data, max_age_hours=24.0) is False
+
+    def test_missing_timestamp_fails(self):
+        from core.signal_modifiers import validate_data_freshness
+        data = {"scores": {"AAPL": {}}}
+        assert validate_data_freshness(data) is False
+
+    def test_invalid_timestamp_fails(self):
+        from core.signal_modifiers import validate_data_freshness
+        data = {"timestamp": "not-a-date"}
+        assert validate_data_freshness(data) is False
+
+    def test_custom_max_age(self):
+        from core.signal_modifiers import validate_data_freshness
+        from datetime import datetime, timedelta
+        recent = (datetime.now() - timedelta(hours=2)).isoformat()
+        data = {"timestamp": recent}
+        assert validate_data_freshness(data, max_age_hours=1.0) is False
+        assert validate_data_freshness(data, max_age_hours=3.0) is True
+
+    def test_updated_at_key(self):
+        from core.signal_modifiers import validate_data_freshness
+        from datetime import datetime
+        data = {"updated_at": datetime.now().isoformat()}
+        assert validate_data_freshness(data) is True
+
+
+class TestSentimentFreshness:
+    def test_stale_sentiment_ignored(self, tmp_path):
+        from core.signal_modifiers import apply_sentiment
+        from datetime import datetime, timedelta
+        sf = tmp_path / "scores.json"
+        old_ts = (datetime.now() - timedelta(hours=48)).isoformat()
+        sf.write_text(json.dumps({
+            "timestamp": old_ts,
+            "scores": {"AAPL": {"sentiment_score": 0.8}},
+        }))
+        signal = {"action": "buy", "strength": 0.5, "reason": "test"}
+        with patch("core.signal_modifiers._SENTIMENT_FILE", str(sf)), \
+             patch("core.signal_modifiers.Config") as mock_config:
+            mock_config.SENTIMENT_FRESHNESS_CHECK = True
+            mock_config.SENTIMENT_MAX_AGE_HOURS = 24.0
+            result = apply_sentiment(signal, "AAPL")
+        # Stale data → signal unchanged
+        assert result["strength"] == 0.5
+        assert "sentiment_score" not in result
+
+    def test_fresh_sentiment_applied(self, tmp_path):
+        from core.signal_modifiers import apply_sentiment
+        from datetime import datetime
+        sf = tmp_path / "scores.json"
+        sf.write_text(json.dumps({
+            "timestamp": datetime.now().isoformat(),
+            "scores": {"AAPL": {"sentiment_score": 0.8}},
+        }))
+        signal = {"action": "buy", "strength": 0.5, "reason": "test"}
+        with patch("core.signal_modifiers._SENTIMENT_FILE", str(sf)), \
+             patch("core.signal_modifiers.Config") as mock_config:
+            mock_config.SENTIMENT_FRESHNESS_CHECK = True
+            mock_config.SENTIMENT_MAX_AGE_HOURS = 24.0
+            result = apply_sentiment(signal, "AAPL")
+        assert result["strength"] != 0.5  # modified
+        assert "sentiment_score" in result
+
+    def test_freshness_disabled_uses_stale(self, tmp_path):
+        from core.signal_modifiers import apply_sentiment
+        from datetime import datetime, timedelta
+        sf = tmp_path / "scores.json"
+        old_ts = (datetime.now() - timedelta(hours=48)).isoformat()
+        sf.write_text(json.dumps({
+            "timestamp": old_ts,
+            "scores": {"AAPL": {"sentiment_score": 0.8}},
+        }))
+        signal = {"action": "buy", "strength": 0.5, "reason": "test"}
+        with patch("core.signal_modifiers._SENTIMENT_FILE", str(sf)), \
+             patch("core.signal_modifiers.Config") as mock_config:
+            mock_config.SENTIMENT_FRESHNESS_CHECK = False
+            result = apply_sentiment(signal, "AAPL")
+        # Freshness check disabled → stale data still used
+        assert "sentiment_score" in result
+
+
+class TestLLMFreshness:
+    def test_stale_llm_ignored(self, tmp_path):
+        from core.signal_modifiers import apply_llm_conviction
+        from datetime import datetime, timedelta
+        lf = tmp_path / "convictions.json"
+        old_ts = (datetime.now() - timedelta(hours=48)).isoformat()
+        lf.write_text(json.dumps({
+            "timestamp": old_ts,
+            "convictions": {"AAPL": {"score": 0.9}},
+        }))
+        signal = {"action": "buy", "strength": 0.5, "reason": "test"}
+        with patch("core.signal_modifiers._LLM_FILE", str(lf)), \
+             patch("core.signal_modifiers.Config") as mock_config:
+            mock_config.SENTIMENT_FRESHNESS_CHECK = True
+            mock_config.SENTIMENT_MAX_AGE_HOURS = 24.0
+            result = apply_llm_conviction(signal, "AAPL")
+        assert result["strength"] == 0.5  # unchanged
+        assert "llm_conviction" not in result
+
+    def test_fresh_llm_applied(self, tmp_path):
+        from core.signal_modifiers import apply_llm_conviction
+        from datetime import datetime
+        lf = tmp_path / "convictions.json"
+        lf.write_text(json.dumps({
+            "timestamp": datetime.now().isoformat(),
+            "convictions": {"AAPL": {"score": 0.9}},
+        }))
+        signal = {"action": "buy", "strength": 0.5, "reason": "test"}
+        with patch("core.signal_modifiers._LLM_FILE", str(lf)), \
+             patch("core.signal_modifiers.Config") as mock_config:
+            mock_config.SENTIMENT_FRESHNESS_CHECK = True
+            mock_config.SENTIMENT_MAX_AGE_HOURS = 24.0
+            result = apply_llm_conviction(signal, "AAPL")
+        assert "llm_conviction" in result

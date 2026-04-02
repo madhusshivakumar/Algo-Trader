@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta
 from alpaca.trading.client import TradingClient
-from alpaca.trading.requests import MarketOrderRequest, GetOrdersRequest
+from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest, StopLimitOrderRequest, GetOrdersRequest
 from alpaca.trading.enums import OrderSide, TimeInForce, QueryOrderStatus
 from alpaca.data.historical.crypto import CryptoHistoricalDataClient
 from alpaca.data.historical.stock import StockHistoricalDataClient
@@ -102,6 +102,45 @@ class Broker:
         order = self.trading_client.submit_order(req)
         return {"id": str(order.id), "status": str(order.status), "symbol": symbol}
 
+    def submit_limit_order(self, symbol: str, qty: float, limit_price: float,
+                           side: str = "buy") -> dict | None:
+        """Submit a limit order. side = 'buy' or 'sell'."""
+        alpaca_symbol = symbol.replace("/", "")
+        is_crypto = Config.is_crypto(symbol)
+        order_side = OrderSide.BUY if side == "buy" else OrderSide.SELL
+        try:
+            req = LimitOrderRequest(
+                symbol=alpaca_symbol,
+                qty=qty,
+                limit_price=limit_price,
+                side=order_side,
+                time_in_force=TimeInForce.GTC if is_crypto else TimeInForce.DAY,
+            )
+            order = self.trading_client.submit_order(req)
+            return {"id": str(order.id), "status": str(order.status), "symbol": symbol}
+        except Exception:
+            return None
+
+    def submit_stop_limit_order(self, symbol: str, qty: float, stop_price: float,
+                                limit_price: float, side: str = "sell") -> dict | None:
+        """Submit a stop-limit order. Typically used for protective stops."""
+        alpaca_symbol = symbol.replace("/", "")
+        is_crypto = Config.is_crypto(symbol)
+        order_side = OrderSide.BUY if side == "buy" else OrderSide.SELL
+        try:
+            req = StopLimitOrderRequest(
+                symbol=alpaca_symbol,
+                qty=qty,
+                stop_price=stop_price,
+                limit_price=limit_price,
+                side=order_side,
+                time_in_force=TimeInForce.GTC if is_crypto else TimeInForce.DAY,
+            )
+            order = self.trading_client.submit_order(req)
+            return {"id": str(order.id), "status": str(order.status), "symbol": symbol}
+        except Exception:
+            return None
+
     def close_position(self, symbol: str) -> dict | None:
         alpaca_symbol = symbol.replace("/", "")
         try:
@@ -109,6 +148,34 @@ class Broker:
             return {"id": str(order.id), "status": str(order.status)}
         except Exception:
             return None
+
+    def get_order_by_id(self, order_id: str) -> dict | None:
+        """Fetch current state of an order by its ID."""
+        try:
+            order = self.trading_client.get_order_by_id(order_id)
+            return {
+                "id": str(order.id),
+                "symbol": order.symbol,
+                "side": str(order.side),
+                "status": str(order.status),
+                "filled_qty": float(order.filled_qty or 0),
+                "filled_avg_price": float(order.filled_avg_price or 0),
+                "created_at": str(order.created_at),
+            }
+        except Exception:
+            return None
+
+    def cancel_order(self, order_id: str) -> bool:
+        """Cancel an open order. Returns True if successful."""
+        try:
+            self.trading_client.cancel_order_by_id(order_id)
+            return True
+        except Exception:
+            return False
+
+    def check_buying_power(self) -> float:
+        """Return current buying power."""
+        return self.get_account()["buying_power"]
 
     # ── Market Data ──────────────────────────────────────────────────
 

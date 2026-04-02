@@ -31,6 +31,27 @@ class Logger:
             )
         """)
         conn.execute("""
+            CREATE TABLE IF NOT EXISTS orders (
+                order_id TEXT PRIMARY KEY,
+                symbol TEXT,
+                side TEXT,
+                order_type TEXT,
+                requested_notional REAL,
+                requested_qty REAL,
+                limit_price REAL,
+                stop_price REAL,
+                expected_price REAL,
+                state TEXT,
+                filled_qty REAL DEFAULT 0,
+                filled_avg_price REAL DEFAULT 0,
+                slippage REAL DEFAULT 0,
+                submitted_at TEXT,
+                filled_at TEXT,
+                last_updated TEXT,
+                error TEXT DEFAULT ''
+            )
+        """)
+        conn.execute("""
             CREATE TABLE IF NOT EXISTS equity_snapshots (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp TEXT,
@@ -84,6 +105,37 @@ class Logger:
         )
         conn.commit()
         conn.close()
+
+    def log_order(self, order_dict: dict):
+        """Log or update a managed order in the orders table."""
+        conn = sqlite3.connect(DB_PATH)
+        conn.execute(
+            """INSERT OR REPLACE INTO orders
+            (order_id, symbol, side, order_type, requested_notional, requested_qty,
+             limit_price, stop_price, expected_price, state, filled_qty, filled_avg_price,
+             slippage, submitted_at, filled_at, last_updated, error)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                order_dict["order_id"], order_dict.get("symbol"), order_dict.get("side"),
+                order_dict.get("order_type"), order_dict.get("requested_notional"),
+                order_dict.get("requested_qty"), order_dict.get("limit_price"),
+                order_dict.get("stop_price"), order_dict.get("expected_price", 0),
+                order_dict.get("state", ""), order_dict.get("filled_qty", 0),
+                order_dict.get("filled_avg_price", 0), order_dict.get("slippage", 0),
+                order_dict.get("submitted_at"), order_dict.get("filled_at"),
+                _ts(), order_dict.get("error", ""),
+            ),
+        )
+        conn.commit()
+        conn.close()
+
+    def log_slippage(self, symbol: str, expected: float, actual: float, slippage_pct: float):
+        """Log slippage for a filled order."""
+        direction = "over" if slippage_pct > 0 else "under"
+        self.info(
+            f"Slippage {symbol}: expected ${expected:.2f} → actual ${actual:.2f} "
+            f"({direction} by {abs(slippage_pct):.4%})"
+        )
 
     def snapshot(self, equity: float, cash: float):
         conn = sqlite3.connect(DB_PATH)

@@ -261,6 +261,7 @@ class TestMain:
         }
 
         with patch("agents.llm_analyst.Config") as mock_config:
+            mock_config.LLM_ANALYST_V2_ENABLED = False
             mock_config.LLM_ANALYST_ENABLED = True
             mock_config.ANTHROPIC_API_KEY = "test-key"
             mock_config.SYMBOLS = ["AAPL"]
@@ -275,6 +276,7 @@ class TestMain:
     def test_main_no_api_key(self, mock_run, mock_write):
         from agents.llm_analyst import main
         with patch("agents.llm_analyst.Config") as mock_config:
+            mock_config.LLM_ANALYST_V2_ENABLED = False
             mock_config.LLM_ANALYST_ENABLED = True
             mock_config.ANTHROPIC_API_KEY = ""
             result = main()

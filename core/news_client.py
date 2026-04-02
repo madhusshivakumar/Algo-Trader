@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from alpaca.data.historical.news import NewsClient
 from alpaca.data.requests import NewsRequest
 
+from config import Config
 from utils.logger import log
 
 
@@ -20,7 +21,7 @@ def fetch_news(symbol: str, lookback_hours: int = DEFAULT_LOOKBACK_HOURS,
     Returns empty list on any error (graceful degradation).
     """
     try:
-        client = NewsClient()
+        client = NewsClient(api_key=Config.ALPACA_API_KEY, secret_key=Config.ALPACA_SECRET_KEY)
         start = datetime.now() - timedelta(hours=lookback_hours)
         request = NewsRequest(
             symbols=symbol.replace("/", ""),  # BTC/USD -> BTCUSD
@@ -30,7 +31,7 @@ def fetch_news(symbol: str, lookback_hours: int = DEFAULT_LOOKBACK_HOURS,
         response = client.get_news(request)
 
         articles = []
-        for article in response.news:
+        for article in response.data.get("news", []):
             articles.append({
                 "headline": getattr(article, "headline", ""),
                 "summary": getattr(article, "summary", ""),

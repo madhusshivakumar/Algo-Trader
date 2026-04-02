@@ -7,7 +7,11 @@ writes results to data/sentiment/scores.json for signal_modifiers to read.
 
 import json
 import os
+import sys
 from datetime import datetime
+
+# Ensure project root is on sys.path when run as a script (python agents/sentiment_agent.py)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config import Config
 from core.news_client import fetch_headlines

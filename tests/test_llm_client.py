@@ -9,7 +9,7 @@ from datetime import date
 class TestEstimateCost:
     def test_haiku_cost(self):
         from core.llm_client import _estimate_cost
-        cost = _estimate_cost("claude-haiku-4-20250514", 1000, 500)
+        cost = _estimate_cost("claude-haiku-4-5-20251001", 1000, 500)
         expected = (1000 / 1000 * 0.00025) + (500 / 1000 * 0.00125)
         assert cost == pytest.approx(expected)
 
@@ -74,7 +74,7 @@ class TestSpendTracking:
         f = tmp_path / "spend.json"
         with patch("core.llm_client._SPEND_LOG", str(f)), \
              patch("core.llm_client._DATA_DIR", str(tmp_path)):
-            _record_spend("claude-haiku-4-20250514", 500, 200, 0.001)
+            _record_spend("claude-haiku-4-5-20251001", 500, 200, 0.001)
             result = _load_spend_log()
         assert result["date"] == str(date.today())
         assert result["total_usd"] == pytest.approx(0.001)
@@ -85,8 +85,8 @@ class TestSpendTracking:
         f = tmp_path / "spend.json"
         with patch("core.llm_client._SPEND_LOG", str(f)), \
              patch("core.llm_client._DATA_DIR", str(tmp_path)):
-            _record_spend("claude-haiku-4-20250514", 500, 200, 0.001)
-            _record_spend("claude-haiku-4-20250514", 500, 200, 0.002)
+            _record_spend("claude-haiku-4-5-20251001", 500, 200, 0.001)
+            _record_spend("claude-haiku-4-5-20251001", 500, 200, 0.002)
             result = _load_spend_log()
         assert result["total_usd"] == pytest.approx(0.003)
         assert len(result["calls"]) == 2
@@ -112,7 +112,7 @@ class TestCallLLM:
 
         mock_module, mock_client = self._mock_anthropic(mock_response)
         with patch.dict("sys.modules", {"anthropic": mock_module}):
-            result = call_llm("test prompt", model="claude-haiku-4-20250514")
+            result = call_llm("test prompt", model="claude-haiku-4-5-20251001")
 
         assert result["text"] == "Hello world"
         assert result["input_tokens"] == 100
@@ -146,7 +146,7 @@ class TestCallLLM:
         mock_module.Anthropic.return_value = mock_client
 
         with patch.dict("sys.modules", {"anthropic": mock_module}):
-            result = call_llm("test", model="claude-haiku-4-20250514")
+            result = call_llm("test", model="claude-haiku-4-5-20251001")
 
         assert result["text"] == "OK"
         assert mock_client.messages.create.call_count == 2
@@ -163,7 +163,7 @@ class TestCallLLM:
 
         with patch.dict("sys.modules", {"anthropic": mock_module}):
             with pytest.raises(Exception, match="persistent error"):
-                call_llm("test", model="claude-haiku-4-20250514")
+                call_llm("test", model="claude-haiku-4-5-20251001")
 
         assert mock_client.messages.create.call_count == 3
 
@@ -178,7 +178,7 @@ class TestCallLLM:
 
         mock_module, mock_client = self._mock_anthropic(mock_response)
         with patch.dict("sys.modules", {"anthropic": mock_module}):
-            call_llm("test", system="You are helpful", model="claude-haiku-4-20250514")
+            call_llm("test", system="You are helpful", model="claude-haiku-4-5-20251001")
 
         call_kwargs = mock_client.messages.create.call_args[1]
         assert call_kwargs["system"] == "You are helpful"
