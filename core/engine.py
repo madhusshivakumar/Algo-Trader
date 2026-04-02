@@ -61,6 +61,14 @@ class TradingEngine:
                 min_trades=Config.DRIFT_MIN_TRADES,
             )
 
+        # v3: Position reconciliation (optional)
+        self.position_reconciler = None
+        if Config.POSITION_RECONCILIATION_ENABLED:
+            from core.position_reconciler import PositionReconciler
+            self.position_reconciler = PositionReconciler(
+                entry_price_tolerance=Config.RECONCILIATION_ENTRY_TOLERANCE,
+            )
+
         # Alerting (optional)
         self.alert_manager = None
         if Config.ALERTING_ENABLED:
@@ -206,6 +214,11 @@ class TradingEngine:
                     log.warning(alert)
             except Exception as e:
                 log.error(f"Drift detection error: {e}")
+
+        # v3: Position reconciliation
+        if (self.position_reconciler and
+                self.cycle_count % Config.RECONCILIATION_INTERVAL_CYCLES == 0):
+            self._run_reconciliation()
 
         # Snapshot equity every 10 cycles
         if self.cycle_count % 10 == 0:
@@ -468,6 +481,36 @@ class TradingEngine:
                 except Exception:
                     pass
         return self._cached_position_dfs
+
+    # ── Position Reconciliation ────────────────────────────────────────
+
+    def _run_reconciliation(self):
+        """Compare engine trailing stops with broker positions and flag mismatches."""
+        try:
+            positions = self.broker.get_positions()
+            result = self.position_reconciler.reconcile(
+                trailing_stops=self.risk.trailing_stops,
+                broker_positions=positions,
+                tracked_symbols=Config.SYMBOLS,
+            )
+            if not result.ok:
+                for m in result.mismatches:
+                    log.warning(f"Position mismatch: {m.symbol} — {m.issue}: {m.detail}")
+
+                # Send alert BEFORE auto-fix so it reports actual problems
+                if self.alert_manager:
+                    self.alert_manager.position_mismatch(
+                        [{"symbol": m.symbol, "issue": f"{m.issue}: {m.detail}"}
+                         for m in result.mismatches])
+
+                # Auto-fix orphaned stops if enabled
+                if Config.RECONCILIATION_AUTO_FIX:
+                    cleaned = self.position_reconciler.auto_fix_orphaned_stops(
+                        self.risk.trailing_stops, result)
+                    if cleaned:
+                        log.info(f"Reconciler auto-fixed {len(cleaned)} orphaned stop(s)")
+        except Exception as e:
+            log.error(f"Position reconciliation error: {e}")
 
     # ── PDT Protection ───────────────────────────────────────────────
 

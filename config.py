@@ -110,6 +110,12 @@ class Config:
     DRIFT_LOOKBACK_DAYS = int(os.getenv("DRIFT_LOOKBACK_DAYS", "7"))
     DRIFT_MIN_TRADES = int(os.getenv("DRIFT_MIN_TRADES", "5"))
 
+    # ── Position Reconciliation ────────────────────────────────────────
+    POSITION_RECONCILIATION_ENABLED = os.getenv("POSITION_RECONCILIATION_ENABLED", "false").lower() == "true"
+    RECONCILIATION_INTERVAL_CYCLES = max(1, int(os.getenv("RECONCILIATION_INTERVAL_CYCLES", "10")))
+    RECONCILIATION_AUTO_FIX = os.getenv("RECONCILIATION_AUTO_FIX", "false").lower() == "true"
+    RECONCILIATION_ENTRY_TOLERANCE = float(os.getenv("RECONCILIATION_ENTRY_TOLERANCE", "0.02"))
+
     # ── Alerting ──────────────────────────────────────────────────────
     ALERTING_ENABLED = os.getenv("ALERTING_ENABLED", "false").lower() == "true"
     SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")
