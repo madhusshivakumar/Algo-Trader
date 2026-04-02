@@ -11,6 +11,7 @@ import os
 
 from config import Config
 from core.signal_modifiers import apply_sentiment, apply_llm_conviction
+from core.multi_timeframe import apply_mtf_filter
 
 from strategies import (
     mean_reversion_aggressive,
@@ -157,5 +158,9 @@ def compute_signals(symbol: str, df):
         signal = apply_sentiment(signal, symbol, weight=Config.SENTIMENT_WEIGHT)
     if Config.LLM_ANALYST_ENABLED:
         signal = apply_llm_conviction(signal, symbol, weight=Config.LLM_CONVICTION_WEIGHT)
+
+    # Apply multi-timeframe filter (resamples existing bars, no extra API calls)
+    if Config.MTF_ENABLED:
+        signal = apply_mtf_filter(signal, df, weight=Config.MTF_WEIGHT)
 
     return signal

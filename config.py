@@ -110,6 +110,10 @@ class Config:
     DRIFT_LOOKBACK_DAYS = int(os.getenv("DRIFT_LOOKBACK_DAYS", "7"))
     DRIFT_MIN_TRADES = int(os.getenv("DRIFT_MIN_TRADES", "5"))
 
+    # ── Multi-Timeframe Analysis ──────────────────────────────────────
+    MTF_ENABLED = os.getenv("MTF_ENABLED", "false").lower() == "true"
+    MTF_WEIGHT = max(0.0, min(float(os.getenv("MTF_WEIGHT", "0.15")), 0.5))
+
     # ── Position Reconciliation ────────────────────────────────────────
     POSITION_RECONCILIATION_ENABLED = os.getenv("POSITION_RECONCILIATION_ENABLED", "false").lower() == "true"
     RECONCILIATION_INTERVAL_CYCLES = max(1, int(os.getenv("RECONCILIATION_INTERVAL_CYCLES", "10")))
