@@ -66,6 +66,20 @@ def api_stats():
     })
 
 
+@app.route("/api/metrics")
+def api_metrics():
+    """Advanced portfolio metrics — Sharpe, Sortino, Calmar, drawdown analysis."""
+    from core.portfolio_metrics import compute_from_db
+    from dataclasses import asdict
+    metrics = compute_from_db(DB_PATH)
+    result = asdict(metrics)
+    # Round floats for clean JSON
+    for key, val in result.items():
+        if isinstance(val, float):
+            result[key] = round(val, 4)
+    return jsonify(result)
+
+
 @app.route("/")
 def index():
     return render_template_string(DASHBOARD_HTML)
