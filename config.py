@@ -134,7 +134,7 @@ class Config:
         if now.weekday() >= 5:
             return False
         current_time = now.time()
-        return cls.MARKET_OPEN <= current_time <= cls.MARKET_CLOSE
+        return cls.MARKET_OPEN <= current_time < cls.MARKET_CLOSE
 
     @classmethod
     def validate(cls):

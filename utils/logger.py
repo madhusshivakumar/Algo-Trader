@@ -93,41 +93,45 @@ class Logger:
         self.success(
             f"{'BUY' if side == 'buy' else 'SELL'} {symbol} "
             f"${amount:.2f} @ ${price:.2f} | {reason}"
-            + (f" | PnL: ${pnl:.2f}" if pnl else "")
+            + (f" | PnL: ${pnl:.2f}" if pnl is not None else "")
         )
         conn = sqlite3.connect(DB_PATH)
-        conn.execute(
-            "INSERT INTO trades (timestamp, symbol, side, amount, price, reason, pnl, "
-            "strategy, sentiment_score, llm_conviction, rl_selected) "
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-            (_ts(), symbol, side, amount, price, reason, pnl, strategy,
-             sentiment_score, llm_conviction, rl_selected),
-        )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute(
+                "INSERT INTO trades (timestamp, symbol, side, amount, price, reason, pnl, "
+                "strategy, sentiment_score, llm_conviction, rl_selected) "
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                (_ts(), symbol, side, amount, price, reason, pnl, strategy,
+                 sentiment_score, llm_conviction, rl_selected),
+            )
+            conn.commit()
+        finally:
+            conn.close()
 
     def log_order(self, order_dict: dict):
         """Log or update a managed order in the orders table."""
         conn = sqlite3.connect(DB_PATH)
-        conn.execute(
-            """INSERT OR REPLACE INTO orders
-            (order_id, symbol, side, order_type, requested_notional, requested_qty,
-             limit_price, stop_price, expected_price, state, filled_qty, filled_avg_price,
-             slippage, submitted_at, filled_at, last_updated, error)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (
-                order_dict["order_id"], order_dict.get("symbol"), order_dict.get("side"),
-                order_dict.get("order_type"), order_dict.get("requested_notional"),
-                order_dict.get("requested_qty"), order_dict.get("limit_price"),
-                order_dict.get("stop_price"), order_dict.get("expected_price", 0),
-                order_dict.get("state", ""), order_dict.get("filled_qty", 0),
-                order_dict.get("filled_avg_price", 0), order_dict.get("slippage", 0),
-                order_dict.get("submitted_at"), order_dict.get("filled_at"),
-                _ts(), order_dict.get("error", ""),
-            ),
-        )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute(
+                """INSERT OR REPLACE INTO orders
+                (order_id, symbol, side, order_type, requested_notional, requested_qty,
+                 limit_price, stop_price, expected_price, state, filled_qty, filled_avg_price,
+                 slippage, submitted_at, filled_at, last_updated, error)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    order_dict["order_id"], order_dict.get("symbol"), order_dict.get("side"),
+                    order_dict.get("order_type"), order_dict.get("requested_notional"),
+                    order_dict.get("requested_qty"), order_dict.get("limit_price"),
+                    order_dict.get("stop_price"), order_dict.get("expected_price", 0),
+                    order_dict.get("state", ""), order_dict.get("filled_qty", 0),
+                    order_dict.get("filled_avg_price", 0), order_dict.get("slippage", 0),
+                    order_dict.get("submitted_at"), order_dict.get("filled_at"),
+                    _ts(), order_dict.get("error", ""),
+                ),
+            )
+            conn.commit()
+        finally:
+            conn.close()
 
     def log_slippage(self, symbol: str, expected: float, actual: float, slippage_pct: float):
         """Log slippage for a filled order."""
