@@ -56,10 +56,31 @@ stop_bot() {
         local pid=$(cat "$BOT_PID_FILE")
         echo -e "${RED}Stopping bot (PID: $pid)...${NC}"
         kill "$pid" 2>/dev/null
-        sleep 1
-        kill -9 "$pid" 2>/dev/null
+        # Wait up to 15 seconds for graceful shutdown (state save + broker calls)
+        for i in $(seq 1 15); do
+            if ! kill -0 "$pid" 2>/dev/null; then
+                break
+            fi
+            sleep 1
+        done
+        # Force kill only if still running
+        if kill -0 "$pid" 2>/dev/null; then
+            echo -e "${YELLOW}Graceful shutdown timed out, forcing...${NC}"
+            kill -9 "$pid" 2>/dev/null
+        fi
         rm -f "$BOT_PID_FILE"
         echo -e "${RED}Bot stopped.${NC}"
+    else
+        echo -e "${YELLOW}Bot is not running.${NC}"
+    fi
+}
+
+reload_bot() {
+    if is_running "$BOT_PID_FILE"; then
+        local pid=$(cat "$BOT_PID_FILE")
+        echo -e "${BLUE}Sending SIGHUP to bot (PID: $pid)...${NC}"
+        kill -HUP "$pid" 2>/dev/null
+        echo -e "${GREEN}Config reload triggered. Check logs for details.${NC}"
     else
         echo -e "${YELLOW}Bot is not running.${NC}"
     fi
@@ -197,6 +218,7 @@ show_help() {
     echo -e "  ${BLUE}./bot.sh backtest${NC}    Run strategy backtest"
     echo -e "  ${BLUE}./bot.sh compare${NC}     Compare all strategies"
     echo ""
+    echo -e "  ${BLUE}./bot.sh reload${NC}      Hot-reload .env config (SIGHUP)"
     echo -e "  ${GREEN}./bot.sh up${NC}          Start bot + dashboard together"
     echo -e "  ${RED}./bot.sh down${NC}        Stop everything"
     echo ""
@@ -219,6 +241,7 @@ mkdir -p "$DIR/logs"
 case "${1:-help}" in
     start)      start_bot ;;
     stop)       stop_bot ;;
+    reload)     reload_bot ;;
     dash)       start_dashboard ;;
     dash-stop)  stop_dashboard ;;
     status|st)  show_status ;;

@@ -231,3 +231,8 @@ class AlertManager:
         """Alert on configuration reload."""
         msg = f"Configuration reloaded: {', '.join(changes[:5])}"
         self.alert("config_reload", msg, AlertLevel.INFO)
+
+    def bot_shutdown(self, reason: str):
+        """Alert on bot shutdown."""
+        msg = f"Trading bot shutting down (reason: {reason})"
+        self.alert("shutdown", msg, AlertLevel.WARNING, {"Reason": reason})

@@ -1,5 +1,6 @@
 """Full coverage tests for the trading engine with mocked broker."""
 
+import signal
 import time
 import pytest
 from unittest.mock import MagicMock, patch, PropertyMock, call
@@ -531,3 +532,127 @@ class TestEngineOrderManager:
                 engine.run_cycle()
 
             mock_order_mgr.cancel_stale_orders.assert_called()
+
+
+class TestSignalHandling:
+    def test_sigterm_sets_shutdown_flag(self, engine, mock_broker):
+        engine._handle_sigterm(signal.SIGTERM, None)
+        assert engine._shutdown_requested is True
+
+    def test_sighup_sets_reload_flag(self, engine, mock_broker):
+        engine._handle_sighup(signal.SIGHUP, None)
+        assert engine._reload_requested is True
+
+    def test_interruptible_sleep_breaks_on_shutdown(self, engine, mock_broker):
+        engine._shutdown_requested = True
+        start = time.time()
+        engine._interruptible_sleep(60)
+        elapsed = time.time() - start
+        assert elapsed < 2  # Should break immediately, not wait 60s
+
+    def test_register_signal_handlers(self, engine, mock_broker):
+        with patch("core.engine.signal.signal") as mock_signal:
+            engine._register_signal_handlers()
+            calls = mock_signal.call_args_list
+            signames = [c[0][0] for c in calls]
+            assert signal.SIGTERM in signames
+            assert signal.SIGHUP in signames
+
+    def test_shutdown_saves_state(self, engine, mock_broker):
+        engine.risk.initialize(100000)
+        engine.state_store = MagicMock()
+        engine._save_persisted_state = MagicMock()
+        engine._shutdown()
+        engine._save_persisted_state.assert_called_once()
+
+    def test_shutdown_warns_pending_orders(self, engine, mock_broker):
+        engine.risk.initialize(100000)
+        engine.order_manager = MagicMock()
+        engine.order_manager.pending_count = 3
+        engine._shutdown()
+        # Should not crash, just warn about pending orders
+
+    def test_shutdown_sends_alert(self, engine, mock_broker):
+        engine.risk.initialize(100000)
+        engine.alert_manager = MagicMock()
+        engine._shutdown(reason="SIGTERM")
+        engine.alert_manager.bot_shutdown.assert_called_once_with("SIGTERM")
+
+    def test_handle_reload_creates_reloader_if_needed(self, engine, mock_broker):
+        engine.config_reloader = None
+        with patch("core.config_reloader.ConfigReloader") as MockReloader:
+            MockReloader.return_value.reload.return_value = {}
+            engine._handle_reload()
+            assert engine.config_reloader is not None
+
+    def test_handle_reload_logs_changes(self, engine, mock_broker):
+        from core.config_reloader import ConfigReloader
+        engine.config_reloader = MagicMock(spec=ConfigReloader)
+        engine.config_reloader.reload.return_value = {"STOP_LOSS_PCT": "0.05"}
+        engine._handle_reload()
+        engine.config_reloader.reload.assert_called_once()
+
+    def test_run_loop_checks_shutdown_flag(self, engine, mock_broker):
+        """Engine run loop should exit when _shutdown_requested is set."""
+        engine.risk.initialize(100000)
+        mock_broker.get_recent_bars.return_value = MagicMock(empty=True)
+
+        # Set shutdown after first cycle
+        original_run_cycle = engine.run_cycle
+        def run_cycle_and_stop():
+            original_run_cycle()
+            engine._shutdown_requested = True
+        engine.run_cycle = run_cycle_and_stop
+
+        with patch("core.engine.signal.signal"):
+            engine.run(interval_seconds=1)
+        # Should have exited cleanly
+        assert engine.cycle_count == 1
+
+    def test_run_loop_checks_reload_flag(self, engine, mock_broker):
+        """Engine run loop should call _handle_reload when flag is set."""
+        engine.risk.initialize(100000)
+        mock_broker.get_recent_bars.return_value = MagicMock(empty=True)
+        engine._reload_requested = True
+
+        call_count = 0
+        def run_cycle_and_stop():
+            nonlocal call_count
+            call_count += 1
+            engine._shutdown_requested = True
+        engine.run_cycle = run_cycle_and_stop
+
+        with patch("core.engine.signal.signal"), \
+             patch.object(engine, "_handle_reload") as mock_reload:
+            engine.run(interval_seconds=1)
+        mock_reload.assert_called_once()
+        assert engine._reload_requested is False
+
+    def test_handle_reload_sends_alert_on_changes(self, engine, mock_broker):
+        """Alert manager should be notified when config changes are detected."""
+        from core.config_reloader import ConfigReloader
+        engine.config_reloader = MagicMock(spec=ConfigReloader)
+        engine.config_reloader.reload.return_value = {"STOP_LOSS_PCT": "0.03", "TRAILING_STOP_PCT": "0.01"}
+        engine.alert_manager = MagicMock()
+        engine._handle_reload()
+        engine.alert_manager.config_reloaded.assert_called_once()
+        keys = engine.alert_manager.config_reloaded.call_args[0][0]
+        assert "STOP_LOSS_PCT" in keys
+        assert "TRAILING_STOP_PCT" in keys
+
+    def test_handle_reload_no_alert_on_empty_changes(self, engine, mock_broker):
+        """No alert should be sent when reload detects no changes."""
+        from core.config_reloader import ConfigReloader
+        engine.config_reloader = MagicMock(spec=ConfigReloader)
+        engine.config_reloader.reload.return_value = {}
+        engine.alert_manager = MagicMock()
+        engine._handle_reload()
+        engine.alert_manager.config_reloaded.assert_not_called()
+
+    def test_handle_reload_exception_does_not_crash(self, engine, mock_broker):
+        """Reload failure should be logged, not crash the engine."""
+        from core.config_reloader import ConfigReloader
+        engine.config_reloader = MagicMock(spec=ConfigReloader)
+        engine.config_reloader.reload.side_effect = RuntimeError("parse error")
+        # Should not raise
+        engine._handle_reload()

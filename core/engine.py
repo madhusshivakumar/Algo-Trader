@@ -1,5 +1,6 @@
 """Main trading engine — handles both crypto (24/7) and equities (market hours)."""
 
+import signal
 import time
 import traceback
 from datetime import datetime
@@ -20,6 +21,8 @@ class TradingEngine:
         self.broker = Broker()
         self.risk = RiskManager()
         self.cycle_count = 0
+        self._shutdown_requested = False
+        self._reload_requested = False
         # Track which equity positions were opened today (PDT protection)
         self._equity_buys_today: dict[str, datetime] = {}
         # Cooldown: last trade timestamp per symbol
@@ -486,47 +489,107 @@ class TradingEngine:
     def _clear_buy_record(self, symbol: str):
         self._equity_buys_today.pop(symbol, None)
 
+    # ── Signal Handling ─────────────────────────────────────────────
+
+    def _register_signal_handlers(self):
+        """Register SIGTERM and SIGHUP handlers (must be called from main thread)."""
+        signal.signal(signal.SIGTERM, self._handle_sigterm)
+        signal.signal(signal.SIGHUP, self._handle_sighup)
+
+    def _handle_sigterm(self, signum, frame):
+        # Only set flag — log.info() is not async-signal-safe
+        self._shutdown_requested = True
+
+    def _handle_sighup(self, signum, frame):
+        # Only set flag — log.info() is not async-signal-safe
+        self._reload_requested = True
+
+    def _interruptible_sleep(self, seconds: int):
+        """Sleep in 1-second increments so shutdown signals are handled promptly."""
+        for _ in range(seconds):
+            if self._shutdown_requested:
+                break
+            time.sleep(1)
+
+    def _handle_reload(self):
+        """Perform config hot-reload (triggered by SIGHUP or polling)."""
+        if not self.config_reloader:
+            from core.config_reloader import ConfigReloader
+            self.config_reloader = ConfigReloader()
+        try:
+            changed = self.config_reloader.reload()
+            if changed:
+                log.info(f"Config reloaded via SIGHUP: {', '.join(changed.keys())}")
+                if self.alert_manager:
+                    self.alert_manager.config_reloaded(list(changed.keys()))
+            else:
+                log.info("Config reload: no changes detected")
+        except Exception as e:
+            log.error(f"Config reload failed: {e}")
+
     # ── Run Loop ─────────────────────────────────────────────────────
 
     def run(self, interval_seconds: int = 60):
-        """Main loop — runs forever."""
+        """Main loop — runs until SIGTERM, SIGHUP triggers reload."""
         self.initialize()
+        self._register_signal_handlers()
         log.info(f"Starting trading loop (interval: {interval_seconds}s)")
-        log.info("Press Ctrl+C to stop\n")
+        log.info("Press Ctrl+C or send SIGTERM to stop\n")
 
-        while True:
+        while not self._shutdown_requested:
             try:
+                if self._reload_requested:
+                    self._handle_reload()
+                    self._reload_requested = False
+
                 self.run_cycle()
-                time.sleep(interval_seconds)
+                self._interruptible_sleep(interval_seconds)
             except KeyboardInterrupt:
-                log.info("\nStopping trading bot...")
-                self._shutdown()
-                break
+                log.info("\nReceived interrupt, shutting down...")
+                self._shutdown_requested = True
             except Exception as e:
                 log.error(f"Unexpected error: {e}")
                 traceback.print_exc()
-                time.sleep(interval_seconds * 2)
+                self._interruptible_sleep(interval_seconds * 2)
 
-    def _shutdown(self):
-        """Clean shutdown — print summary."""
-        account = self.broker.get_account()
-        positions = self.broker.get_positions()
-        log.snapshot(account["equity"], account["cash"])
+        self._shutdown()
 
-        log.info(f"\nFinal equity: ${account['equity']:.2f}")
-        log.info(f"Final cash: ${account['cash']:.2f}")
+    def _shutdown(self, reason: str = "manual"):
+        """Clean shutdown — save state first (critical), then print summary."""
+        log.info(f"Shutdown initiated (reason: {reason})")
 
-        if positions:
-            log.info("Open positions:")
-            for p in positions:
-                asset_tag = "[CRYPTO]" if "USD" in p["symbol"] and len(p["symbol"]) > 4 else "[EQUITY]"
-                log.info(f"  {asset_tag} {p['symbol']}: {p['qty']} units @ ${p['avg_entry_price']:.2f} "
-                         f"(PnL: ${p['unrealized_pl']:.2f})")
-
-        pnl = account["equity"] - self.risk.starting_equity
-        pnl_pct = (pnl / self.risk.starting_equity * 100) if self.risk.starting_equity else 0
-        log.info(f"\nTotal PnL: ${pnl:.2f} ({pnl_pct:+.2f}%)")
-        log.print_summary()
-
-        # v3: Save final state on shutdown
+        # Save state first — most critical operation
         self._save_persisted_state()
+
+        # Send shutdown alert before potentially slow broker calls
+        if self.alert_manager:
+            try:
+                self.alert_manager.bot_shutdown(reason)
+            except Exception:
+                pass
+
+        try:
+            account = self.broker.get_account()
+            positions = self.broker.get_positions()
+            log.snapshot(account["equity"], account["cash"])
+
+            log.info(f"\nFinal equity: ${account['equity']:.2f}")
+            log.info(f"Final cash: ${account['cash']:.2f}")
+
+            if positions:
+                log.info("Open positions:")
+                for p in positions:
+                    asset_tag = "[CRYPTO]" if "USD" in p["symbol"] and len(p["symbol"]) > 4 else "[EQUITY]"
+                    log.info(f"  {asset_tag} {p['symbol']}: {p['qty']} units @ ${p['avg_entry_price']:.2f} "
+                             f"(PnL: ${p['unrealized_pl']:.2f})")
+
+            # Warn about pending orders
+            if self.order_manager and self.order_manager.pending_count > 0:
+                log.warning(f"  {self.order_manager.pending_count} orders still pending at broker")
+
+            pnl = account["equity"] - self.risk.starting_equity
+            pnl_pct = (pnl / self.risk.starting_equity * 100) if self.risk.starting_equity else 0
+            log.info(f"\nTotal PnL: ${pnl:.2f} ({pnl_pct:+.2f}%)")
+            log.print_summary()
+        except Exception as e:
+            log.error(f"Error during shutdown summary: {e}")
