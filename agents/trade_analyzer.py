@@ -20,7 +20,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
 
 DATA_DIR = os.path.join(PROJECT_ROOT, "data")
-DB_PATH = os.path.join(PROJECT_ROOT, "trades.db")
+DB_PATH = os.environ.get("DB_PATH", os.path.join(PROJECT_ROOT, "trades.db"))
 AGENT_STATE_FILE = os.path.join(DATA_DIR, "agent_state.json")
 LEARNINGS_FILE = os.path.join(DATA_DIR, "learnings.json")
 FALLBACK_FILE = os.path.join(DATA_DIR, "fallback_config.json")

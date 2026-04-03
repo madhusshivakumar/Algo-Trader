@@ -69,11 +69,49 @@ class TradingEngine:
                 entry_price_tolerance=Config.RECONCILIATION_ENTRY_TOLERANCE,
             )
 
+        # v3: Transaction cost modeling (optional)
+        self.cost_model = None
+        if Config.TC_ENABLED:
+            from core.transaction_costs import TransactionCostModel
+            self.cost_model = TransactionCostModel()
+
+        # v3: DB rotation (optional)
+        self.db_rotator = None
+        if Config.DB_ROTATION_ENABLED:
+            from utils.db_rotation import DBRotator
+            from utils.logger import DB_PATH
+            self.db_rotator = DBRotator(DB_PATH)
+
+        # v3: VWAP/TWAP execution (optional)
+        self.execution_manager = None
+        if Config.VWAP_TWAP_ENABLED:
+            from core.execution_algo import ExecutionAlgoManager
+            self.execution_manager = ExecutionAlgoManager()
+
+        # v3: Portfolio optimization (optional)
+        self.portfolio_optimizer = None
+        if Config.PORTFOLIO_OPTIMIZATION_ENABLED:
+            from core.portfolio_optimizer import PortfolioOptimizer
+            self.portfolio_optimizer = PortfolioOptimizer()
+
         # Alerting (optional)
         self.alert_manager = None
         if Config.ALERTING_ENABLED:
             from core.alerting import AlertManager
             self.alert_manager = AlertManager()
+
+    def _check_db_rotation(self):
+        """Check if the trades DB needs rotation and rotate if so."""
+        if not self.db_rotator:
+            return
+        try:
+            if self.db_rotator.should_rotate(
+                max_rows=Config.DB_ROTATION_MAX_ROWS,
+                max_age_days=Config.DB_ROTATION_MAX_AGE_DAYS,
+            ):
+                self.db_rotator.rotate(keep_recent_days=Config.DB_ROTATION_KEEP_DAYS)
+        except Exception as e:
+            log.error(f"DB rotation error: {e}")
 
     def _load_persisted_state(self):
         """Restore runtime state from SQLite (if state persistence enabled)."""
@@ -156,6 +194,9 @@ class TradingEngine:
         # Restore persisted state (must come after risk.initialize)
         self._load_persisted_state()
 
+        # v3: Check DB rotation on startup
+        self._check_db_rotation()
+
         if Config.is_paper():
             log.warning("Running in PAPER trading mode")
         else:
@@ -196,6 +237,18 @@ class TradingEngine:
             except Exception as e:
                 log.error(f"Error canceling stale orders: {e}")
 
+        # v3: VWAP/TWAP execution — dispatch due child orders and poll fills
+        if self.execution_manager:
+            try:
+                self.execution_manager.tick(self.broker)
+                completed = self.execution_manager.poll_children(self.broker)
+                self._handle_completed_executions(completed)
+                # Clean up old plans every 100 cycles
+                if self.cycle_count % 100 == 0:
+                    self.execution_manager.cleanup_completed()
+            except Exception as e:
+                log.error(f"Execution algo error: {e}")
+
         # v3: Config hot-reload every 30 cycles
         if self.config_reloader and self.cycle_count % 30 == 0:
             try:
@@ -205,6 +258,14 @@ class TradingEngine:
                         log.info(f"Config reloaded: {', '.join(changed.keys())}")
             except Exception as e:
                 log.error(f"Config reload error: {e}")
+
+        # v3: Portfolio optimization recompute
+        if (self.portfolio_optimizer and Config.MEAN_VARIANCE_ENABLED
+                and self.portfolio_optimizer.should_recompute(self.cycle_count)):
+            try:
+                self._recompute_allocation(equity)
+            except Exception as e:
+                log.error(f"Portfolio optimization error: {e}")
 
         # v3: Drift detection every 100 cycles
         if self.drift_detector and self.cycle_count % 100 == 0:
@@ -225,6 +286,10 @@ class TradingEngine:
             log.snapshot(equity, account["cash"])
             # v3: Save state periodically
             self._save_persisted_state()
+
+        # v3: DB rotation check every 1000 cycles
+        if self.db_rotator and self.cycle_count % 1000 == 0:
+            self._check_db_rotation()
 
         # Check risk limits
         if not self.risk.can_trade(equity):
@@ -340,6 +405,29 @@ class TradingEngine:
                         self.alert_manager.stop_loss_hit(symbol, entry_price, current_price, loss_pct)
                 return
 
+        # Pre-earnings position closure (optional — closes equity positions in blackout window)
+        if (Config.EARNINGS_CALENDAR_ENABLED and Config.EARNINGS_CLOSE_POSITIONS
+                and position and is_equity):
+            from core.signal_modifiers import is_in_earnings_blackout
+            if is_in_earnings_blackout(symbol):
+                if self._is_same_day_buy(symbol):
+                    log.warning(f"{symbol} in earnings blackout but PDT blocks same-day sell")
+                else:
+                    log.info(f"Closing {symbol} — earnings blackout (pre-earnings risk reduction)")
+                    result = self.broker.close_position(symbol)
+                    if result:
+                        pnl = position["unrealized_pl"]
+                        log.trade(symbol, "sell", position["market_value"], current_price,
+                                  "earnings blackout close", pnl, strategy=get_strategy_key(symbol))
+                        self.risk.unregister(symbol)
+                        # No cooldown for earnings close — it's defensive, not a trade signal
+                        self._clear_buy_record(symbol)
+                        if self.alert_manager and Config.ALERT_ON_TRADE:
+                            self.alert_manager.trade_executed(
+                                symbol, "sell", position["market_value"],
+                                current_price, "earnings blackout close")
+                    return
+
         # Compute strategy signals (routed per symbol)
         signal = route_signals(symbol, df)
 
@@ -370,6 +458,16 @@ class TradingEngine:
             else:
                 base_pct = 0.35
 
+            # v3: Portfolio optimization — Kelly or mean-variance override
+            if self.portfolio_optimizer:
+                if Config.KELLY_SIZING_ENABLED:
+                    kelly_size = self.portfolio_optimizer.get_kelly_size(
+                        symbol, equity, base_pct)
+                    base_pct = kelly_size / equity if equity > 0 else base_pct
+                elif Config.MEAN_VARIANCE_ENABLED:
+                    base_pct = self.portfolio_optimizer.get_position_pct(
+                        symbol, base_pct)
+
             # v3: Volatility-adjusted sizing
             if Config.VOLATILITY_SIZING_ENABLED:
                 max_size = self.risk.calculate_volatility_adjusted_size(equity, df, base_pct)
@@ -381,6 +479,12 @@ class TradingEngine:
 
             size = max_size * signal["strength"]
             size = max(size, 1.0)
+
+            # v3: Transaction cost adjustment — reduce size to account for costs
+            if self.cost_model:
+                size = self.cost_model.net_buy_amount(symbol, size)
+                if size < 1.0:
+                    return
 
             # v3: Buying power pre-check
             if self.order_manager:
@@ -395,10 +499,43 @@ class TradingEngine:
 
             log.info(f"BUY signal for {symbol}: {signal['reason']} (strength: {signal['strength']:.2f})")
 
+            # v3: Route through VWAP/TWAP execution when enabled and above min notional
+            if self.execution_manager and size >= Config.VWAP_TWAP_MIN_NOTIONAL:
+                # Skip if an execution is already active for this symbol
+                if self.execution_manager.get_active_plans(symbol):
+                    return
+
+                volume_profile = None
+                if Config.VWAP_TWAP_ALGO == "vwap":
+                    try:
+                        from core.execution_algo import build_volume_profile
+                        volume_profile = build_volume_profile(
+                            self.broker, symbol, Config.VWAP_VOLUME_LOOKBACK_DAYS)
+                    except Exception:
+                        pass  # Falls back to uniform weights
+
+                plan = self.execution_manager.create_plan(
+                    symbol=symbol, side="buy", total_notional=size,
+                    algo=Config.VWAP_TWAP_ALGO, current_price=current_price,
+                    volume_profile=volume_profile,
+                )
+                log.info(f"  {symbol}: Created {Config.VWAP_TWAP_ALGO.upper()} execution plan "
+                         f"({len(plan.children)} slices, ${size:.0f} total)")
+                self._record_trade(symbol)
+                if is_equity:
+                    self._record_buy(symbol)
             # v3: Route through OrderManager when enabled
-            if self.order_manager:
+            elif self.order_manager:
                 order = self.order_manager.submit_market_buy(symbol, size, current_price)
                 if order and order.state.value == "filled":
+                    # Compute and log slippage for immediately filled orders
+                    # (poll_pending_orders computes it for deferred fills, but
+                    #  immediate fills skip polling so we compute here)
+                    if order.expected_price and order.filled_avg_price:
+                        from core.order_manager import OrderManager as OM
+                        slippage = OM.compute_slippage(order)
+                        log.log_slippage(symbol, order.expected_price,
+                                         order.filled_avg_price, slippage)
                     log.trade(symbol, "buy", size, current_price, signal["reason"],
                               strategy=signal.get("strategy", ""))
                     self.risk.register_entry(symbol, current_price, df)
@@ -448,10 +585,17 @@ class TradingEngine:
                 continue
             symbol = order.symbol
             is_equity = not Config.is_crypto(symbol)
+
+            # Log slippage for all filled orders
+            if order.expected_price and order.filled_avg_price:
+                log.log_slippage(symbol, order.expected_price,
+                                 order.filled_avg_price, order.slippage)
+
             if order.side == "buy":
                 log.trade(symbol, "buy", order.requested_notional or 0,
                           order.filled_avg_price, "filled via poll",
                           strategy=get_strategy_key(symbol))
+                # df unavailable at poll time — falls back to fixed stops (no ATR)
                 self.risk.register_entry(symbol, order.filled_avg_price)
                 self._record_trade(symbol)
                 if is_equity:
@@ -460,6 +604,24 @@ class TradingEngine:
                     self.alert_manager.trade_executed(
                         symbol, "buy", order.requested_notional or 0,
                         order.filled_avg_price, "filled via poll")
+
+    def _handle_completed_executions(self, completed_plans: list):
+        """Handle execution plans that finished all child orders."""
+        for plan in completed_plans:
+            avg_price = plan.avg_fill_price
+            if avg_price == 0:
+                log.warning(f"  {plan.symbol}: {plan.algo.upper()} execution had no fills")
+                continue
+            log.info(
+                f"  {plan.symbol}: {plan.algo.upper()} execution complete — "
+                f"{plan.filled_children} slices, avg fill ${avg_price:.2f}, "
+                f"slippage vs arrival: {plan.slippage_bps:+.1f} bps"
+            )
+            log.trade(plan.symbol, "buy", plan.filled_notional,
+                      avg_price,
+                      f"{plan.algo.upper()} execution ({plan.filled_children} slices)",
+                      strategy=get_strategy_key(plan.symbol))
+            self.risk.register_entry(plan.symbol, avg_price)
 
     def _get_existing_position_dfs(self) -> dict[str, "pd.DataFrame"]:
         """Fetch recent bars for all open positions (for correlation checks)."""
@@ -481,6 +643,34 @@ class TradingEngine:
                 except Exception:
                     pass
         return self._cached_position_dfs
+
+    # ── Portfolio Optimization ──────────────────────────────────────────
+
+    def _recompute_allocation(self, equity: float):
+        """Recompute mean-variance allocation from recent bar data."""
+        import pandas as pd
+
+        symbols = Config.SYMBOLS
+        returns_data = {}
+        for sym in symbols:
+            try:
+                bars = self.broker.get_recent_bars(sym, limit=Config.MEAN_VARIANCE_LOOKBACK_DAYS)
+                if bars is not None and len(bars) >= 10 and "close" in bars.columns:
+                    rets = bars["close"].pct_change().dropna()
+                    if len(rets) >= 5:
+                        returns_data[sym] = rets.values[-Config.MEAN_VARIANCE_LOOKBACK_DAYS:]
+            except Exception:
+                pass
+
+        if len(returns_data) < 2:
+            return
+
+        # Align lengths
+        min_len = min(len(v) for v in returns_data.values())
+        aligned = {sym: vals[-min_len:] for sym, vals in returns_data.items()}
+        returns_df = pd.DataFrame(aligned)
+
+        self.portfolio_optimizer.update_allocation(returns_df, self.cycle_count)
 
     # ── Position Reconciliation ────────────────────────────────────────
 

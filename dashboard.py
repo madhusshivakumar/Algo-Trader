@@ -1,5 +1,6 @@
 """Live trading dashboard — web UI for monitoring the bot."""
 
+import os
 import sqlite3
 import json
 from datetime import datetime
@@ -8,7 +9,7 @@ from core.broker import Broker
 from config import Config
 
 app = Flask(__name__)
-DB_PATH = "trades.db"
+DB_PATH = os.environ.get("DB_PATH", "trades.db")
 
 
 def get_broker():
@@ -346,4 +347,5 @@ setInterval(refresh, 5000);
 
 if __name__ == "__main__":
     print("\n  Dashboard: http://localhost:5050\n")
-    app.run(host="127.0.0.1", port=5050, debug=False)
+    host = os.environ.get("DASHBOARD_HOST", "127.0.0.1")
+    app.run(host=host, port=5050, debug=False)

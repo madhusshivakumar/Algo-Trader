@@ -39,8 +39,12 @@ STRATEGIES = {
 
 
 def backtest_strategy(strategy_fn, df: pd.DataFrame, starting_cash: float = 100.0,
-                      stop_loss_pct: float = 0.025, trailing_stop_pct: float = 0.02) -> dict:
+                      stop_loss_pct: float = 0.025, trailing_stop_pct: float = 0.02,
+                      symbol: str = "UNKNOWN") -> dict:
     """Run a single strategy through the backtester. Returns metrics dict."""
+    from core.transaction_costs import TransactionCostModel
+    cost_model = TransactionCostModel() if Config.TC_ENABLED else None
+    total_costs = 0.0
     cash = starting_cash
     position_qty = 0.0
     position_avg_price = 0.0
@@ -63,6 +67,10 @@ def backtest_strategy(strategy_fn, df: pd.DataFrame, starting_cash: float = 100.
 
             if current_price <= hard_stop_price:
                 proceeds = position_qty * current_price
+                if cost_model:
+                    costs = cost_model.estimate(symbol, proceeds)
+                    proceeds -= costs.total_cost
+                    total_costs += costs.total_cost
                 pnl = proceeds - (position_qty * position_avg_price)
                 cash += proceeds
                 trades.append({"side": "sell", "price": current_price, "pnl": pnl, "reason": "hard stop"})
@@ -71,6 +79,10 @@ def backtest_strategy(strategy_fn, df: pd.DataFrame, starting_cash: float = 100.
 
             if current_price <= trailing_stop_price:
                 proceeds = position_qty * current_price
+                if cost_model:
+                    costs = cost_model.estimate(symbol, proceeds)
+                    proceeds -= costs.total_cost
+                    total_costs += costs.total_cost
                 pnl = proceeds - (position_qty * position_avg_price)
                 cash += proceeds
                 trades.append({"side": "sell", "price": current_price, "pnl": pnl, "reason": "trailing stop"})
@@ -87,15 +99,27 @@ def backtest_strategy(strategy_fn, df: pd.DataFrame, starting_cash: float = 100.
             size = min(size, cash - 0.01)
             if size < 1:
                 continue
-            qty = size / current_price
+            if cost_model:
+                costs = cost_model.estimate(symbol, size)
+                net_size = size - costs.total_cost
+                total_costs += costs.total_cost
+                if net_size < 1:
+                    continue
+            else:
+                net_size = size
+            qty = net_size / current_price
             position_qty = qty
             position_avg_price = current_price
             highest_since_entry = current_price
             cash -= size
-            trades.append({"side": "buy", "price": current_price, "amount": size})
+            trades.append({"side": "buy", "price": current_price, "amount": net_size})
 
         elif signal["action"] == "sell" and position_qty > 0:
             proceeds = position_qty * current_price
+            if cost_model:
+                costs = cost_model.estimate(symbol, proceeds)
+                proceeds -= costs.total_cost
+                total_costs += costs.total_cost
             pnl = proceeds - (position_qty * position_avg_price)
             cash += proceeds
             trades.append({"side": "sell", "price": current_price, "pnl": pnl, "reason": signal["reason"]})
@@ -105,6 +129,10 @@ def backtest_strategy(strategy_fn, df: pd.DataFrame, starting_cash: float = 100.
     if position_qty > 0:
         last_price = float(df["close"].iloc[-1])
         proceeds = position_qty * last_price
+        if cost_model:
+            costs = cost_model.estimate(symbol, proceeds)
+            proceeds -= costs.total_cost
+            total_costs += costs.total_cost
         pnl = proceeds - (position_qty * position_avg_price)
         cash += proceeds
         trades.append({"side": "sell", "price": last_price, "pnl": pnl, "reason": "end"})

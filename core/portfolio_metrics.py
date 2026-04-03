@@ -336,7 +336,7 @@ def compute_all(equity_curve: list[float] | np.ndarray,
     return metrics
 
 
-def compute_from_db(db_path: str = "logs/trades.db",
+def compute_from_db(db_path: str = "trades.db",
                     annualize: int = _MINUTES_PER_YEAR) -> PortfolioMetrics:
     """Compute metrics from the trades database.
 

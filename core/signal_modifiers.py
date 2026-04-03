@@ -13,6 +13,7 @@ from config import Config
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 _SENTIMENT_FILE = os.path.join(_DATA_DIR, "sentiment", "scores.json")
 _LLM_FILE = os.path.join(_DATA_DIR, "llm_analyst", "convictions.json")
+_EARNINGS_FILE = os.path.join(_DATA_DIR, "earnings_calendar", "output.json")
 
 
 def _clamp(value: float, lo: float = 0.3, hi: float = 1.0) -> float:
@@ -133,4 +134,68 @@ def apply_llm_conviction(signal: dict, symbol: str, weight: float = 0.2) -> dict
     signal["strength"] = _clamp(signal["strength"])
     signal["llm_conviction"] = round(conviction, 3)
     signal["reason"] = signal.get("reason", "") + f" | llm={conviction:+.2f}"
+    return signal
+
+
+_earnings_cache: dict = {}
+_earnings_cache_mtime: float = 0.0
+
+
+def _get_earnings_data() -> dict:
+    """Load earnings data with file-mtime caching (avoids re-reading unchanged files)."""
+    global _earnings_cache, _earnings_cache_mtime
+    try:
+        mtime = os.path.getmtime(_EARNINGS_FILE)
+    except OSError:
+        return {}
+    if mtime != _earnings_cache_mtime:
+        _earnings_cache = _load_json(_EARNINGS_FILE)
+        _earnings_cache_mtime = mtime
+    return _earnings_cache
+
+
+def is_in_earnings_blackout(symbol: str) -> bool:
+    """Quick check used by engine for pre-earnings position closure."""
+    data = _get_earnings_data()
+    sym_data = data.get("earnings", {}).get(symbol)
+    if not sym_data:
+        return False
+    return sym_data.get("in_blackout", False)
+
+
+def apply_earnings_blackout(signal: dict, symbol: str) -> dict:
+    """Reduce or block buy signals during earnings blackout window.
+
+    Reads from data/earnings_calendar/output.json written by the earnings agent.
+    Crypto symbols are never in blackout (no earnings).
+
+    - Buy signals: strength multiplied by EARNINGS_SIZE_REDUCTION (0.0 = block entirely)
+    - Sell signals: pass through unchanged
+    - Hold signals: annotated with earnings_blackout flag
+    """
+    if Config.is_crypto(symbol):
+        return signal
+
+    data = _get_earnings_data()
+    sym_data = data.get("earnings", {}).get(symbol)
+    if not sym_data or not sym_data.get("in_blackout", False):
+        return signal
+
+    days_until = sym_data.get("days_until")
+    signal["earnings_blackout"] = True
+    signal["days_to_earnings"] = days_until
+
+    if signal["action"] == "buy":
+        reduction = Config.EARNINGS_SIZE_REDUCTION
+        if reduction <= 0:
+            signal["action"] = "hold"
+            signal["strength"] = 0.0
+            signal["reason"] = signal.get("reason", "") + f" | earnings_blackout({days_until}d) -> blocked"
+        else:
+            signal["strength"] = _clamp(signal.get("strength", 0.5) * reduction)
+            signal["reason"] = signal.get("reason", "") + f" | earnings_blackout({days_until}d) size*{reduction}"
+    elif signal["action"] == "hold":
+        signal["reason"] = signal.get("reason", "") + f" | earnings_blackout({days_until}d)"
+
+    # Sell signals pass through unchanged — selling before earnings is fine
     return signal

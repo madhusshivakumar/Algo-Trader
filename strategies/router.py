@@ -10,7 +10,7 @@ import json
 import os
 
 from config import Config
-from core.signal_modifiers import apply_sentiment, apply_llm_conviction
+from core.signal_modifiers import apply_sentiment, apply_llm_conviction, apply_earnings_blackout
 from core.multi_timeframe import apply_mtf_filter
 
 from strategies import (
@@ -162,5 +162,9 @@ def compute_signals(symbol: str, df):
     # Apply multi-timeframe filter (resamples existing bars, no extra API calls)
     if Config.MTF_ENABLED:
         signal = apply_mtf_filter(signal, df, weight=Config.MTF_WEIGHT)
+
+    # Apply earnings blackout (equity only — reduces sizing near earnings)
+    if Config.EARNINGS_CALENDAR_ENABLED:
+        signal = apply_earnings_blackout(signal, symbol)
 
     return signal

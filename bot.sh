@@ -190,8 +190,15 @@ run_rl_train() {
     python agents/rl_trainer.py
 }
 
+run_earnings() {
+    echo -e "${BLUE}${BOLD}Running Earnings Calendar agent...${NC}"
+    python agents/earnings_calendar.py
+}
+
 run_agents() {
     echo -e "${BLUE}${BOLD}Running all agents in sequence...${NC}"
+    echo ""
+    run_earnings
     echo ""
     run_optimizer
     echo ""
@@ -204,11 +211,69 @@ run_agents() {
     run_analyzer
 }
 
+# --- Docker Commands ---
+docker_up() {
+    echo -e "${GREEN}${BOLD}Starting all services via Docker Compose...${NC}"
+    docker compose up -d --build
+    echo ""
+    echo -e "${GREEN}${BOLD}All systems go!${NC}"
+    echo -e "${BLUE}Dashboard: http://localhost:5050${NC}"
+    echo -e "${CYAN}Engine logs:  ./bot.sh docker-logs engine${NC}"
+    echo -e "${CYAN}Agent logs:   ./bot.sh docker-logs agents${NC}"
+}
+
+docker_down() {
+    echo -e "${RED}${BOLD}Stopping all Docker services...${NC}"
+    docker compose down
+    echo -e "${RED}${BOLD}All services stopped.${NC}"
+}
+
+docker_status() {
+    echo -e "${BOLD}╔══════════════════════════════════════╗${NC}"
+    echo -e "${BOLD}║     Algo Trader (Docker) Status      ║${NC}"
+    echo -e "${BOLD}╚══════════════════════════════════════╝${NC}"
+    echo ""
+    docker compose ps
+    echo ""
+    docker compose exec engine python main.py --status 2>/dev/null || \
+        echo -e "  ${YELLOW}(Engine not running or API keys not set)${NC}"
+}
+
+docker_logs() {
+    local service="${2:-engine}"
+    echo -e "${CYAN}Following ${service} logs (Ctrl+C to stop)...${NC}"
+    docker compose logs -f "$service"
+}
+
+docker_exec_agent() {
+    local agent="$1"
+    echo -e "${BLUE}${BOLD}Running ${agent} in Docker...${NC}"
+    docker compose exec agents python "agents/${agent}.py"
+}
+
+docker_backtest() {
+    shift  # remove "docker-backtest" from args
+    echo -e "${BLUE}${BOLD}Running backtest in Docker...${NC}"
+    docker compose run --rm engine python backtest.py "$@"
+}
+
+docker_test() {
+    echo -e "${BLUE}${BOLD}Running tests in Docker...${NC}"
+    docker compose run --rm engine python -m pytest tests/ -v --tb=short
+}
+
+docker_reload() {
+    echo -e "${BLUE}Sending SIGHUP to engine container...${NC}"
+    docker compose kill -s SIGHUP engine
+    echo -e "${GREEN}Config reload triggered. Check logs for details.${NC}"
+}
+
 show_help() {
     echo ""
     echo -e "${BOLD}Algo Trader Commands${NC}"
     echo -e "${BOLD}════════════════════${NC}"
     echo ""
+    echo -e "  ${BOLD}Local (no Docker):${NC}"
     echo -e "  ${GREEN}./bot.sh start${NC}       Start the trading bot"
     echo -e "  ${RED}./bot.sh stop${NC}        Stop the trading bot"
     echo -e "  ${GREEN}./bot.sh dash${NC}        Start the web dashboard"
@@ -217,15 +282,24 @@ show_help() {
     echo -e "  ${CYAN}./bot.sh logs${NC}        Follow live bot logs"
     echo -e "  ${BLUE}./bot.sh backtest${NC}    Run strategy backtest"
     echo -e "  ${BLUE}./bot.sh compare${NC}     Compare all strategies"
-    echo ""
     echo -e "  ${BLUE}./bot.sh reload${NC}      Hot-reload .env config (SIGHUP)"
     echo -e "  ${GREEN}./bot.sh up${NC}          Start bot + dashboard together"
     echo -e "  ${RED}./bot.sh down${NC}        Stop everything"
     echo ""
-    echo -e "  ${BOLD}Agents:${NC}"
+    echo -e "  ${BOLD}Docker (production):${NC}"
+    echo -e "  ${GREEN}./bot.sh docker-up${NC}       Start all services (engine + dashboard + agents)"
+    echo -e "  ${RED}./bot.sh docker-down${NC}     Stop all services"
+    echo -e "  ${CYAN}./bot.sh docker-status${NC}   Show container status + account info"
+    echo -e "  ${CYAN}./bot.sh docker-logs${NC}     Follow engine logs (or: docker-logs agents)"
+    echo -e "  ${BLUE}./bot.sh docker-reload${NC}   Hot-reload .env config"
+    echo -e "  ${BLUE}./bot.sh docker-backtest${NC} Run backtest (pass extra args after)"
+    echo -e "  ${BLUE}./bot.sh docker-test${NC}     Run test suite in container"
+    echo ""
+    echo -e "  ${BOLD}Agents (local):${NC}"
     echo -e "  ${BLUE}./bot.sh optimizer${NC}   Run Strategy Optimizer"
     echo -e "  ${BLUE}./bot.sh scanner${NC}     Run Market Scanner"
     echo -e "  ${BLUE}./bot.sh analyzer${NC}    Run Trade Analyzer"
+    echo -e "  ${BLUE}./bot.sh earnings${NC}    Run Earnings Calendar Agent"
     echo -e "  ${BLUE}./bot.sh sentiment${NC}   Run Sentiment Agent (FinBERT)"
     echo -e "  ${BLUE}./bot.sh llm${NC}         Run LLM Analyst Agent (Claude)"
     echo -e "  ${BLUE}./bot.sh rl-train${NC}    Run RL Trainer Agent (DQN)"
@@ -252,6 +326,7 @@ case "${1:-help}" in
     scanner)    run_scanner ;;
     analyzer)   run_analyzer ;;
     agents)     run_agents ;;
+    earnings)   run_earnings ;;
     sentiment)  run_sentiment ;;
     llm)        run_llm ;;
     rl-train)   run_rl_train ;;
@@ -270,5 +345,13 @@ case "${1:-help}" in
         stop_dashboard
         echo -e "${RED}${BOLD}All systems stopped.${NC}"
         ;;
+    # Docker commands
+    docker-up)          docker_up ;;
+    docker-down)        docker_down ;;
+    docker-status|docker-st) docker_status ;;
+    docker-logs)        docker_logs "$@" ;;
+    docker-reload)      docker_reload ;;
+    docker-backtest)    docker_backtest "$@" ;;
+    docker-test)        docker_test ;;
     *)          show_help ;;
 esac

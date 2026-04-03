@@ -4,7 +4,7 @@ A fully automated algorithmic trading system for crypto and US equities, powered
 
 The bot runs **9 technical strategies**, selects the best one per symbol using daily backtesting, and enriches signals with **FinBERT sentiment analysis**, a **4-stage Claude LLM analyst pipeline**, and an optional **RL strategy selector (DQN)**. Ten autonomous agents handle optimization, scanning, analysis, feedback scoring, pattern discovery, and health checks on a daily schedule. A self-improving feedback loop scores prediction accuracy and injects learnings back into the LLM prompts.
 
-**Current state:** 869 tests, ~95% coverage, 17 active symbols (2 crypto + 15 equities), paper trading.
+**Current state:** 1324 tests, ~95% coverage, 17 active symbols (2 crypto + 15 equities), paper trading. Docker-ready with automated startup and scheduling.
 
 ---
 
@@ -23,6 +23,7 @@ The bot runs **9 technical strategies**, selects the best one per symbol using d
 - [Autonomous Agents](#autonomous-agents)
 - [Production Hardening (v3)](#production-hardening-v3)
 - [Getting Started](#getting-started)
+- [Docker Deployment](#docker-deployment)
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Testing](#testing)
@@ -34,6 +35,16 @@ The bot runs **9 technical strategies**, selects the best one per symbol using d
 ## Architecture
 
 ```
+                              ┌──────────────────────────┐
+                              │     STARTUP (5:58 AM)    │
+                              │                          │
+                              │  Mac wakes → Docker up   │
+                              │  → Pre-market agents     │
+                              │    (parallel, ~2-3 min)  │
+                              │  → Engine starts         │
+                              └────────────┬─────────────┘
+                                           ▼
+
 ┌──────────────────────── SCHEDULED AGENTS (Pre/Post Market) ─────────────────────────┐
 │                                                                                      │
 │  5:30 AM         5:45 AM          6:00 AM         6:15 AM          5:00 PM   Sunday  │
@@ -65,11 +76,12 @@ The bot runs **9 technical strategies**, selects the best one per symbol using d
 │  │  │ Poll orders   │  │ Drawdown    │  │ 1. Check cooldown                    ││  │
 │  │  │ Cancel stale  │  │ Halt check  │  │ 2. Fetch bars (or use prefetch)      ││  │
 │  │  │ Equity snap   │  │ Exposure    │  │ 3. Check trailing stops              ││  │
-│  │  │ Hot reload    │  │             │  │ 4. Route to strategy                 ││  │
+│  │  │ Hot reload    │  │ Reconcile   │  │ 4. Route to strategy                 ││  │
 │  │  │ Drift detect  │  │             │  │ 5. Compute signal                    ││  │
-│  │  └───────────────┘  └─────────────┘  │ 6. Apply AI modifiers               ││  │
-│  │                                       │ 7. Risk checks + sizing             ││  │
-│  │                                       │ 8. Execute BUY/SELL/HOLD            ││  │
+│  │  │ Exec plans   │  │             │  │ 6. Apply AI modifiers               ││  │
+│  │  │ Rebalance    │  │             │  │ 7. Risk + sizing (Kelly/MV)         ││  │
+│  │  └───────────────┘  └─────────────┘  │ 8. Txn cost adjustment             ││  │
+│  │                                       │ 9. Execute (VWAP/TWAP or direct)   ││  │
 │  │                                       └───────────────────────────────────────┘│  │
 │  └────────────────────────────────────────────────────────────────────────────────┘  │
 │                                                                                      │
@@ -77,6 +89,11 @@ The bot runs **9 technical strategies**, selects the best one per symbol using d
 │  │  Broker  │ │   Risk   │ │  Order   │ │  State  │ │   Data   │ │    Config     │  │
 │  │ (Alpaca) │ │ Manager  │ │ Manager  │ │  Store  │ │ Fetcher  │ │   Reloader    │  │
 │  └──────────┘ └──────────┘ └──────────┘ └─────────┘ └──────────┘ └──────────────┘  │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌─────────────────────┐                    │
+│  │Execution │ │Portfolio │ │  Txn     │ │  Position           │                    │
+│  │  Algo    │ │Optimizer │ │  Costs   │ │  Reconciler         │                    │
+│  │(VWAP/TWP)│ │(Kelly/MV)│ │          │ │                     │                    │
+│  └──────────┘ └──────────┘ └──────────┘ └─────────────────────┘                    │
 └──────────────────────────────────────────────────────────────────────────────────────┘
 
                           ▼ reads from / writes to ▼
@@ -86,6 +103,10 @@ The bot runs **9 technical strategies**, selects the best one per symbol using d
 │  │  trades.db  │◀──▶│  Dashboard   │    │  Drift Detector     │  │
 │  │  (SQLite)   │    │ (Flask:5050) │    │  (perf. tracking)   │  │
 │  └─────────────┘    └──────────────┘    └─────────────────────┘  │
+│  ┌─────────────┐    ┌──────────────┐                             │
+│  │Monte Carlo  │    │  Walk-Forward│                             │
+│  │ Simulation  │    │  Validation  │                             │
+│  └─────────────┘    └──────────────┘                             │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -97,16 +118,17 @@ The bot runs **9 technical strategies**, selects the best one per symbol using d
 
 The trading engine runs a **60-second cycle** for each configured symbol:
 
-1. **Periodic Tasks** — Poll pending orders, cancel stale orders, snapshot equity, check for config changes, run drift detection
+1. **Periodic Tasks** — Poll pending orders, tick execution plans, snapshot equity, hot-reload config, drift detection, position reconciliation, portfolio rebalance
 2. **Risk Gate** — Check daily drawdown limit, halt status, total exposure cap
 3. **Fetch Data** — Pull latest 1-minute OHLCV bars from Alpaca (parallel fetch if enabled)
 4. **Check Stops** — Evaluate trailing stops on existing positions (ATR-based or fixed %)
 5. **Select Strategy** — RL model picks the best strategy (or fallback to optimizer assignments)
 6. **Compute Signal** — Run the selected strategy's technical analysis on the DataFrame
-7. **Enrich Signal** — Apply sentiment modifier (FinBERT) and LLM conviction modifier (Claude)
+7. **Enrich Signal** — Apply modifiers: sentiment (FinBERT), LLM conviction (Claude), multi-timeframe filter, earnings blackout guard
 8. **Risk Check** — Validate exposure limits, cooldowns, drawdown, PDT, correlation, buying power
-9. **Size & Execute** — Calculate position size (strength-weighted, volatility-adjusted) and submit order
-10. **Log & Persist** — Record trade to SQLite, persist engine state for crash recovery
+9. **Size Position** — Kelly criterion or mean-variance optimization, volatility adjustment, transaction cost deduction
+10. **Execute** — Submit via VWAP/TWAP algo (large orders) or direct broker order
+11. **Log & Persist** — Record trade to SQLite, persist engine state for crash recovery
 
 ### Signal Flow Pipeline
 
@@ -116,11 +138,12 @@ The trading engine runs a **60-second cycle** for each configured symbol:
                 │                 │         │                   │         │              │
  OHLCV Bars ──▶│  Strategy       │────────▶│ 1. Sentiment      │────────▶│  Risk Checks │
  (1-min)       │  (1 of 9)       │ signal  │    (FinBERT)      │ modified│  Correlation │
-               │                 │         │ 2. LLM Conviction │ signal  │  Vol Sizing  │
-               │  Returns:       │         │    (Claude)       │         │  Order Submit│
-               │  action: buy    │         │ 3. RL Selection   │         │              │
-               │  reason: "..."  │         │    (DQN)          │         │              │
-               │  strength: 0.8  │         │                   │         │              │
+               │                 │         │ 2. LLM Conviction │ signal  │  Kelly/MV    │
+               │  Returns:       │         │    (Claude)       │         │  Vol Sizing  │
+               │  action: buy    │         │ 3. RL Selection   │         │  Txn Costs   │
+               │  reason: "..."  │         │    (DQN)          │         │  VWAP/TWAP   │
+               │  strength: 0.8  │         │ 4. MTF Filter     │         │  or Direct   │
+               │                 │         │ 5. Earnings Guard  │         │              │
                └─────────────────┘         └───────────────────┘         └──────────────┘
 
  Modifier Logic:
@@ -325,17 +348,18 @@ Market Features (10-dim) -> Trained DQN -> Best Strategy Index (0-8)
 
 | Agent | Schedule | Purpose | Outputs |
 |-------|----------|---------|---------|
-| **Strategy Optimizer** | 5:30 AM M-F | Backtest 9 strategies x all symbols | `strategy_assignments.json` |
-| **Sentiment Agent** | 5:45 AM M-F | FinBERT sentiment on 24h headlines | `sentiment/scores.json` |
-| **Market Scanner** | 6:00 AM M-F | Screen & select equities from 80-stock universe | Updates `.env` EQUITY_SYMBOLS |
-| **LLM Analyst** | 6:15 AM M-F | 4-stage Claude analysis pipeline | `convictions.json`, `macro_report.json` |
-| **Trade Analyzer** | 5:00 PM M-F | Daily P&L, per-strategy metrics | `analyzer/reports/<date>.json` |
-| **Conviction Scorer** | 5:00 PM M-F | Score prediction accuracy, write feedback | `feedback/<date>.json` |
-| **Health Check** | 7:00 PM M-F | Verify all agents ran, data is fresh | `health_report.json` |
-| **Pattern Discoverer** | Sun 6 PM | Weekly: find systematic biases in predictions | `patterns.json` |
-| **RL Trainer** | Sun 2:00 AM | Retrain DQN strategy selector | `rl_models/dqn_latest.zip` |
+| **Earnings Calendar** | Pre-market (startup) | Check earnings blackout windows | `earnings_calendar/output.json` |
+| **Sentiment Agent** | Pre-market (startup) | FinBERT sentiment on 24h headlines | `sentiment/scores.json` |
+| **Market Scanner** | Pre-market (startup) | Screen & select equities from 80-stock universe | Updates `.env` EQUITY_SYMBOLS |
+| **LLM Analyst** | Pre-market (startup) | 4-stage Claude analysis pipeline | `convictions.json`, `macro_report.json` |
+| **Trade Analyzer** | 5:03 PM M-F | Daily P&L, per-strategy metrics | `analyzer/reports/<date>.json` |
+| **Conviction Scorer** | 5:05 PM M-F | Score prediction accuracy, write feedback | `feedback/<date>.json` |
+| **Health Check** | 7:07 PM M-F | Verify all agents ran, data is fresh | `health_report.json` |
+| **Strategy Optimizer** | Sun 2:13 AM | Backtest 9 strategies x all symbols | `strategy_assignments.json` |
+| **RL Trainer** | Sun 2:43 AM | Retrain DQN strategy selector | `rl_models/dqn_latest.zip` |
+| **Pattern Discoverer** | Sun 6:00 PM | Weekly: find systematic biases in predictions | `patterns.json` |
 
-All agents communicate through **JSON files** in the `data/` directory. No agent imports another agent's code.
+Pre-market agents run **in parallel** on engine container startup (~2-3 min). Post-market and weekly agents run via cron (supercronic in Docker, times in US Eastern, DST-aware). All agents communicate through **JSON files** in the `data/` directory. No agent imports another agent's code.
 
 ---
 
@@ -354,13 +378,27 @@ v3 adds production-grade infrastructure, all behind feature flags:
 - **Freshness Validation** — Skips stale sentiment/LLM data (> 24h old)
 
 ### Execution & Performance
+- **VWAP/TWAP Execution** — Splits large orders into time-sliced child orders to reduce market impact
+- **Transaction Cost Model** — Estimates slippage, spread, and commission before trade; adjusts position size
 - **Parallel Data Fetching** — ThreadPoolExecutor for concurrent bar fetching across symbols
 - **DB Rotation** — Archives old rows, vacuums database to prevent unbounded growth
+
+### Portfolio Optimization
+- **Kelly Criterion Sizing** — Optimal position sizing from win rate and payoff ratio (fractional Kelly, default 0.25)
+- **Mean-Variance Optimization** — Markowitz-style allocation maximizing Sharpe ratio with no-short constraints
+- **Monte Carlo Simulation** — Bootstrap resampling for VaR, CVaR, and max drawdown distributions (backtest integration)
 
 ### Monitoring & Ops
 - **Hot Config Reload** — Reloads risk params and feature flags from `.env` without restart
 - **Drift Detection** — Compares recent 7 days of trades against baseline, flags degradation
 - **Walk-Forward Backtesting** — Rolling-window validation to detect strategy overfitting
+- **Position Reconciliation** — Detects drift between engine state and broker positions
+
+### Deployment
+- **Docker Compose** — 3-service orchestration (engine + dashboard + agents) with named volumes
+- **Automated Startup** — Mac wake → Docker up → pre-market agents (parallel) → engine start
+- **Watchdog** — Post-startup verification that all containers are healthy
+- **Supercronic** — Container-friendly cron for post-market and weekly agent scheduling (US Eastern, DST-aware)
 
 ---
 
@@ -431,6 +469,53 @@ python main.py --status
 ./bot.sh status    # Check bot status + account info
 ```
 
+---
+
+## Docker Deployment
+
+The recommended way to run the system in production:
+
+```bash
+# Build and start all services (engine + dashboard + agents)
+./bot.sh docker-up
+
+# Or use the startup script (handles Docker Desktop, retries, health checks)
+bash scripts/startup.sh
+
+# Check status
+./bot.sh docker-status
+
+# Follow logs
+./bot.sh docker-logs engine
+./bot.sh docker-logs agents
+
+# Stop everything
+./bot.sh docker-down
+```
+
+### Architecture (Docker)
+
+| Service | Container | Purpose |
+|---------|-----------|---------|
+| `engine` | `algo-engine` | Pre-market agents (on startup) → trading engine |
+| `dashboard` | `algo-dashboard` | Flask web UI on port 5050 |
+| `agents` | `algo-agents` | Post-market + weekly agents via supercronic |
+
+All services share a named volume (`db-data`) for SQLite and bind-mounted `./data` and `./logs` directories.
+
+### Automated Daily Startup
+
+The system is configured to start automatically on weekday mornings:
+
+1. **5:50 AM** — Mac wakes (via `pmset`)
+2. **5:58 AM** — `scripts/startup.sh` starts Docker, runs pre-market agents, launches engine
+3. **6:45 AM** — Watchdog verifies all containers are running
+
+To set up Mac auto-wake (one-time):
+```bash
+sudo pmset repeat wakeorpoweron MTWRF 05:50:00
+```
+
 ### Enabling AI Features
 
 **Sentiment Analysis** (no API key required, runs locally):
@@ -481,6 +566,18 @@ PARALLEL_FETCH_ENABLED=true
 DB_ROTATION_ENABLED=true
 HOT_RELOAD_ENABLED=true
 DRIFT_DETECTION_ENABLED=true
+POSITION_RECONCILIATION_ENABLED=true
+TC_ENABLED=true
+VWAP_TWAP_ENABLED=true
+EARNINGS_CALENDAR_ENABLED=true
+
+# Portfolio optimization (choose one):
+PORTFOLIO_OPTIMIZATION_ENABLED=true
+KELLY_SIZING_ENABLED=true         # Kelly criterion sizing
+# MEAN_VARIANCE_ENABLED=true      # Or mean-variance (mutually exclusive)
+
+# Monte Carlo (backtest only):
+MONTE_CARLO_ENABLED=true
 ```
 
 ---
@@ -545,6 +642,17 @@ DRIFT_DETECTION_ENABLED=true
 | `HOT_RELOAD_ENABLED` | `false` | Live config reload without restart |
 | `DRIFT_DETECTION_ENABLED` | `false` | Strategy degradation monitoring |
 | `DRIFT_LOOKBACK_DAYS` | `7` | Window for drift comparison |
+| `VWAP_TWAP_ENABLED` | `false` | VWAP/TWAP order splitting |
+| `VWAP_MIN_NOTIONAL` | `5000` | Min order size for algo execution |
+| `TC_ENABLED` | `false` | Transaction cost model |
+| `POSITION_RECONCILIATION_ENABLED` | `false` | Broker-engine position sync |
+| `ALERTING_ENABLED` | `false` | Alert notifications |
+| `PORTFOLIO_OPTIMIZATION_ENABLED` | `false` | Portfolio optimizer |
+| `KELLY_SIZING_ENABLED` | `false` | Kelly criterion position sizing |
+| `KELLY_FRACTION` | `0.25` | Fractional Kelly scaling (0-1) |
+| `MEAN_VARIANCE_ENABLED` | `false` | Mean-variance allocation |
+| `MONTE_CARLO_ENABLED` | `false` | Monte Carlo simulation (backtest) |
+| `EARNINGS_CALENDAR_ENABLED` | `false` | Earnings blackout guard |
 
 ---
 
@@ -553,7 +661,7 @@ DRIFT_DETECTION_ENABLED=true
 ### Bot Commands (`bot.sh`)
 
 ```bash
-# Lifecycle
+# Local (no Docker)
 ./bot.sh start       # Start the trading bot (background)
 ./bot.sh stop        # Stop the trading bot
 ./bot.sh dash        # Start web dashboard (http://localhost:5050)
@@ -562,12 +670,22 @@ DRIFT_DETECTION_ENABLED=true
 ./bot.sh down        # Stop everything
 ./bot.sh status      # Show bot status + account info
 ./bot.sh logs        # Follow live bot logs
+./bot.sh reload      # Hot-reload .env config (SIGHUP)
+
+# Docker (production)
+./bot.sh docker-up       # Start all services (engine + dashboard + agents)
+./bot.sh docker-down     # Stop all services
+./bot.sh docker-status   # Show container status + account info
+./bot.sh docker-logs     # Follow engine logs (or: docker-logs agents)
+./bot.sh docker-reload   # Hot-reload .env config
+./bot.sh docker-backtest # Run backtest in container
+./bot.sh docker-test     # Run test suite in container
 
 # Analysis
 ./bot.sh backtest    # Run strategy backtest
 ./bot.sh compare     # Compare all 9 strategies (no trading)
 
-# Agents
+# Agents (local)
 ./bot.sh health      # Run system health check
 ./bot.sh optimizer   # Run Strategy Optimizer
 ./bot.sh scanner     # Run Market Scanner
@@ -575,6 +693,7 @@ DRIFT_DETECTION_ENABLED=true
 ./bot.sh llm         # Run LLM Analyst Agent (Claude)
 ./bot.sh rl-train    # Run RL Trainer Agent (DQN)
 ./bot.sh analyzer    # Run Trade Analyzer
+./bot.sh earnings    # Run Earnings Calendar Agent
 ./bot.sh agents      # Run all agents in sequence
 ./bot.sh test        # Run full test suite
 ```
@@ -592,7 +711,7 @@ python main.py --status     # Show account status and recent trades
 ## Testing
 
 ```bash
-# Run full suite (869 tests)
+# Run full suite (1324 tests)
 python -m pytest tests/ -x -q
 
 # Run with coverage report
@@ -605,7 +724,7 @@ python -m pytest tests/test_conviction_scorer.py -v
 python -m pytest tests/test_order_manager.py -v
 ```
 
-Current: **869 tests, ~95% line coverage**.
+Current: **1324 tests, ~95% line coverage**.
 
 ---
 
@@ -613,7 +732,8 @@ Current: **869 tests, ~95% line coverage**.
 
 ```
 algo-trader/
-├── agents/                              # 10 autonomous agents
+├── agents/                              # 11 autonomous agents
+│   ├── earnings_calendar.py             # Pre-market: earnings blackout detection
 │   ├── health_check.py                  # System validation (pytest, files, DB, imports)
 │   ├── strategy_optimizer.py            # Backtest 9 strategies, assign best per symbol
 │   ├── market_scanner.py                # Screen 80 stocks, select 10-20 for trading
@@ -629,13 +749,21 @@ algo-trader/
 │   ├── engine.py                        # Main 60s trading loop
 │   ├── broker.py                        # Alpaca API (crypto + equities, orders, bars)
 │   ├── risk_manager.py                  # Trailing stops, ATR stops, position sizing, drawdown
-│   ├── signal_modifiers.py              # Sentiment + LLM conviction blending + freshness
+│   ├── signal_modifiers.py              # Sentiment + LLM + MTF + earnings modifiers
 │   ├── order_manager.py                 # Order lifecycle tracking, slippage computation
+│   ├── execution_algo.py               # VWAP/TWAP order splitting for large orders
+│   ├── portfolio_optimizer.py           # Kelly criterion + mean-variance optimization
+│   ├── monte_carlo.py                   # Bootstrap Monte Carlo simulation (VaR, CVaR)
+│   ├── transaction_costs.py             # Slippage, spread, commission estimation
+│   ├── portfolio_metrics.py             # Sortino, Calmar, expectancy, drawdown analysis
+│   ├── position_reconciler.py           # Broker ↔ engine state sync
 │   ├── state_store.py                   # SQLite persistence (stops, cooldowns, PDT, orders)
 │   ├── data_fetcher.py                  # Parallel bar fetching (ThreadPoolExecutor)
 │   ├── config_reloader.py               # Hot-reload .env without restart
+│   ├── alerting.py                      # Alert notifications
 │   ├── drift_detector.py               # Strategy degradation monitoring
 │   ├── walk_forward.py                  # Walk-forward backtesting (overfitting detection)
+│   ├── multi_timeframe.py              # Multi-timeframe signal filter
 │   ├── influencer_registry.py           # 15 key figures, keyword matching, impact patterns
 │   ├── news_client.py                   # Alpaca News API client
 │   ├── sentiment_analyzer.py            # FinBERT pipeline wrapper
@@ -677,18 +805,27 @@ algo-trader/
 │   ├── rl_models/                       # Trained DQN models
 │   └── history/                         # Daily archives
 │
-├── tests/                               # 869 tests, ~95% coverage
+├── tests/                               # 1324 tests, ~95% coverage
 │   ├── conftest.py                      # Shared fixtures
-│   └── test_*.py                        # ~40 test files
+│   └── test_*.py                        # 45 test files
+│
+├── scripts/                             # Deployment & orchestration
+│   ├── startup.sh                       # Reliable startup (Docker check, retries, health)
+│   ├── entrypoint.sh                    # Engine container entrypoint (agents → engine)
+│   └── run_premarket.sh                 # Parallelized pre-market agent pipeline
 │
 ├── config.py                            # Environment-based configuration (all feature flags)
 ├── main.py                              # Entry point (bot, backtest, status)
 ├── dashboard.py                         # Flask web dashboard (:5050)
-├── backtest.py                          # Historical backtester
+├── backtest.py                          # Historical backtester (+ Monte Carlo)
 ├── compare_strategies.py                # Strategy benchmarking tool
-├── bot.sh                               # CLI wrapper for all commands
+├── bot.sh                               # CLI wrapper for all commands (local + Docker)
+├── Dockerfile                           # Python 3.11-slim + supercronic
+├── docker-compose.yml                   # 3-service orchestration
+├── crontab                              # Agent schedule (US Eastern, DST-aware)
 ├── requirements.txt                     # Python dependencies
 ├── .env.example                         # Environment template
+├── .dockerignore                        # Docker build exclusions
 ├── .coveragerc                          # Coverage configuration
 ├── CLAUDE.md                            # Claude Code development guidelines
 └── .gitignore                           # Excludes .env, trades.db, data/, logs/
@@ -729,5 +866,7 @@ The system is designed to **never fail due to a missing AI component**:
 | Database | SQLite (`trades.db`) |
 | Dashboard | Flask (port 5050) |
 | Console UI | Rich library |
-| Testing | pytest (869 tests) |
-| Scheduling | cron / bot.sh |
+| Testing | pytest (1324 tests) |
+| Containers | Docker Compose (3 services) |
+| Cron (Docker) | Supercronic (DST-aware) |
+| Scheduling | pmset wake + scheduled tasks |

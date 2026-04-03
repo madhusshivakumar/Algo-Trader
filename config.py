@@ -103,12 +103,20 @@ class Config:
     DB_ROTATION_ENABLED = os.getenv("DB_ROTATION_ENABLED", "false").lower() == "true"
     DB_ROTATION_MAX_ROWS = int(os.getenv("DB_ROTATION_MAX_ROWS", "50000"))
     DB_ROTATION_KEEP_DAYS = int(os.getenv("DB_ROTATION_KEEP_DAYS", "30"))
+    DB_ROTATION_MAX_AGE_DAYS = int(os.getenv("DB_ROTATION_MAX_AGE_DAYS", "90"))
 
     # Sprint 4: Backtesting & monitoring
     HOT_RELOAD_ENABLED = os.getenv("HOT_RELOAD_ENABLED", "false").lower() == "true"
     DRIFT_DETECTION_ENABLED = os.getenv("DRIFT_DETECTION_ENABLED", "false").lower() == "true"
     DRIFT_LOOKBACK_DAYS = int(os.getenv("DRIFT_LOOKBACK_DAYS", "7"))
     DRIFT_MIN_TRADES = int(os.getenv("DRIFT_MIN_TRADES", "5"))
+
+    # ── Transaction Cost Modeling ──────────────────────────────────────
+    TC_ENABLED = os.getenv("TC_ENABLED", "false").lower() == "true"
+    TC_COMMISSION_PCT = float(os.getenv("TC_COMMISSION_PCT", "0.0"))
+    TC_SPREAD_BPS_EQUITY = float(os.getenv("TC_SPREAD_BPS_EQUITY", "5.0"))
+    TC_SPREAD_BPS_CRYPTO = float(os.getenv("TC_SPREAD_BPS_CRYPTO", "15.0"))
+    TC_SLIPPAGE_BPS = float(os.getenv("TC_SLIPPAGE_BPS", "3.0"))
 
     # ── Multi-Timeframe Analysis ──────────────────────────────────────
     MTF_ENABLED = os.getenv("MTF_ENABLED", "false").lower() == "true"
@@ -119,6 +127,36 @@ class Config:
     RECONCILIATION_INTERVAL_CYCLES = max(1, int(os.getenv("RECONCILIATION_INTERVAL_CYCLES", "10")))
     RECONCILIATION_AUTO_FIX = os.getenv("RECONCILIATION_AUTO_FIX", "false").lower() == "true"
     RECONCILIATION_ENTRY_TOLERANCE = float(os.getenv("RECONCILIATION_ENTRY_TOLERANCE", "0.02"))
+
+    # ── Earnings Calendar Awareness ─────────────────────────────────
+    EARNINGS_CALENDAR_ENABLED = os.getenv("EARNINGS_CALENDAR_ENABLED", "false").lower() == "true"
+    EARNINGS_BLACKOUT_DAYS = int(os.getenv("EARNINGS_BLACKOUT_DAYS", "2"))
+    EARNINGS_CLOSE_POSITIONS = os.getenv("EARNINGS_CLOSE_POSITIONS", "false").lower() == "true"
+    EARNINGS_SIZE_REDUCTION = float(os.getenv("EARNINGS_SIZE_REDUCTION", "0.5"))
+
+    # ── VWAP/TWAP Execution ─────────────────────────────────────────
+    VWAP_TWAP_ENABLED = os.getenv("VWAP_TWAP_ENABLED", "false").lower() == "true"
+    VWAP_TWAP_ALGO = os.getenv("VWAP_TWAP_ALGO", "twap")
+    VWAP_TWAP_NUM_SLICES = int(os.getenv("VWAP_TWAP_NUM_SLICES", "5"))
+    VWAP_TWAP_INTERVAL_SECONDS = int(os.getenv("VWAP_TWAP_INTERVAL_SECONDS", "60"))
+    VWAP_TWAP_MIN_NOTIONAL = float(os.getenv("VWAP_TWAP_MIN_NOTIONAL", "100.0"))
+    VWAP_VOLUME_LOOKBACK_DAYS = int(os.getenv("VWAP_VOLUME_LOOKBACK_DAYS", "5"))
+
+    # ── Monte Carlo Simulation ────────────────────────────────────────
+    MONTE_CARLO_ENABLED = os.getenv("MONTE_CARLO_ENABLED", "false").lower() == "true"
+    MONTE_CARLO_NUM_SIMULATIONS = int(os.getenv("MONTE_CARLO_NUM_SIMULATIONS", "1000"))
+    MONTE_CARLO_CONFIDENCE_LEVELS = [0.95, 0.99]  # VaR confidence levels
+    MONTE_CARLO_HORIZON_DAYS = int(os.getenv("MONTE_CARLO_HORIZON_DAYS", "252"))
+
+    # ── Portfolio Optimization ────────────────────────────────────────
+    PORTFOLIO_OPTIMIZATION_ENABLED = os.getenv("PORTFOLIO_OPTIMIZATION_ENABLED", "false").lower() == "true"
+    KELLY_SIZING_ENABLED = os.getenv("KELLY_SIZING_ENABLED", "false").lower() == "true"
+    KELLY_FRACTION = float(os.getenv("KELLY_FRACTION", "0.25"))  # fractional Kelly (conservative)
+    KELLY_MIN_TRADES = int(os.getenv("KELLY_MIN_TRADES", "20"))  # min trades for reliable estimate
+    MEAN_VARIANCE_ENABLED = os.getenv("MEAN_VARIANCE_ENABLED", "false").lower() == "true"
+    MEAN_VARIANCE_LOOKBACK_DAYS = int(os.getenv("MEAN_VARIANCE_LOOKBACK_DAYS", "60"))
+    MEAN_VARIANCE_RISK_FREE_RATE = float(os.getenv("MEAN_VARIANCE_RISK_FREE_RATE", "0.05"))
+    MAX_SINGLE_POSITION_PCT = float(os.getenv("MAX_SINGLE_POSITION_PCT", "0.35"))
 
     # ── Alerting ──────────────────────────────────────────────────────
     ALERTING_ENABLED = os.getenv("ALERTING_ENABLED", "false").lower() == "true"

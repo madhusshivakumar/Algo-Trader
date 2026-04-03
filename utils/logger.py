@@ -8,7 +8,8 @@ from rich.table import Table
 
 console = Console()
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "trades.db")
+DB_PATH = os.environ.get("DB_PATH",
+                         os.path.join(os.path.dirname(os.path.dirname(__file__)), "trades.db"))
 
 
 class Logger:

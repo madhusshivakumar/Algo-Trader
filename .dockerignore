@@ -1,0 +1,45 @@
+# Git
+.git
+.gitignore
+
+# Python
+.venv
+__pycache__
+*.pyc
+*.egg-info
+.pytest_cache
+.coverage
+htmlcov
+
+# IDE
+.idea
+.vscode
+*.swp
+
+# Runtime state (mounted as volumes, not baked into image)
+.env
+trades.db
+logs/
+data/sentiment/scores.json
+data/llm_analyst/
+data/rl_models/*.zip
+data/agent_state.json
+data/health_report.json
+data/analyzer/reports/
+data/optimizer/backtest_results.json
+data/optimizer/strategy_assignments.json
+data/scanner/
+
+# Bot PID files (not used in Docker)
+.bot.pid
+.dashboard.pid
+
+# Claude
+.claude
+
+# OS
+.DS_Store
+
+# Docker
+Dockerfile
+docker-compose.yml

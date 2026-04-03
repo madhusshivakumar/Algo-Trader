@@ -1,0 +1,31 @@
+# ============================================================
+#  Algo Trader — Agent Schedule
+#
+#  Pre-market agents (earnings, sentiment, scanner, LLM) run
+#  on engine startup via scripts/entrypoint.sh (~2-3 min).
+#
+#  This crontab handles post-market and weekly jobs only.
+#  Times are US Eastern (container TZ=America/New_York).
+#  DST is handled automatically.
+# ============================================================
+
+# ── Post-Market (weekdays) ────────────────────────────────────
+# Trade analyzer — daily P&L report (5:03 PM ET)
+3 17 * * 1-5 cd /app && python agents/trade_analyzer.py >> /app/logs/agents.log 2>&1
+
+# Conviction scorer — score LLM predictions against actual moves (5:05 PM ET)
+5 17 * * 1-5 cd /app && python agents/conviction_scorer.py >> /app/logs/agents.log 2>&1
+
+# Health check — system validation (7:07 PM ET)
+7 19 * * 1-5 cd /app && python agents/health_check.py >> /app/logs/agents.log 2>&1
+
+# ── Weekly (Sunday) ───────────────────────────────────────────
+# Strategy optimizer — backtest all strategies, reassign symbols
+# Runs weekly because results are stable day-to-day (~15-25 min)
+13 2 * * 0 cd /app && python agents/strategy_optimizer.py >> /app/logs/agents.log 2>&1
+
+# RL trainer — retrain DQN model
+43 2 * * 0 cd /app && python agents/rl_trainer.py >> /app/logs/agents.log 2>&1
+
+# Pattern discoverer — LLM-powered pattern discovery from prediction feedback (6:00 PM ET Sunday)
+0 18 * * 0 cd /app && python agents/pattern_discoverer.py >> /app/logs/agents.log 2>&1
