@@ -41,9 +41,12 @@ class TestEngineCooldown:
     def test_record_trade(self):
         engine = TradingEngine.__new__(TradingEngine)
         engine._last_trade_time = {}
+        engine._daily_trade_count = {}
+        engine._daily_trade_date = ""
         engine._record_trade("AAPL")
         assert "AAPL" in engine._last_trade_time
         assert time.time() - engine._last_trade_time["AAPL"] < 1
+        assert engine._daily_trade_count.get("equity", 0) == 1
 
 
 class TestEnginePDT:
@@ -77,8 +80,73 @@ class TestEngineConstants:
     """Test engine class-level constants."""
 
     def test_cooldown_values(self):
-        assert TradingEngine.COOLDOWN_CRYPTO == 900   # 15 min
+        assert TradingEngine.COOLDOWN_CRYPTO == 2700  # 45 min
         assert TradingEngine.COOLDOWN_EQUITY == 300   # 5 min
 
     def test_crypto_cooldown_longer_than_equity(self):
         assert TradingEngine.COOLDOWN_CRYPTO > TradingEngine.COOLDOWN_EQUITY
+
+
+class TestDailyTradeLimit:
+    """Test daily trade limit enforcement."""
+
+    def _make_engine(self):
+        engine = TradingEngine.__new__(TradingEngine)
+        engine._last_trade_time = {}
+        engine._daily_trade_count = {}
+        engine._daily_trade_date = ""
+        engine.cycle_count = 0
+        return engine
+
+    def test_no_limit_initially(self):
+        engine = self._make_engine()
+        assert engine._is_daily_trade_limit_reached("AAPL") is False
+        assert engine._is_daily_trade_limit_reached("BTC/USD") is False
+
+    @patch.object(Config, "MAX_TRADES_PER_DAY_EQUITY", 2)
+    def test_equity_limit_reached(self):
+        engine = self._make_engine()
+        engine._record_trade("AAPL")
+        engine._record_trade("NVDA")
+        assert engine._is_daily_trade_limit_reached("META") is True
+
+    @patch.object(Config, "MAX_TRADES_PER_DAY_CRYPTO", 3)
+    def test_crypto_limit_reached(self):
+        engine = self._make_engine()
+        engine._record_trade("BTC/USD")
+        engine._record_trade("ETH/USD")
+        engine._record_trade("BTC/USD")
+        assert engine._is_daily_trade_limit_reached("BTC/USD") is True
+
+    @patch.object(Config, "MAX_TRADES_PER_DAY_EQUITY", 2)
+    @patch.object(Config, "MAX_TRADES_PER_DAY_CRYPTO", 3)
+    def test_equity_limit_doesnt_affect_crypto(self):
+        engine = self._make_engine()
+        engine._record_trade("AAPL")
+        engine._record_trade("NVDA")
+        # Equity limit reached, but crypto should still be allowed
+        assert engine._is_daily_trade_limit_reached("META") is True
+        assert engine._is_daily_trade_limit_reached("BTC/USD") is False
+
+    def test_record_trade_increments_count(self):
+        engine = self._make_engine()
+        engine._record_trade("AAPL")
+        assert engine._daily_trade_count.get("equity") == 1
+        engine._record_trade("BTC/USD")
+        assert engine._daily_trade_count.get("crypto") == 1
+        engine._record_trade("NVDA")
+        assert engine._daily_trade_count.get("equity") == 2
+
+
+class TestMinSignalStrength:
+    """Test that MIN_SIGNAL_STRENGTH config exists and has correct default."""
+
+    def test_default_value(self):
+        assert Config.MIN_SIGNAL_STRENGTH == 0.55
+
+    def test_max_trades_per_day_defaults(self):
+        assert Config.MAX_TRADES_PER_DAY_CRYPTO == 8
+        assert Config.MAX_TRADES_PER_DAY_EQUITY == 4
+
+    def test_max_single_position_pct_lowered(self):
+        assert Config.MAX_SINGLE_POSITION_PCT == 0.25

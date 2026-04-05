@@ -13,6 +13,7 @@ Workflow:
 
 import json
 import os
+import tempfile
 import sys
 from datetime import datetime, timedelta, date
 
@@ -59,8 +60,14 @@ def archive_predictions(convictions_data: dict):
         "overall_bias": convictions_data.get("overall_bias", "neutral"),
     }
 
-    with open(archive_path, "w") as f:
-        json.dump(archive, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(archive_path), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(archive, f, indent=2)
+        os.replace(tmp_path, archive_path)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
     log.info(f"Archived predictions for {today} ({len(archive['convictions'])} symbols)")
 
 
@@ -204,8 +211,14 @@ def write_feedback(feedback: dict):
     _ensure_dirs()
     feedback_date = feedback.get("date", date.today().isoformat())
     path = os.path.join(_FEEDBACK_DIR, f"{feedback_date}.json")
-    with open(path, "w") as f:
-        json.dump(feedback, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(path), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(feedback, f, indent=2)
+        os.replace(tmp_path, path)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
     log.info(f"Wrote feedback for {feedback_date}: "
              f"{feedback['total_correct']}/{feedback['total_scored']} correct "
              f"({feedback['overall_direction_accuracy']:.0%})")
@@ -295,8 +308,14 @@ def update_summary():
             "recent_days": recent_days,
         }
 
-    with open(_SUMMARY_FILE, "w") as f:
-        json.dump(summary, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(_SUMMARY_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(summary, f, indent=2)
+        os.replace(tmp_path, _SUMMARY_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
     log.info(f"Updated feedback summary: {summary['total_days']} days, "
              f"accuracy={summary['overall_accuracy']:.0%}")
 

@@ -11,6 +11,7 @@ Crypto symbols are skipped (no earnings).
 import json
 import os
 import sys
+import tempfile
 from datetime import datetime, timedelta
 
 # Ensure project root is on sys.path when run as a script
@@ -139,8 +140,14 @@ def run_analysis(symbols: list[str] | None = None,
 def write_output(data: dict):
     """Write earnings data to JSON for signal_modifiers to read."""
     _ensure_data_dir()
-    with open(_OUTPUT_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(_OUTPUT_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(data, f, indent=2)
+        os.replace(tmp_path, _OUTPUT_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
     log.success(f"Wrote earnings calendar for {len(data.get('earnings', {}))} symbols")
 
 

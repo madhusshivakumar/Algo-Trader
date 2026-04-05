@@ -1,15 +1,14 @@
 """Live trading dashboard — web UI for monitoring the bot."""
 
-import os
 import sqlite3
-import json
 from datetime import datetime
+from markupsafe import escape
 from flask import Flask, jsonify, render_template_string
 from core.broker import Broker
 from config import Config
+from utils.logger import DB_PATH
 
 app = Flask(__name__)
-DB_PATH = os.environ.get("DB_PATH", "trades.db")
 
 
 def get_broker():
@@ -19,9 +18,11 @@ def get_broker():
 def query_db(sql, args=()):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
-    rows = conn.execute(sql, args).fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
+    try:
+        rows = conn.execute(sql, args).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
 
 
 @app.route("/api/account")
@@ -35,6 +36,11 @@ def api_account():
 @app.route("/api/trades")
 def api_trades():
     trades = query_db("SELECT * FROM trades ORDER BY id DESC LIMIT 50")
+    # Sanitize string fields to prevent XSS when rendered in dashboard
+    for t in trades:
+        for key in ("symbol", "side", "reason", "strategy", "timestamp"):
+            if key in t and t[key] is not None:
+                t[key] = str(escape(str(t[key])))
     return jsonify(trades)
 
 
@@ -46,15 +52,26 @@ def api_equity():
 
 @app.route("/api/stats")
 def api_stats():
+    # Per-trade wins/losses from local DB (engine-computed PnL)
     trades = query_db("SELECT * FROM trades")
     buys = [t for t in trades if t["side"] == "buy"]
     sells = [t for t in trades if t["side"] == "sell"]
     wins = [t for t in sells if (t.get("pnl") or 0) > 0]
     losses = [t for t in sells if (t.get("pnl") or 0) < 0]
-    total_pnl = sum(t.get("pnl") or 0 for t in trades)
     win_rate = (len(wins) / len(sells) * 100) if sells else 0
     avg_win = sum(t["pnl"] for t in wins) / len(wins) if wins else 0
     avg_loss = sum(t["pnl"] for t in losses) / len(losses) if losses else 0
+
+    # Total P&L from broker (authoritative: current equity - starting capital)
+    try:
+        broker = get_broker()
+        account = broker.get_account()
+        equity = float(account.get("equity", 0))
+        # Starting capital from portfolio history base_value, fall back to 100k
+        total_pnl = equity - Config.STARTING_CAPITAL
+    except Exception:
+        # Fall back to summing trade PnL if broker unavailable
+        total_pnl = sum(t.get("pnl") or 0 for t in trades)
 
     return jsonify({
         "total_trades": len(buys),
@@ -346,6 +363,7 @@ setInterval(refresh, 5000);
 """
 
 if __name__ == "__main__":
+    import os
     print("\n  Dashboard: http://localhost:5050\n")
     host = os.environ.get("DASHBOARD_HOST", "127.0.0.1")
     app.run(host=host, port=5050, debug=False)

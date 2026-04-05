@@ -11,6 +11,7 @@ import os
 import re
 import sqlite3
 import sys
+import tempfile
 import time
 from collections import defaultdict
 from datetime import datetime
@@ -339,10 +340,14 @@ def apply_risk_adjustments(adjustments: dict):
         changed = True
 
     if changed:
-        tmp = ENV_FILE + ".tmp"
-        with open(tmp, "w") as f:
-            f.write(content)
-        os.rename(tmp, ENV_FILE)
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(ENV_FILE), suffix=".tmp")
+        try:
+            with os.fdopen(tmp_fd, "w") as f:
+                f.write(content)
+            os.replace(tmp_path, ENV_FILE)
+        except Exception:
+            os.unlink(tmp_path)
+            raise
 
 
 def update_learnings(findings: dict):
@@ -372,10 +377,14 @@ def update_learnings(findings: dict):
     # Simple approach: keep last 90 entries
     learnings["entries"] = learnings["entries"][-90:]
 
-    tmp = LEARNINGS_FILE + ".tmp"
-    with open(tmp, "w") as f:
-        json.dump(learnings, f, indent=2)
-    os.rename(tmp, LEARNINGS_FILE)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(LEARNINGS_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(learnings, f, indent=2)
+        os.replace(tmp_path, LEARNINGS_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
 
 
 def update_fallback_config(net_pnl: float):
@@ -415,10 +424,14 @@ def update_fallback_config(net_pnl: float):
     except ImportError:
         pass
 
-    tmp = FALLBACK_FILE + ".tmp"
-    with open(tmp, "w") as f:
-        json.dump(fallback, f, indent=2)
-    os.rename(tmp, FALLBACK_FILE)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(FALLBACK_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(fallback, f, indent=2)
+        os.replace(tmp_path, FALLBACK_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
     print(f"  Updated fallback config (profitable day: ${net_pnl:.2f})")
 
 
@@ -440,8 +453,14 @@ def update_agent_state(status: str, trades_analyzed: int = 0, error: str = None,
         "error": error,
     }
 
-    with open(AGENT_STATE_FILE, "w") as f:
-        json.dump(state, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(AGENT_STATE_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(state, f, indent=2)
+        os.replace(tmp_path, AGENT_STATE_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
 
 
 def main():
@@ -476,11 +495,12 @@ def main():
         time_analysis = analyze_time_of_day(trades)
         patterns = detect_patterns(by_symbol, by_strategy, trades)
 
-        # Get current risk params
+        # Get current risk params from Config (single source of truth)
+        from config import Config
         current_risk = {
-            "stop_loss_pct": float(os.getenv("STOP_LOSS_PCT", "0.025")),
-            "max_position_pct": float(os.getenv("MAX_POSITION_PCT", "0.50")),
-            "daily_drawdown_limit": float(os.getenv("DAILY_DRAWDOWN_LIMIT", "0.10")),
+            "stop_loss_pct": Config.STOP_LOSS_PCT,
+            "max_position_pct": Config.MAX_POSITION_PCT,
+            "daily_drawdown_limit": Config.DAILY_DRAWDOWN_LIMIT,
         }
         risk_adjustments = compute_risk_adjustments(by_symbol, sells, current_risk)
 
@@ -516,8 +536,14 @@ def main():
         # Write report
         os.makedirs(REPORTS_DIR, exist_ok=True)
         report_file = os.path.join(REPORTS_DIR, f"{today}.json")
-        with open(report_file, "w") as f:
-            json.dump(report, f, indent=2)
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=REPORTS_DIR, suffix=".tmp")
+        try:
+            with os.fdopen(tmp_fd, "w") as f:
+                json.dump(report, f, indent=2)
+            os.replace(tmp_path, report_file)
+        except Exception:
+            os.unlink(tmp_path)
+            raise
         print(f"  Report: {report_file}")
 
         # Build learnings

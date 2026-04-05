@@ -62,7 +62,7 @@ _FALLBACK_FILE = os.path.join(_DATA_DIR, "fallback_config.json")
 # Default assignments (used if no agent files exist)
 _DEFAULT_MAP = {
     "BTC/USD": "mean_reversion_aggressive",
-    "ETH/USD": "volume_profile",
+    "ETH/USD": "mean_reversion_aggressive",
     "TSLA":    "mean_reversion_aggressive",
     "NVDA":    "mean_reversion_aggressive",
     "AMD":     "mean_reversion_aggressive",

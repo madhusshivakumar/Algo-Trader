@@ -18,6 +18,8 @@ class Logger:
 
     def _init_db(self):
         conn = sqlite3.connect(DB_PATH)
+        # WAL mode: allows concurrent reads from dashboard/agents while engine writes
+        conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("""
             CREATE TABLE IF NOT EXISTS trades (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -144,12 +146,14 @@ class Logger:
 
     def snapshot(self, equity: float, cash: float):
         conn = sqlite3.connect(DB_PATH)
-        conn.execute(
-            "INSERT INTO equity_snapshots (timestamp, equity, cash) VALUES (?,?,?)",
-            (_ts(), equity, cash),
-        )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute(
+                "INSERT INTO equity_snapshots (timestamp, equity, cash) VALUES (?,?,?)",
+                (_ts(), equity, cash),
+            )
+            conn.commit()
+        finally:
+            conn.close()
 
     def print_summary(self):
         conn = sqlite3.connect(DB_PATH)

@@ -38,9 +38,15 @@ class StateStore:
                 symbol TEXT PRIMARY KEY,
                 entry_price REAL,
                 highest_price REAL,
-                stop_pct REAL
+                stop_pct REAL,
+                entry_time REAL DEFAULT 0.0
             )
         """)
+        # Migration: add entry_time column if table existed before this change
+        try:
+            conn.execute("ALTER TABLE persisted_trailing_stops ADD COLUMN entry_time REAL DEFAULT 0.0")
+        except sqlite3.OperationalError:
+            pass  # Column already exists
         conn.execute("""
             CREATE TABLE IF NOT EXISTS persisted_cooldowns (
                 symbol TEXT PRIMARY KEY,
@@ -105,15 +111,16 @@ class StateStore:
     # ── Trailing stops ──────────────────────────────────────────────
 
     def save_trailing_stops(self, stops: dict) -> None:
-        """Save trailing stops. stops = {symbol: {entry_price, highest_price, stop_pct}}"""
+        """Save trailing stops. stops = {symbol: {entry_price, highest_price, stop_pct, entry_time}}"""
         conn = self._get_conn()
         try:
             conn.execute("DELETE FROM persisted_trailing_stops")
             for symbol, data in stops.items():
                 conn.execute(
-                    "INSERT INTO persisted_trailing_stops (symbol, entry_price, highest_price, stop_pct) "
-                    "VALUES (?, ?, ?, ?)",
-                    (symbol, data["entry_price"], data["highest_price"], data["stop_pct"]),
+                    "INSERT INTO persisted_trailing_stops (symbol, entry_price, highest_price, stop_pct, entry_time) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    (symbol, data["entry_price"], data["highest_price"], data["stop_pct"],
+                     data.get("entry_time", 0.0)),
                 )
             conn.commit()
         except Exception:
@@ -123,14 +130,15 @@ class StateStore:
             conn.close()
 
     def load_trailing_stops(self) -> dict:
-        """Returns {symbol: {entry_price, highest_price, stop_pct}}"""
+        """Returns {symbol: {entry_price, highest_price, stop_pct, entry_time}}"""
         conn = self._get_conn()
         try:
-            rows = conn.execute("SELECT symbol, entry_price, highest_price, stop_pct FROM persisted_trailing_stops").fetchall()
+            rows = conn.execute("SELECT symbol, entry_price, highest_price, stop_pct, entry_time FROM persisted_trailing_stops").fetchall()
         finally:
             conn.close()
         return {
-            row[0]: {"entry_price": row[1], "highest_price": row[2], "stop_pct": row[3]}
+            row[0]: {"entry_price": row[1], "highest_price": row[2], "stop_pct": row[3],
+                      "entry_time": row[4] if row[4] else 0.0}
             for row in rows
         }
 
@@ -249,9 +257,10 @@ class StateStore:
             conn.execute("DELETE FROM persisted_trailing_stops")
             for symbol, data in trailing_stops.items():
                 conn.execute(
-                    "INSERT INTO persisted_trailing_stops (symbol, entry_price, highest_price, stop_pct) "
-                    "VALUES (?, ?, ?, ?)",
-                    (symbol, data["entry_price"], data["highest_price"], data["stop_pct"]),
+                    "INSERT INTO persisted_trailing_stops (symbol, entry_price, highest_price, stop_pct, entry_time) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    (symbol, data["entry_price"], data["highest_price"], data["stop_pct"],
+                     data.get("entry_time", 0.0)),
                 )
 
             # Cooldowns

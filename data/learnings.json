@@ -47,6 +47,155 @@
           "ETH/USD"
         ]
       }
+    },
+    {
+      "date": "2026-03-31",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [
+          "TSLA"
+        ],
+        "worst_performing_symbols": [],
+        "strategy_notes": {
+          "Mean Rev Aggressive": "Strong: 67% win rate, $113.70 P&L"
+        },
+        "risk_observations": {
+          "avg_drawdown_pct": 0.1663,
+          "max_single_loss": -16.63,
+          "overall_win_rate": 50.0,
+          "total_pnl": 100.21
+        },
+        "patterns": [
+          "Strategy 'Mean Rev Aggressive' performing well: 67% win rate on 3 sells"
+        ],
+        "symbols_to_avoid": [],
+        "symbols_to_favor": [
+          "TSLA"
+        ],
+        "rl_comparison": {
+          "rl_selected": {
+            "trades": 0,
+            "sells": 0,
+            "pnl": 0,
+            "win_rate": 0
+          },
+          "optimizer_selected": {
+            "trades": 17,
+            "sells": 4,
+            "pnl": 100.21,
+            "win_rate": 50.0
+          },
+          "rl_better": null
+        }
+      }
+    },
+    {
+      "date": "2026-04-01",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [
+          "CRM",
+          "SOFI",
+          "INTC",
+          "TSLA",
+          "PLTR"
+        ],
+        "worst_performing_symbols": [
+          "OXY",
+          "XOM",
+          "XLE",
+          "VLO",
+          "BTC/USD"
+        ],
+        "strategy_notes": {
+          "mean_reversion_aggressive": "Weak: 12% win rate, $-169.42 P&L",
+          "Mean Rev Aggressive": "Strong: 100% win rate, $883.89 P&L"
+        },
+        "risk_observations": {
+          "avg_drawdown_pct": 0.6096,
+          "max_single_loss": -60.96,
+          "overall_win_rate": 41.7,
+          "total_pnl": 714.48
+        },
+        "patterns": [
+          "Had 4 consecutive losing trades",
+          "Strategy 'mean_reversion_aggressive' underperforming: 12% win rate on 8 sells",
+          "Strategy 'Mean Rev Aggressive' performing well: 100% win rate on 4 sells",
+          "Large loss: XOM lost $53.37 (trailing stop)",
+          "Large loss: VLO lost $60.96 (trailing stop)"
+        ],
+        "symbols_to_avoid": [
+          "OXY",
+          "XOM",
+          "XLE",
+          "VLO",
+          "BTC/USD"
+        ],
+        "symbols_to_favor": [
+          "CRM",
+          "SOFI",
+          "INTC",
+          "TSLA",
+          "PLTR"
+        ],
+        "rl_comparison": {
+          "rl_selected": {
+            "trades": 0,
+            "sells": 0,
+            "pnl": 0,
+            "win_rate": 0
+          },
+          "optimizer_selected": {
+            "trades": 21,
+            "sells": 12,
+            "pnl": 714.48,
+            "win_rate": 41.7
+          },
+          "rl_better": null
+        }
+      }
+    },
+    {
+      "date": "2026-04-03",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [],
+        "worst_performing_symbols": [],
+        "strategy_notes": {
+          "Mean Rev Aggressive": "Weak: 33% win rate, $1.43 P&L",
+          "Volume Profile": "Weak: 33% win rate, $-12.20 P&L"
+        },
+        "risk_observations": {
+          "avg_drawdown_pct": 0.0804,
+          "max_single_loss": -8.04,
+          "overall_win_rate": 33.3,
+          "total_pnl": -10.77
+        },
+        "patterns": [
+          "BTC/USD overtrading: 12 trades, 33% win rate, $1.43 P&L",
+          "ETH/USD overtrading: 7 trades, 33% win rate, $-12.20 P&L",
+          "Had 4 consecutive losing trades",
+          "Strategy 'Mean Rev Aggressive' underperforming: 33% win rate on 6 sells",
+          "Strategy 'Volume Profile' underperforming: 33% win rate on 3 sells"
+        ],
+        "symbols_to_avoid": [],
+        "symbols_to_favor": [],
+        "rl_comparison": {
+          "rl_selected": {
+            "trades": 0,
+            "sells": 0,
+            "pnl": 0,
+            "win_rate": 0
+          },
+          "optimizer_selected": {
+            "trades": 19,
+            "sells": 9,
+            "pnl": -10.77,
+            "win_rate": 33.3
+          },
+          "rl_better": null
+        }
+      }
     }
   ]
 }

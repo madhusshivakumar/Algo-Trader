@@ -9,6 +9,7 @@ import json
 import os
 import sys
 import subprocess
+import tempfile
 import time
 from datetime import datetime, timedelta
 
@@ -429,8 +430,14 @@ def update_agent_state(status: str, duration: float, issues_count: int):
         "error": None,
     }
 
-    with open(AGENT_STATE_FILE, "w") as f:
-        json.dump(state, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(AGENT_STATE_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(state, f, indent=2)
+        os.replace(tmp_path, AGENT_STATE_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
 
 
 def main():
@@ -564,8 +571,14 @@ def main():
         },
     }
 
-    with open(HEALTH_REPORT_FILE, "w") as f:
-        json.dump(report, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(HEALTH_REPORT_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(report, f, indent=2)
+        os.replace(tmp_path, HEALTH_REPORT_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
     print(f"  Report: {HEALTH_REPORT_FILE}")
 
     update_agent_state(status, duration, len(all_issues))

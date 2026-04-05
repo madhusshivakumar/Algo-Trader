@@ -10,6 +10,7 @@ creating a self-improving feedback loop.
 import json
 import os
 import sys
+import tempfile
 from datetime import datetime, timedelta, date
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -196,8 +197,14 @@ def save_patterns(discovery_result: dict):
         },
     }
 
-    with open(_PATTERNS_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(_PATTERNS_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(data, f, indent=2)
+        os.replace(tmp_path, _PATTERNS_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
     log.info(f"Saved {len(deduped)} patterns ({len(new_patterns)} new)")
 
 

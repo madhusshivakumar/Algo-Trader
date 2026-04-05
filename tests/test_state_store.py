@@ -80,22 +80,22 @@ class TestTrailingStops:
 
     def test_save_and_load_multiple(self, store):
         stops = {
-            "AAPL": {"entry_price": 150.0, "highest_price": 160.0, "stop_pct": 0.02},
-            "BTC/USD": {"entry_price": 60000.0, "highest_price": 65000.0, "stop_pct": 0.015},
+            "AAPL": {"entry_price": 150.0, "highest_price": 160.0, "stop_pct": 0.02, "entry_time": 0.0},
+            "BTC/USD": {"entry_price": 60000.0, "highest_price": 65000.0, "stop_pct": 0.015, "entry_time": 0.0},
         }
         store.save_trailing_stops(stops)
         loaded = store.load_trailing_stops()
         assert loaded == stops
 
     def test_full_replace_on_save(self, store):
-        store.save_trailing_stops({"AAPL": {"entry_price": 150.0, "highest_price": 160.0, "stop_pct": 0.02}})
-        store.save_trailing_stops({"TSLA": {"entry_price": 200.0, "highest_price": 210.0, "stop_pct": 0.02}})
+        store.save_trailing_stops({"AAPL": {"entry_price": 150.0, "highest_price": 160.0, "stop_pct": 0.02, "entry_time": 0.0}})
+        store.save_trailing_stops({"TSLA": {"entry_price": 200.0, "highest_price": 210.0, "stop_pct": 0.02, "entry_time": 0.0}})
         loaded = store.load_trailing_stops()
         assert "AAPL" not in loaded
         assert "TSLA" in loaded
 
     def test_single_stop(self, store):
-        stops = {"SPY": {"entry_price": 500.0, "highest_price": 505.0, "stop_pct": 0.01}}
+        stops = {"SPY": {"entry_price": 500.0, "highest_price": 505.0, "stop_pct": 0.01, "entry_time": 0.0}}
         store.save_trailing_stops(stops)
         assert store.load_trailing_stops() == stops
 
@@ -207,7 +207,7 @@ class TestManagedOrders:
 
 class TestBulkOperations:
     def test_save_engine_state_all_components(self, store):
-        stops = {"AAPL": {"entry_price": 150.0, "highest_price": 155.0, "stop_pct": 0.02}}
+        stops = {"AAPL": {"entry_price": 150.0, "highest_price": 155.0, "stop_pct": 0.02, "entry_time": 0.0}}
         cooldowns = {"AAPL": 1700000000.0}
         pdt = {"TSLA": "2026-03-30T10:30:00"}
         scalars = {"halted": True, "halt_reason": "drawdown", "daily_start_equity": 99000.0, "cycle_count": 100}
@@ -234,8 +234,8 @@ class TestBulkOperations:
 
     def test_save_load_roundtrip(self, store):
         stops = {
-            "BTC/USD": {"entry_price": 60000.0, "highest_price": 62000.0, "stop_pct": 0.015},
-            "ETH/USD": {"entry_price": 3000.0, "highest_price": 3100.0, "stop_pct": 0.015},
+            "BTC/USD": {"entry_price": 60000.0, "highest_price": 62000.0, "stop_pct": 0.015, "entry_time": 0.0},
+            "ETH/USD": {"entry_price": 3000.0, "highest_price": 3100.0, "stop_pct": 0.015, "entry_time": 0.0},
         }
         cooldowns = {"BTC/USD": 1700000000.0, "AAPL": 1700000500.0}
         pdt = {"AAPL": "2026-03-30T10:00:00", "NVDA": "2026-03-30T11:00:00"}
@@ -251,11 +251,11 @@ class TestBulkOperations:
 
     def test_save_engine_state_replaces_previous(self, store):
         store.save_engine_state(
-            {"AAPL": {"entry_price": 100.0, "highest_price": 105.0, "stop_pct": 0.02}},
+            {"AAPL": {"entry_price": 100.0, "highest_price": 105.0, "stop_pct": 0.02, "entry_time": 0.0}},
             {"AAPL": 1000.0}, {}, {"halted": False, "halt_reason": "", "daily_start_equity": 50000.0, "cycle_count": 1},
         )
         store.save_engine_state(
-            {"TSLA": {"entry_price": 200.0, "highest_price": 210.0, "stop_pct": 0.02}},
+            {"TSLA": {"entry_price": 200.0, "highest_price": 210.0, "stop_pct": 0.02, "entry_time": 0.0}},
             {"TSLA": 2000.0}, {}, {"halted": True, "halt_reason": "test", "daily_start_equity": 48000.0, "cycle_count": 2},
         )
         state = store.load_engine_state()

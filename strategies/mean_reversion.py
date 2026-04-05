@@ -8,7 +8,6 @@ import pandas as pd
 import ta
 
 from config import Config
-from utils.logger import log
 
 
 def compute_signals(df: pd.DataFrame) -> dict:
@@ -34,6 +33,10 @@ def compute_signals(df: pd.DataFrame) -> dict:
     lower_band = bb.bollinger_lband().iloc[-1]
     middle_band = bb.bollinger_mavg().iloc[-1]
     current_price = close.iloc[-1]
+
+    # Guard against NaN indicators
+    if pd.isna(current_rsi) or pd.isna(upper_band) or pd.isna(lower_band) or pd.isna(current_price):
+        return {"action": "hold", "reason": "insufficient data", "strength": 0.0}
 
     # Buy signal: RSI oversold + price near/below lower band
     if current_rsi < Config.RSI_OVERSOLD and current_price <= lower_band * 1.005:

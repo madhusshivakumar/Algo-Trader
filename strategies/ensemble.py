@@ -3,7 +3,6 @@
 import pandas as pd
 
 from strategies import momentum, mean_reversion
-from utils.logger import log
 
 
 def compute_signals(df: pd.DataFrame) -> dict:

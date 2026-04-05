@@ -36,6 +36,10 @@ def compute_signals(df: pd.DataFrame) -> dict:
     ema5_val = ema_5.iloc[-1]
     ema13_val = ema_13.iloc[-1]
 
+    # Guard against NaN indicators
+    if pd.isna(ema5_val) or pd.isna(ema13_val) or pd.isna(current_vwap):
+        return {"action": "hold", "reason": "insufficient data", "strength": 0.0}
+
     # Stochastic RSI for timing
     stoch_rsi = ta.momentum.stochrsi(close, window=14)
     stoch_val = stoch_rsi.iloc[-1] if len(stoch_rsi) > 14 else 0.5

@@ -24,6 +24,11 @@ def compute_signals(df: pd.DataFrame) -> dict:
     # On-Balance Volume and its EMA
     obv = ta.volume.on_balance_volume(close, volume)
     obv_ema = ta.trend.ema_indicator(obv, window=20)
+
+    # Guard against NaN indicators
+    if pd.isna(obv.iloc[-1]) or pd.isna(obv_ema.iloc[-1]) or pd.isna(obv.iloc[-2]) or pd.isna(obv_ema.iloc[-2]):
+        return {"action": "hold", "reason": "insufficient data", "strength": 0.0}
+
     obv_above = obv.iloc[-1] > obv_ema.iloc[-1]
     obv_prev_above = obv.iloc[-2] > obv_ema.iloc[-2]
 

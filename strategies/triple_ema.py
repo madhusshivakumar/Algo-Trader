@@ -27,6 +27,10 @@ def compute_signals(df: pd.DataFrame) -> dict:
     e8_prev = ema_8.iloc[-2]
     e21_prev = ema_21.iloc[-2]
 
+    # Guard against NaN indicators
+    if pd.isna(e8) or pd.isna(e21) or pd.isna(e55) or pd.isna(e8_prev) or pd.isna(e21_prev):
+        return {"action": "hold", "reason": "insufficient data", "strength": 0.0}
+
     # ADX for trend strength
     adx = ta.trend.adx(df["high"], df["low"], close, window=14)
     adx_val = adx.iloc[-1] if len(adx) > 14 else 20

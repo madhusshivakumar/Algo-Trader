@@ -11,6 +11,7 @@ Runs weekly (Sunday 2 AM):
 
 import json
 import os
+import tempfile
 from datetime import datetime
 
 import numpy as np
@@ -148,8 +149,15 @@ def save_train_log(train_sharpe: float, val_sharpe: float, deployed: bool):
         "deployed": deployed,
         "threshold": Config.RL_MIN_SHARPE_THRESHOLD,
     }
-    with open(_TRAIN_LOG, "w") as f:
-        json.dump(log_data, f, indent=2)
+    os.makedirs(os.path.dirname(_TRAIN_LOG), exist_ok=True)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(_TRAIN_LOG), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(log_data, f, indent=2)
+        os.replace(tmp_path, _TRAIN_LOG)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
 
 
 def run_training(df: pd.DataFrame, strategy_fns: dict,

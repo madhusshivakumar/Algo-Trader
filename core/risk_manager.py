@@ -18,6 +18,7 @@ class TrailingStop:
     entry_price: float
     highest_price: float
     stop_pct: float = Config.TRAILING_STOP_PCT
+    entry_time: float = 0.0
 
     @property
     def stop_price(self) -> float:
@@ -25,9 +26,17 @@ class TrailingStop:
 
     def update(self, current_price: float) -> bool:
         """Update trailing stop. Returns True if stop was triggered."""
+        import math
+        if math.isnan(current_price) or math.isinf(current_price):
+            return False  # Don't trigger or update on bad data
         if current_price > self.highest_price:
             self.highest_price = current_price
         return current_price <= self.stop_price
+
+    def hours_held(self) -> float:
+        if self.entry_time <= 0:
+            return 0.0
+        return (time.time() - self.entry_time) / 3600.0
 
 
 @dataclass
@@ -62,7 +71,10 @@ class RiskManager:
         self.check_daily_reset(current_equity)
 
         if self.daily_start_equity <= 0:
-            return False
+            self.halted = True
+            self.halt_reason = "Daily start equity is zero or negative — cannot compute drawdown"
+            log.warning(self.halt_reason)
+            return True
 
         drawdown = (self.daily_start_equity - current_equity) / self.daily_start_equity
         self.daily_drawdown = drawdown
@@ -95,19 +107,21 @@ class RiskManager:
         """Register a new position for trailing stop tracking."""
         # v3: ATR-based stops when enabled and data available
         if Config.ATR_STOPS_ENABLED and df is not None and len(df) >= 15:
-            stop_pct = self.calculate_atr_stop_pct(df, Config.ATR_STOP_MULTIPLIER)
+            multiplier = Config.ATR_STOP_MULTIPLIER_CRYPTO if Config.is_crypto(symbol) else Config.ATR_STOP_MULTIPLIER
+            stop_pct = self.calculate_atr_stop_pct(df, multiplier)
         else:
-            # Tighter stops for crypto (high frequency), wider for equities
+            # Wider stops for crypto (volatile), tighter for equities
             if Config.is_crypto(symbol):
-                stop_pct = 0.015  # 1.5% for crypto
+                stop_pct = 0.04   # 4% for crypto
             else:
-                stop_pct = 0.02   # 2.0% for equities
+                stop_pct = 0.025  # 2.5% for equities
 
         self.trailing_stops[symbol] = TrailingStop(
             symbol=symbol,
             entry_price=entry_price,
             highest_price=entry_price,
             stop_pct=stop_pct,
+            entry_time=time.time(),
         )
         log.info(f"Trailing stop registered for {symbol} at ${entry_price:.2f} (stop: {stop_pct:.1%})")
 
@@ -121,6 +135,19 @@ class RiskManager:
         if self.check_drawdown(current_equity):
             return False
         return True
+
+    def is_max_hold_exceeded(self, symbol: str) -> bool:
+        stop = self.trailing_stops.get(symbol)
+        if stop is None:
+            return False
+        max_hours = Config.MAX_HOLD_HOURS_CRYPTO if Config.is_crypto(symbol) else Config.MAX_HOLD_HOURS
+        if max_hours <= 0:
+            return False
+        hours = stop.hours_held()
+        if hours >= max_hours:
+            log.warning(f"Max hold exceeded: {symbol} held {hours:.1f}h >= {max_hours}h limit")
+            return True
+        return False
 
     # ── v3 Sprint 2: ATR-based stops ────────────────────────────────
 
@@ -156,7 +183,7 @@ class RiskManager:
         if current_price <= 0:
             return 0.02
         atr_pct = (atr / current_price) * multiplier
-        return max(0.005, min(atr_pct, 0.05))
+        return max(0.005, min(atr_pct, 0.08))
 
     # ── v3 Sprint 2: Volatility-adjusted sizing ────────────────────
 

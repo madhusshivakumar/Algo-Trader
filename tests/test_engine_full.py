@@ -13,6 +13,37 @@ from core.engine import TradingEngine
 from config import Config
 
 
+# Disable all optional v3 features for base engine tests.
+# These tests verify core order routing, not the v3 feature stack.
+_V3_OFF = {
+    "ORDER_MANAGEMENT_ENABLED": False, "STATE_PERSISTENCE_ENABLED": False,
+    "PARALLEL_FETCH_ENABLED": False, "HOT_RELOAD_ENABLED": False,
+    "DRIFT_DETECTION_ENABLED": False, "ALERTING_ENABLED": False,
+    "POSITION_RECONCILIATION_ENABLED": False, "TC_ENABLED": False,
+    "VWAP_TWAP_ENABLED": False, "DB_ROTATION_ENABLED": False,
+    "PORTFOLIO_OPTIMIZATION_ENABLED": False, "VOLATILITY_SIZING_ENABLED": False,
+    "CORRELATION_CHECK_ENABLED": False, "MONTE_CARLO_ENABLED": False,
+    "EARNINGS_CALENDAR_ENABLED": False, "KELLY_SIZING_ENABLED": False,
+    "MEAN_VARIANCE_ENABLED": False,
+}
+
+
+def _v3_off_context():
+    """Return a combined patch context that disables all v3 features."""
+    import contextlib
+    return contextlib.ExitStack()
+
+
+@pytest.fixture
+def v3_off():
+    """Fixture that disables all v3 features on Config during test."""
+    import contextlib
+    with contextlib.ExitStack() as stack:
+        for attr, val in _V3_OFF.items():
+            stack.enter_context(patch.object(Config, attr, val))
+        yield
+
+
 @pytest.fixture
 def mock_broker():
     with patch("core.engine.Broker") as MockBroker:
@@ -41,12 +72,10 @@ def _isolate_db(tmp_path):
 @pytest.fixture
 def engine(mock_broker):
     # Ensure optional v3 features are disabled for base engine tests
-    with patch.object(Config, "ORDER_MANAGEMENT_ENABLED", False), \
-         patch.object(Config, "STATE_PERSISTENCE_ENABLED", False), \
-         patch.object(Config, "PARALLEL_FETCH_ENABLED", False), \
-         patch.object(Config, "HOT_RELOAD_ENABLED", False), \
-         patch.object(Config, "DRIFT_DETECTION_ENABLED", False), \
-         patch.object(Config, "ALERTING_ENABLED", False):
+    import contextlib
+    with contextlib.ExitStack() as stack:
+        for attr, val in _V3_OFF.items():
+            stack.enter_context(patch.object(Config, attr, val))
         engine = TradingEngine()
     return engine
 
@@ -454,6 +483,7 @@ class TestEngineOrderManager:
         mock_order_mgr = MagicMock()
         mock_order_mgr.poll_pending_orders.return_value = []
         mock_order_mgr.cancel_stale_orders.return_value = []
+        mock_order_mgr.get_active_orders.return_value = []  # No pending orders
         mock_broker.get_recent_bars.return_value = sample_df
         mock_broker.get_position.return_value = None
         mock_broker.get_positions.return_value = []
@@ -472,7 +502,7 @@ class TestEngineOrderManager:
             # Should not have submitted order due to buying power check
             mock_order_mgr.submit_market_buy.assert_not_called()
 
-    def test_order_manager_submit_used(self, mock_broker, sample_df):
+    def test_order_manager_submit_used(self, mock_broker, sample_df, v3_off):
         from core.order_manager import ManagedOrder, OrderState
         mock_order = ManagedOrder(
             order_id="test-001", symbol="AAPL", side="buy", order_type="market",
@@ -481,6 +511,7 @@ class TestEngineOrderManager:
         mock_order_mgr = MagicMock()
         mock_order_mgr.poll_pending_orders.return_value = []
         mock_order_mgr.cancel_stale_orders.return_value = []
+        mock_order_mgr.get_active_orders.return_value = []
         mock_order_mgr.submit_market_buy.return_value = mock_order
         mock_broker.get_recent_bars.return_value = sample_df
         mock_broker.get_position.return_value = None
@@ -497,10 +528,9 @@ class TestEngineOrderManager:
                 engine._process_symbol("AAPL", 100000)
 
             mock_order_mgr.submit_market_buy.assert_called_once()
-            # Direct broker.buy should NOT be called when order manager is active
             mock_broker.buy.assert_not_called()
 
-    def test_no_order_manager_uses_direct_buy(self, mock_broker, sample_df):
+    def test_no_order_manager_uses_direct_buy(self, mock_broker, sample_df, v3_off):
         mock_broker.get_recent_bars.return_value = sample_df
         mock_broker.get_position.return_value = None
         mock_broker.get_positions.return_value = []
@@ -508,7 +538,7 @@ class TestEngineOrderManager:
 
         with patch("core.engine.Broker", return_value=mock_broker):
             engine = TradingEngine()
-            engine.order_manager = None  # disabled
+            engine.order_manager = None
             engine.risk.initialize(100000)
 
             buy_signal = {"action": "buy", "reason": "test", "strength": 0.8, "strategy": "test"}

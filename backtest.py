@@ -32,7 +32,9 @@ class Backtester:
         window = 100  # bars needed for indicators
 
         for i in range(window, len(df)):
-            slice_df = df.iloc[i - window:i + 1].copy()
+            # Use bars [i-window, i) for signals — bar i is NOT included in indicator calc
+            slice_df = df.iloc[i - window:i].copy()
+            # Current price is the LAST bar in the slice (bar i-1), which we're "reacting to"
             current_price = float(slice_df["close"].iloc[-1])
 
             signal = compute_signals(slice_df)

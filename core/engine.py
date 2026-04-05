@@ -14,7 +14,7 @@ from utils.logger import log
 
 class TradingEngine:
     # Minimum seconds between trades on the same symbol
-    COOLDOWN_CRYPTO = 900   # 15 minutes
+    COOLDOWN_CRYPTO = 2700  # 45 minutes
     COOLDOWN_EQUITY = 300   # 5 minutes
 
     def __init__(self):
@@ -27,6 +27,9 @@ class TradingEngine:
         self._equity_buys_today: dict[str, datetime] = {}
         # Cooldown: last trade timestamp per symbol
         self._last_trade_time: dict[str, float] = {}
+        # Daily trade counter (reset on daily reset)
+        self._daily_trade_count: dict[str, int] = {}  # "crypto" / "equity" → count
+        self._daily_trade_date: str = ""
 
         # v3: State persistence (optional)
         self.state_store = None
@@ -138,6 +141,7 @@ class TradingEngine:
                     entry_price=data["entry_price"],
                     highest_price=data["highest_price"],
                     stop_pct=data["stop_pct"],
+                    entry_time=data.get("entry_time", 0.0),
                 )
 
             # Restore scalars
@@ -166,6 +170,7 @@ class TradingEngine:
                     "entry_price": stop.entry_price,
                     "highest_price": stop.highest_price,
                     "stop_pct": stop.stop_pct,
+                    "entry_time": stop.entry_time,
                 }
                 for sym, stop in self.risk.trailing_stops.items()
             }
@@ -193,6 +198,9 @@ class TradingEngine:
 
         # Restore persisted state (must come after risk.initialize)
         self._load_persisted_state()
+
+        # Detect orphan positions (broker positions without trailing stops)
+        self._detect_orphan_positions()
 
         # v3: Check DB rotation on startup
         self._check_db_rotation()
@@ -281,11 +289,12 @@ class TradingEngine:
                 self.cycle_count % Config.RECONCILIATION_INTERVAL_CYCLES == 0):
             self._run_reconciliation()
 
+        # v3: Save state every cycle
+        self._save_persisted_state()
+
         # Snapshot equity every 10 cycles
         if self.cycle_count % 10 == 0:
             log.snapshot(equity, account["cash"])
-            # v3: Save state periodically
-            self._save_persisted_state()
 
         # v3: DB rotation check every 1000 cycles
         if self.db_rotator and self.cycle_count % 1000 == 0:
@@ -352,6 +361,28 @@ class TradingEngine:
     def _record_trade(self, symbol: str):
         """Record trade time for cooldown tracking."""
         self._last_trade_time[symbol] = time.time()
+        # Update daily trade count
+        today = datetime.now(Config.MARKET_TZ).strftime("%Y-%m-%d")
+        if getattr(self, "_daily_trade_date", "") != today:
+            self._daily_trade_count = {}
+            self._daily_trade_date = today
+        asset_class = "crypto" if Config.is_crypto(symbol) else "equity"
+        counts = getattr(self, "_daily_trade_count", {})
+        counts[asset_class] = counts.get(asset_class, 0) + 1
+        self._daily_trade_count = counts
+
+    def _is_daily_trade_limit_reached(self, symbol: str) -> bool:
+        """Check if we've hit the daily trade limit for this asset class."""
+        today = datetime.now(Config.MARKET_TZ).strftime("%Y-%m-%d")
+        if getattr(self, "_daily_trade_date", "") != today:
+            self._daily_trade_count = {}
+            self._daily_trade_date = today
+            return False
+        is_crypto = Config.is_crypto(symbol)
+        asset_class = "crypto" if is_crypto else "equity"
+        limit = Config.MAX_TRADES_PER_DAY_CRYPTO if is_crypto else Config.MAX_TRADES_PER_DAY_EQUITY
+        count = getattr(self, "_daily_trade_count", {}).get(asset_class, 0)
+        return count >= limit
 
     def _process_symbol_with_data(self, symbol: str, equity: float, df):
         """Process a symbol with pre-fetched data (used by parallel fetcher)."""
@@ -371,6 +402,7 @@ class TradingEngine:
 
     def _process_symbol_inner(self, symbol: str, equity: float, df):
         """Core processing logic for a single symbol (shared by both paths)."""
+        import math
         is_equity = not Config.is_crypto(symbol)
 
         # Skip if symbol is on cooldown
@@ -378,6 +410,11 @@ class TradingEngine:
             return
 
         current_price = float(df["close"].iloc[-1])
+
+        # Guard against NaN/Inf prices (bad data from broker)
+        if math.isnan(current_price) or math.isinf(current_price) or current_price <= 0:
+            log.warning(f"  {symbol}: Invalid price {current_price}, skipping")
+            return
 
         # Check trailing stops for existing positions
         position = self.broker.get_position(symbol)
@@ -428,10 +465,42 @@ class TradingEngine:
                                 current_price, "earnings blackout close")
                     return
 
+        # Max hold time check
+        if position and self.risk.is_max_hold_exceeded(symbol):
+            if is_equity and self._is_same_day_buy(symbol):
+                log.warning(f"Max hold exceeded for {symbol} but PDT blocks same-day sell")
+            else:
+                log.info(f"Closing {symbol} — max hold time exceeded")
+                result = self.broker.close_position(symbol)
+                if result:
+                    pnl = float(position.get("unrealized_pl", 0))
+                    strategy_key = get_strategy_key(symbol)
+                    log.trade(symbol, "sell", abs(float(position["market_value"])),
+                              current_price, "max_hold_exceeded", pnl,
+                              strategy=strategy_key)
+                    self.risk.unregister(symbol)
+                return
+
         # Compute strategy signals (routed per symbol)
         signal = route_signals(symbol, df)
 
         if signal["action"] == "buy" and not position:
+            # ── Min signal strength gate ──
+            if signal.get("strength", 0) < Config.MIN_SIGNAL_STRENGTH:
+                return
+
+            # ── Daily trade limit ──
+            if self._is_daily_trade_limit_reached(symbol):
+                if self.cycle_count % 10 == 0:
+                    log.info(f"  {symbol}: Skipping buy — daily trade limit reached")
+                return
+
+            # ── Duplicate order guard ──
+            if self.order_manager and self.order_manager.get_active_orders(symbol):
+                if self.cycle_count % 10 == 0:
+                    log.info(f"  {symbol}: Skipping buy — pending order already exists")
+                return
+
             # ── Check total exposure cap (90% of equity) ──
             total_exposure = self._get_total_exposure()
             max_total_exposure = equity * 0.90
@@ -456,7 +525,7 @@ class TradingEngine:
             if is_equity:
                 base_pct = 0.15
             else:
-                base_pct = 0.35
+                base_pct = 0.20
 
             # v3: Portfolio optimization — Kelly or mean-variance override
             if self.portfolio_optimizer:
@@ -702,6 +771,46 @@ class TradingEngine:
         except Exception as e:
             log.error(f"Position reconciliation error: {e}")
 
+    # ── Orphan Position Detection ──────────────────────────────────
+
+    def _detect_orphan_positions(self):
+        """Detect broker positions missing trailing stops and register them."""
+        try:
+            positions = self.broker.get_positions()
+            registered = 0
+            for p in positions:
+                symbol = self._resolve_symbol(p["symbol"])
+                if symbol not in self.risk.trailing_stops:
+                    entry_price = float(p["avg_entry_price"])
+                    current_price = float(p["current_price"])
+                    market_value = abs(float(p["market_value"]))
+                    log.warning(
+                        f"Orphan position detected: {symbol} | "
+                        f"entry=${entry_price:.2f} | current=${current_price:.2f} | "
+                        f"value=${market_value:.2f} — registering trailing stop"
+                    )
+                    df = None
+                    try:
+                        df = self.broker.get_recent_bars(symbol, limit=100)
+                    except Exception:
+                        pass
+                    self.risk.register_entry(symbol, entry_price, df)
+                    if current_price > entry_price and symbol in self.risk.trailing_stops:
+                        self.risk.trailing_stops[symbol].highest_price = current_price
+                    registered += 1
+            if positions:
+                log.info(f"Orphan detection complete: {registered} new stops registered "
+                         f"out of {len(positions)} broker positions")
+        except Exception as e:
+            log.error(f"Orphan position detection failed: {e}")
+
+    def _resolve_symbol(self, raw_symbol: str) -> str:
+        """Resolve Alpaca stripped symbol back to config symbol."""
+        for crypto_sym in Config.CRYPTO_SYMBOLS:
+            if crypto_sym.replace("/", "") == raw_symbol:
+                return crypto_sym
+        return raw_symbol
+
     # ── PDT Protection ───────────────────────────────────────────────
 
     def _record_buy(self, symbol: str):
@@ -811,10 +920,21 @@ class TradingEngine:
 
             if positions:
                 log.info("Open positions:")
+                crypto_open = []
                 for p in positions:
-                    asset_tag = "[CRYPTO]" if "USD" in p["symbol"] and len(p["symbol"]) > 4 else "[EQUITY]"
-                    log.info(f"  {asset_tag} {p['symbol']}: {p['qty']} units @ ${p['avg_entry_price']:.2f} "
+                    sym = p["symbol"]
+                    is_crypto = "USD" in sym and len(sym) > 4
+                    asset_tag = "[CRYPTO]" if is_crypto else "[EQUITY]"
+                    log.info(f"  {asset_tag} {sym}: {p['qty']} units @ ${p['avg_entry_price']:.2f} "
                              f"(PnL: ${p['unrealized_pl']:.2f})")
+                    if is_crypto:
+                        crypto_open.append(sym)
+                if crypto_open:
+                    log.warning(
+                        f"WARNING: {len(crypto_open)} crypto position(s) still open at shutdown: "
+                        f"{', '.join(crypto_open)} — these trade 24/7 and will have no active "
+                        f"trailing stop protection until the bot restarts"
+                    )
 
             # Warn about pending orders
             if self.order_manager and self.order_manager.pending_count > 0:

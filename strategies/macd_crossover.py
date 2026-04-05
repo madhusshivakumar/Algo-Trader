@@ -26,6 +26,10 @@ def compute_signals(df: pd.DataFrame) -> dict:
     curr_hist = histogram.iloc[-1]
     prev_hist = histogram.iloc[-2]
 
+    # Guard against NaN indicators
+    if pd.isna(curr_macd) or pd.isna(curr_signal) or pd.isna(prev_macd) or pd.isna(prev_signal):
+        return {"action": "hold", "reason": "insufficient data", "strength": 0.0}
+
     # Bullish crossover: MACD crosses above signal line
     bullish_cross = prev_macd <= prev_signal and curr_macd > curr_signal
 

@@ -118,7 +118,9 @@ class Broker:
             )
             order = self.trading_client.submit_order(req)
             return {"id": str(order.id), "status": str(order.status), "symbol": symbol}
-        except Exception:
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"Failed to submit limit order {symbol}: {e}")
             return None
 
     def submit_stop_limit_order(self, symbol: str, qty: float, stop_price: float,
@@ -138,7 +140,9 @@ class Broker:
             )
             order = self.trading_client.submit_order(req)
             return {"id": str(order.id), "status": str(order.status), "symbol": symbol}
-        except Exception:
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"Failed to submit stop-limit order {symbol}: {e}")
             return None
 
     def close_position(self, symbol: str) -> dict | None:
@@ -146,7 +150,9 @@ class Broker:
         try:
             order = self.trading_client.close_position(alpaca_symbol)
             return {"id": str(order.id), "status": str(order.status)}
-        except Exception:
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"Failed to close position {symbol}: {e}")
             return None
 
     def get_order_by_id(self, order_id: str) -> dict | None:

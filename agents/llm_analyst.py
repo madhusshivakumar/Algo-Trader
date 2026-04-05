@@ -11,6 +11,7 @@ Writes results to data/llm_analyst/convictions.json for signal_modifiers to read
 
 import json
 import os
+import tempfile
 from datetime import datetime
 
 from config import Config
@@ -236,8 +237,14 @@ def run_analysis(symbols: list[str] | None = None) -> dict:
 def write_convictions(data: dict):
     """Write convictions to JSON file for signal_modifiers to read."""
     _ensure_data_dir()
-    with open(_CONVICTIONS_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(_CONVICTIONS_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(data, f, indent=2)
+        os.replace(tmp_path, _CONVICTIONS_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
     log.success(f"Wrote LLM convictions for {len(data.get('convictions', {}))} symbols")
 
 

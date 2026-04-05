@@ -8,6 +8,7 @@ writes results to data/sentiment/scores.json for signal_modifiers to read.
 import json
 import os
 import sys
+import tempfile
 from datetime import datetime
 
 # Ensure project root is on sys.path when run as a script (python agents/sentiment_agent.py)
@@ -70,8 +71,14 @@ def run_analysis(symbols: list[str] | None = None,
 def write_scores(data: dict):
     """Write scores to the JSON file for signal_modifiers to read."""
     _ensure_data_dir()
-    with open(_SCORES_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(_SCORES_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(data, f, indent=2)
+        os.replace(tmp_path, _SCORES_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
     log.success(f"Wrote sentiment scores for {len(data.get('scores', {}))} symbols")
 
 

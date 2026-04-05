@@ -8,7 +8,6 @@ import pandas as pd
 import ta
 
 from config import Config
-from utils.logger import log
 
 
 def compute_signals(df: pd.DataFrame) -> dict:
@@ -41,6 +40,10 @@ def compute_signals(df: pd.DataFrame) -> dict:
     # MACD for momentum confirmation
     macd = ta.trend.macd_diff(close)
     macd_positive = macd.iloc[-1] > 0 if len(df) > 26 else True
+
+    # Guard against NaN indicators
+    if pd.isna(lookback_high) or pd.isna(avg_volume) or pd.isna(ema_50.iloc[-1]) or pd.isna(macd.iloc[-1]):
+        return {"action": "hold", "reason": "insufficient data", "strength": 0.0}
 
     # Breakout condition
     breakout = current_close > lookback_high and prev_close <= lookback_high

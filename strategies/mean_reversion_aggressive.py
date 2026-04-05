@@ -28,6 +28,10 @@ def compute_signals(df: pd.DataFrame) -> dict:
     # %B — where price is relative to bands (0 = lower, 1 = upper)
     pct_b = bb.bollinger_pband().iloc[-1]
 
+    # Guard against NaN indicators
+    if pd.isna(current_rsi) or pd.isna(upper) or pd.isna(lower) or pd.isna(pct_b):
+        return {"action": "hold", "reason": "insufficient data", "strength": 0.0}
+
     # Extreme buy: RSI < 30 or %B < 0.05 (check extreme first)
     if current_rsi < 30 or pct_b < 0.05:
         return {
@@ -45,17 +49,22 @@ def compute_signals(df: pd.DataFrame) -> dict:
             "strength": max(strength, 0.5),
         }
 
-    # Extreme sell: RSI > 75 or %B > 0.95 (check extreme first)
-    if current_rsi > 75 or pct_b > 0.95:
+    # ── Sell logic (v2: data-driven thresholds) ──
+    # Winners exit avg RSI 62.8, losers avg 59.9 — old RSI 60 was in noise zone
+    if current_rsi > 80 and pct_b > 0.95:
         return {
             "action": "sell",
             "reason": f"Extreme overbought: RSI={current_rsi:.0f}, %B={pct_b:.2f}",
+            "strength": 0.8,
+        }
+    if current_rsi > 80:
+        return {
+            "action": "sell",
+            "reason": f"RSI extreme: RSI={current_rsi:.0f}, %B={pct_b:.2f}",
             "strength": 0.7,
         }
-
-    # Sell: RSI > 60 and price in upper 80% of BB
-    if current_rsi > 60 and pct_b > 0.8:
-        strength = min((current_rsi - 60) / 30 + (pct_b - 0.8), 1.0)
+    if current_rsi > 70 and pct_b > 0.85:
+        strength = min((current_rsi - 70) / 20 + (pct_b - 0.85), 1.0)
         return {
             "action": "sell",
             "reason": f"Mean rev sell: RSI={current_rsi:.0f}, %B={pct_b:.2f}",

@@ -17,6 +17,10 @@ set -euo pipefail
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$DIR"
 
+# Ensure Docker tools (including docker-credential-desktop) are in PATH
+export PATH="/Applications/Docker.app/Contents/Resources/bin:/usr/local/bin:$PATH"
+
+DOCKER="/Applications/Docker.app/Contents/Resources/bin/docker"
 LOG="$DIR/logs/startup.log"
 mkdir -p "$DIR/logs"
 
@@ -28,14 +32,25 @@ log "=========================================="
 log "STARTUP: Algo Trader startup initiated"
 log "=========================================="
 
+# ── Step 0: Kill any local bot process (leftover from non-Docker runs) ──
+if [ -f "$DIR/.bot.pid" ]; then
+    OLD_PID=$(cat "$DIR/.bot.pid")
+    if kill -0 "$OLD_PID" 2>/dev/null; then
+        log "Killing leftover local bot (PID: $OLD_PID)..."
+        kill "$OLD_PID" 2>/dev/null || true
+        sleep 2
+    fi
+    rm -f "$DIR/.bot.pid"
+fi
+
 # ── Step 1: Ensure Docker Desktop is running ──────────────────
-if ! docker info &>/dev/null; then
+if ! $DOCKER info &>/dev/null; then
     log "Docker not running. Starting Docker Desktop..."
     open -a Docker
 
     DOCKER_WAIT=0
     DOCKER_TIMEOUT=120
-    while ! docker info &>/dev/null; do
+    while ! $DOCKER info &>/dev/null; do
         sleep 5
         DOCKER_WAIT=$((DOCKER_WAIT + 5))
         if [ $DOCKER_WAIT -ge $DOCKER_TIMEOUT ]; then
@@ -50,9 +65,9 @@ else
 fi
 
 # ── Step 2: Stop any stale containers ─────────────────────────
-if docker compose ps --quiet 2>/dev/null | grep -q .; then
+if $DOCKER compose ps --quiet 2>/dev/null | grep -q .; then
     log "Stopping stale containers from previous run..."
-    docker compose down --timeout 30 2>&1 | tee -a "$LOG"
+    $DOCKER compose down --timeout 30 2>&1 | tee -a "$LOG"
     sleep 2
 fi
 
@@ -61,7 +76,7 @@ MAX_RETRIES=3
 RETRY=0
 while [ $RETRY -lt $MAX_RETRIES ]; do
     log "Starting Docker Compose (attempt $((RETRY+1))/$MAX_RETRIES)..."
-    if docker compose up -d --build 2>&1 | tee -a "$LOG"; then
+    if $DOCKER compose up -d --build 2>&1 | tee -a "$LOG"; then
         log "Docker Compose started successfully"
         break
     fi
@@ -80,7 +95,7 @@ log "Waiting for engine to become healthy..."
 ENGINE_WAIT=0
 ENGINE_TIMEOUT=300  # 5 min (pre-market agents take 2-3 min)
 while [ $ENGINE_WAIT -lt $ENGINE_TIMEOUT ]; do
-    STATUS=$(docker inspect --format='{{.State.Health.Status}}' algo-engine 2>/dev/null || echo "not_found")
+    STATUS=$($DOCKER inspect --format='{{.State.Health.Status}}' algo-engine 2>/dev/null || echo "not_found")
     if [ "$STATUS" = "healthy" ]; then
         log "Engine is healthy (took ${ENGINE_WAIT}s)"
         break
@@ -94,13 +109,13 @@ done
 
 if [ $ENGINE_WAIT -ge $ENGINE_TIMEOUT ]; then
     log "WARNING: Engine health check timed out after ${ENGINE_TIMEOUT}s"
-    log "Engine status: $(docker inspect --format='{{.State.Health.Status}}' algo-engine 2>/dev/null || echo 'unknown')"
+    log "Engine status: $($DOCKER inspect --format='{{.State.Health.Status}}' algo-engine 2>/dev/null || echo 'unknown')"
 fi
 
 # ── Step 5: Verify all containers are running ─────────────────
 FAILURES=0
 for SERVICE in algo-engine algo-dashboard algo-agents; do
-    STATE=$(docker inspect --format='{{.State.Status}}' "$SERVICE" 2>/dev/null || echo "missing")
+    STATE=$($DOCKER inspect --format='{{.State.Status}}' "$SERVICE" 2>/dev/null || echo "missing")
     if [ "$STATE" = "running" ]; then
         log "  ✓ $SERVICE: running"
     else

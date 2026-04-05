@@ -456,6 +456,7 @@ class TestEngineEarningsClose:
         engine = TradingEngine.__new__(TradingEngine)
         engine.broker = MagicMock()
         engine.risk = MagicMock()
+        engine.risk.is_max_hold_exceeded.return_value = False
         engine.order_manager = None
         engine.data_fetcher = None
         engine.config_reloader = None

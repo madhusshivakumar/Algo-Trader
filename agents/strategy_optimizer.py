@@ -8,6 +8,7 @@ Does NOT modify router.py or .env — only writes recommendations for the Market
 import json
 import os
 import sys
+import tempfile
 import time
 from datetime import datetime
 
@@ -107,8 +108,14 @@ def update_agent_state(status: str, symbols_tested: int = 0, error: str = None, 
         "error": error,
     }
 
-    with open(AGENT_STATE_FILE, "w") as f:
-        json.dump(state, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(AGENT_STATE_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(state, f, indent=2)
+        os.replace(tmp_path, AGENT_STATE_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
 
 
 def main():
@@ -237,16 +244,23 @@ def main():
                     return obj.tolist()
                 return super().default(obj)
 
-        tmp_results = RESULTS_FILE + ".tmp"
-        tmp_assignments = ASSIGNMENTS_FILE + ".tmp"
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(RESULTS_FILE), suffix=".tmp")
+        try:
+            with os.fdopen(tmp_fd, "w") as f:
+                json.dump(results_output, f, indent=2, cls=NumpyEncoder)
+            os.replace(tmp_path, RESULTS_FILE)
+        except Exception:
+            os.unlink(tmp_path)
+            raise
 
-        with open(tmp_results, "w") as f:
-            json.dump(results_output, f, indent=2, cls=NumpyEncoder)
-        os.rename(tmp_results, RESULTS_FILE)
-
-        with open(tmp_assignments, "w") as f:
-            json.dump(assignments_output, f, indent=2, cls=NumpyEncoder)
-        os.rename(tmp_assignments, ASSIGNMENTS_FILE)
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(ASSIGNMENTS_FILE), suffix=".tmp")
+        try:
+            with os.fdopen(tmp_fd, "w") as f:
+                json.dump(assignments_output, f, indent=2, cls=NumpyEncoder)
+            os.replace(tmp_path, ASSIGNMENTS_FILE)
+        except Exception:
+            os.unlink(tmp_path)
+            raise
 
         update_agent_state("success", symbols_tested=len(all_results), duration=duration)
 

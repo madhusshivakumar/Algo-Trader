@@ -110,17 +110,17 @@ class TestRiskManager:
         rm = RiskManager()
         assert rm.should_stop_loss("UNKNOWN", 100) is False
 
-    def test_crypto_gets_tighter_stop(self):
+    def test_crypto_gets_wider_stop(self):
         rm = RiskManager()
         rm.register_entry("BTC/USD", 60000)
         stop = rm.trailing_stops["BTC/USD"]
-        assert stop.stop_pct == 0.015  # 1.5% for crypto
+        assert stop.stop_pct == 0.04  # 4% for crypto
 
-    def test_equity_gets_wider_stop(self):
+    def test_equity_gets_standard_stop(self):
         rm = RiskManager()
         rm.register_entry("AAPL", 250)
         stop = rm.trailing_stops["AAPL"]
-        assert stop.stop_pct == 0.02  # 2.0% for equities
+        assert stop.stop_pct == 0.025  # 2.5% for equities
 
     def test_calculate_position_size(self):
         rm = RiskManager()
@@ -160,7 +160,7 @@ class TestATRStops:
     def test_atr_stop_pct_normal_volatility(self):
         df = _make_df(n=50, volatility=1.0)
         pct = RiskManager.calculate_atr_stop_pct(df, multiplier=2.0)
-        assert 0.005 <= pct <= 0.05
+        assert 0.005 <= pct <= 0.08
 
     def test_atr_stop_pct_high_volatility(self):
         df = _make_df(n=50, volatility=5.0)
@@ -177,7 +177,7 @@ class TestATRStops:
         # Extreme volatility
         df = _make_df(n=50, base_price=10, volatility=10.0)
         pct = RiskManager.calculate_atr_stop_pct(df, multiplier=5.0)
-        assert pct <= 0.05
+        assert pct <= 0.08
 
     def test_atr_stop_pct_insufficient_data(self):
         df = _make_df(n=10)
@@ -203,13 +203,13 @@ class TestATRStops:
         df = _make_df(n=50)
         with patch.object(Config, "ATR_STOPS_ENABLED", False):
             rm.register_entry("AAPL", 100.0, df)
-        assert rm.trailing_stops["AAPL"].stop_pct == 0.02  # fixed equity default
+        assert rm.trailing_stops["AAPL"].stop_pct == 0.025  # fixed equity default
 
     def test_register_entry_atr_no_df_fallback(self):
         rm = RiskManager()
         with patch.object(Config, "ATR_STOPS_ENABLED", True):
             rm.register_entry("AAPL", 100.0, None)
-        assert rm.trailing_stops["AAPL"].stop_pct == 0.02  # fallback
+        assert rm.trailing_stops["AAPL"].stop_pct == 0.025  # fallback
 
 
 # ── Sprint 2: Volatility-adjusted sizing ───────────────────────────

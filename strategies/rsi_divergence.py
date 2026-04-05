@@ -18,6 +18,10 @@ def compute_signals(df: pd.DataFrame) -> dict:
     rsi = ta.momentum.rsi(close, window=14)
     current_rsi = rsi.iloc[-1]
 
+    # Guard against NaN indicators
+    if pd.isna(current_rsi):
+        return {"action": "hold", "reason": "insufficient data", "strength": 0.0}
+
     # Look for divergence over last 20 bars
     lookback = 20
     price_window = close.iloc[-lookback:]

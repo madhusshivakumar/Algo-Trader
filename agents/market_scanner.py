@@ -10,6 +10,7 @@ import json
 import os
 import re
 import sys
+import tempfile
 import time
 from datetime import datetime, timedelta
 
@@ -287,10 +288,14 @@ def update_env_file(symbols: list[str]):
         content += f"\nEQUITY_SYMBOLS={new_value}\n"
 
     # Atomic write
-    tmp = ENV_FILE + ".tmp"
-    with open(tmp, "w") as f:
-        f.write(content)
-    os.rename(tmp, ENV_FILE)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(ENV_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            f.write(content)
+        os.replace(tmp_path, ENV_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
     print(f"  Updated .env: EQUITY_SYMBOLS={new_value}")
 
 
@@ -312,8 +317,14 @@ def update_agent_state(status: str, symbols_selected: int = 0, error: str = None
         "error": error,
     }
 
-    with open(AGENT_STATE_FILE, "w") as f:
-        json.dump(state, f, indent=2)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(AGENT_STATE_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w") as f:
+            json.dump(state, f, indent=2)
+        os.replace(tmp_path, AGENT_STATE_FILE)
+    except Exception:
+        os.unlink(tmp_path)
+        raise
 
 
 def main():
@@ -408,35 +419,64 @@ def main():
             "run_timestamp": datetime.now().isoformat(),
             "assignments": {sym: {"strategy": strat} for sym, strat in strategy_map.items()},
         }
-        tmp = os.path.join(DATA_DIR, "optimizer", "strategy_assignments.json.tmp")
-        with open(tmp, "w") as f:
-            json.dump(assignments_output, f, indent=2)
-        os.rename(tmp, os.path.join(DATA_DIR, "optimizer", "strategy_assignments.json"))
+        assign_path = os.path.join(DATA_DIR, "optimizer", "strategy_assignments.json")
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(assign_path), suffix=".tmp")
+        try:
+            with os.fdopen(tmp_fd, "w") as f:
+                json.dump(assignments_output, f, indent=2)
+            os.replace(tmp_path, assign_path)
+        except Exception:
+            os.unlink(tmp_path)
+            raise
 
         # Write scanner outputs
         today = datetime.now().strftime("%Y-%m-%d")
 
         # Selected symbols
-        with open(SELECTED_FILE, "w") as f:
-            json.dump({
-                "date": today,
-                "symbols": selected_symbols,
-                "strategy_map": strategy_map,
-                "selection": selected,
-            }, f, indent=2)
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(SELECTED_FILE), suffix=".tmp")
+        try:
+            with os.fdopen(tmp_fd, "w") as f:
+                json.dump({
+                    "date": today,
+                    "symbols": selected_symbols,
+                    "strategy_map": strategy_map,
+                    "selection": selected,
+                }, f, indent=2)
+            os.replace(tmp_path, SELECTED_FILE)
+        except Exception:
+            os.unlink(tmp_path)
+            raise
 
         # Full candidates
-        with open(CANDIDATES_FILE, "w") as f:
-            json.dump({"date": today, "candidates": candidates}, f, indent=2)
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(CANDIDATES_FILE), suffix=".tmp")
+        try:
+            with os.fdopen(tmp_fd, "w") as f:
+                json.dump({"date": today, "candidates": candidates}, f, indent=2)
+            os.replace(tmp_path, CANDIDATES_FILE)
+        except Exception:
+            os.unlink(tmp_path)
+            raise
 
         # Archive
         history_sym = os.path.join(DATA_DIR, "history", "symbols", f"{today}.json")
-        with open(history_sym, "w") as f:
-            json.dump({"date": today, "symbols": selected_symbols}, f, indent=2)
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(history_sym), suffix=".tmp")
+        try:
+            with os.fdopen(tmp_fd, "w") as f:
+                json.dump({"date": today, "symbols": selected_symbols}, f, indent=2)
+            os.replace(tmp_path, history_sym)
+        except Exception:
+            os.unlink(tmp_path)
+            raise
 
         history_assign = os.path.join(DATA_DIR, "history", "assignments", f"{today}.json")
-        with open(history_assign, "w") as f:
-            json.dump({"date": today, "strategy_map": strategy_map}, f, indent=2)
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(history_assign), suffix=".tmp")
+        try:
+            with os.fdopen(tmp_fd, "w") as f:
+                json.dump({"date": today, "strategy_map": strategy_map}, f, indent=2)
+            os.replace(tmp_path, history_assign)
+        except Exception:
+            os.unlink(tmp_path)
+            raise
 
         # Validate
         print("\n  Validating...")
