@@ -1,0 +1,58 @@
+{
+    "sector": "communication_services",
+    "agent_name": "communication_services_judge",
+    "timestamp": "2026-04-04T14:00:00Z",
+    "overall_quality_score": 69,
+    "thesis_rigor_score": 70,
+    "risk_assessment_score": 62,
+    "data_quality_score": 72,
+    "contrarian_thinking_score": 52,
+    "actionability_score": 45,
+    "major_flaws": [
+        "GOOGL appears in BOTH the Technology report (as a top pick) and the Communication Services report (as the #1 pick). This is either a deliberate overlap with no position sizing coordination, or an error. Either way, a portfolio running both sectors would double-count GOOGL exposure.",
+        "All 7 picks are BUY or STRONG_BUY. In a sector where SNAP, PINS, and legacy media companies are struggling, zero sell recommendations suggests the analyst only looked at winners.",
+        "SPOT at 65x PE with 8.5% profit margins rated BUY is aggressive. The report says the margin expansion story is real but provides no timeline for when SPOT reaches 15% or 20% margins. Without that, the 65x PE is faith, not analysis.",
+        "TTWO's entire thesis is GTA VI. A single-catalyst thesis for a $55B company at 45x PE is extraordinarily risky. If GTA VI underperforms expectations (which are stratospheric), the stock crashes. The report acknowledges this but still rates it BUY.",
+        "META's Reality Labs is burning $19.2B annually. The report mentions this as a concern but does not model what META's PE would be if Reality Labs were spun off. Excluding Reality Labs losses, META's core ad business PE is significantly lower than 24x.",
+        "No portfolio construction guidance. Seven picks with no allocation weights, no correlation analysis, and no discussion of how GOOGL and META together represent massive concentration in digital advertising."
+    ],
+    "missing_analysis": [
+        "No antitrust scenario analysis for GOOGL. The DOJ case is the biggest risk. Model three outcomes: (1) behavioral remedies, (2) structural separation of AdX, (3) forced divestiture of Chrome or Android. What is the EPS impact of each?",
+        "GOOGL and META combined represent approximately $5.4T in market cap in this portfolio. What is the correlation between them? If digital advertising slows, both decline simultaneously.",
+        "NFLX ad tier revenue doubling to $3B -- from what base? What is the CPM? How does it compare to linear TV advertising CPMs? Is $3B the ceiling or the floor?",
+        "TMUS subscriber growth 'fell short of expectations' but is still rated BUY. What is the trend? If postpaid net adds decline for 3 consecutive quarters, is that a structural concern?",
+        "DIS ESPN standalone app -- no TAM analysis. How many subscribers at what ARPU? What is the cannibalization from existing bundle subscriptions? This is the key catalyst and it has zero quantification.",
+        "Missing: Competitive landscape for digital advertising. How is AI changing the ad tech stack? Are there disruptors beyond Google and Meta that could gain share?",
+        "No analysis of TikTok regulatory risk and its impact on META and GOOGL. A TikTok ban would be massively positive for both -- probability assessment is missing."
+    ],
+    "logical_fallacies": [
+        "The report argues SPOT is the 'clear global leader in audio streaming' while also noting competition from Apple Music, Amazon Music, and YouTube Music 'with deeper pockets.' If competitors have deeper pockets and comparable products, how clear is the leadership?",
+        "TTWO's GTA VI is called 'the most anticipated game release in history.' This claim cannot be verified before release. It is hyperbole masquerading as analysis.",
+        "DIS at 20.5x PE is called 'very reasonable' but the company is growing revenue only 5%. A 20.5x PE with 5% revenue growth gives a PEG of 4x, which is expensive by most frameworks.",
+        "META's FTC antitrust dismissal is cited as removing an overhang. But the FTC is appealing. Saying the overhang is removed while an appeal is pending is premature."
+    ],
+    "biases_detected": [
+        "RECENCY BIAS: The sector gained 23.5% over the past year, driven by mega-cap AI names. The report projects continued outperformance based on recent momentum.",
+        "CONFIRMATION BIAS: GOOGL's bull case quantifies every positive metric (Cloud growth, YouTube revenue, Gemini users) while the bear case is qualitative ('could restrict,' 'may impair').",
+        "NARRATIVE FALLACY: 'AI monetization inflection' is applied to both GOOGL and META as a growth driver, but the actual incremental revenue from AI is not quantified for either company.",
+        "ANCHORING BIAS: NFLX is called 'pulled back 23% from highs, creating a better entry point.' But a 23% pullback from an overvalued level is not necessarily a good entry point. Where was fair value before the decline?",
+        "AUTHORITY BIAS: Analyst consensus targets and ratings are cited for every pick without questioning whether consensus has predictive value in fast-moving technology and media sectors."
+    ],
+    "questions_to_answer": [
+        "GOOGL is in two sector reports simultaneously. What is the total portfolio weight across both sectors? Is it within position limits?",
+        "If DOJ forces GOOGL to divest Chrome or stop paying Apple for default search, what is the revenue impact? Model this with specific numbers.",
+        "META spends $115-135B on AI capex in 2026. What is the expected incremental revenue from this investment? What is the implied ROIC?",
+        "TTWO: If GTA VI ships 50M copies in year one (vs. consensus of 100M+), what is the EPS impact? What PE does the stock trade at in that scenario?",
+        "SPOT's ad revenue DECLINED 4% in Q4 despite user growth. Why? Is this a pricing issue, inventory issue, or demand issue? This is a red flag for a BUY-rated company.",
+        "DIS ESPN standalone app -- what is the subscriber target for year 1? At what subscriber level is the app break-even? These are basic questions with no answers in the report."
+    ],
+    "improvement_demands": [
+        "Resolve the GOOGL duplication between Technology and Communication Services. One sector owns it, the other does not. Decide and document.",
+        "Add SELL recommendations. SNAP, PINS, Comcast, and ViacomCBS are all struggling. Some deserve explicit sell ratings.",
+        "Quantify the AI incremental revenue for GOOGL and META. 'AI monetization inflection' is meaningless without dollar amounts.",
+        "Model the DOJ antitrust scenarios for GOOGL with probability weights and EPS impacts. This is the single biggest risk in the sector.",
+        "Add portfolio allocation weights. Seven picks with no sizing guidance is incomplete.",
+        "Provide a content cost analysis for NFLX and DIS. Content spending is the key variable for streaming profitability and it is not modeled."
+    ],
+    "verdict": "NEEDS_WORK"
+}

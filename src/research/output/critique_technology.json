@@ -1,0 +1,62 @@
+{
+    "sector": "technology",
+    "agent_name": "technology_judge",
+    "timestamp": "2026-04-04T14:00:00Z",
+    "overall_quality_score": 62,
+    "thesis_rigor_score": 68,
+    "risk_assessment_score": 55,
+    "data_quality_score": 72,
+    "contrarian_thinking_score": 45,
+    "actionability_score": 38,
+    "major_flaws": [
+        "Every single top pick is rated BUY or STRONG_BUY -- zero sells, zero avoids. This is not analysis, it is cheerleading. An 8-pick portfolio with no rejects signals insufficient critical filtering.",
+        "NVDA moat_score of 10/10 ignores the demonstrable reality that Broadcom XPUs, AMD MI450, and Google TPUs are actively taking share. A 10/10 moat means zero competitive threat -- that is empirically false.",
+        "PLTR at 80x PE rated BUY with a valuation_score of 4/10 yet overall_score of 7.6 -- the scoring formula cannot produce this result if valuation is weighted at 20%. The math does not check out: (8*0.3)+(8*0.2)+(10*0.3)+(4*0.2) = 2.4+1.6+3.0+0.8 = 7.8, not 7.6. Scoring inconsistency undermines credibility.",
+        "No position sizing, no entry prices, no stop-loss levels, no exit criteria for ANY of the 8 picks. This is a wish list, not an investment thesis.",
+        "The report claims NVDA forward PE of 25x -- but at $4.3T market cap and ~$130B FY2027 consensus earnings, that implies ~33x, not 25x. Either the earnings estimate or the PE is wrong. Which one?",
+        "Free cash flow analysis is mentioned as a sector risk but never quantified for any individual pick. What is NVDA's FCF yield? AVGO's? At $66B debt, what is AVGO's interest coverage ratio?",
+        "Taiwan geopolitical risk is listed as a risk for TSM but no probability weighting or hedging strategy is offered. If you acknowledge this could be catastrophic, what is the position sizing implication?"
+    ],
+    "missing_analysis": [
+        "No DCF or reverse DCF for any pick. At what growth rate does NVDA's current price make sense? What if revenue growth drops to 30% instead of 50%+?",
+        "No peer comparison table. How does NVDA's PE compare to AMD, AVGO, INTC on a PEG basis? The report treats each pick in isolation.",
+        "No analysis of insider selling patterns. NVDA insiders have been consistent sellers -- what does that signal?",
+        "CRWD at 95x PE with 8.5% profit margins -- what is the path to margin expansion? When does CRWD reach 20% margins? No timeline provided.",
+        "No correlation analysis between picks. If you own NVDA, AVGO, TSM, and AMD, what is your effective concentration risk in AI semiconductors?",
+        "Missing revenue concentration analysis: What percentage of NVDA revenue comes from top 5 customers (hyperscalers)? What happens if even one cuts capex 20%?",
+        "No discussion of the semiconductor inventory cycle. Are we at peak or mid-cycle? Historical analog analysis is completely absent.",
+        "ServiceNow and Palantir compete in overlapping enterprise AI segments -- no competitive positioning analysis between the two picks."
+    ],
+    "logical_fallacies": [
+        "Circular reasoning on NVDA: 'AI infrastructure demand is durable because NVDA revenue is growing, and NVDA revenue is growing because AI infrastructure demand is durable.' Where is the independent demand verification?",
+        "Appeal to authority: 'CUDA ecosystem creates an unbreachable software moat' -- unbreachable is an absolute claim with no supporting evidence. PyTorch runs on ROCm. Triton abstracts hardware. JAX targets TPUs. The moat is real but not unbreachable.",
+        "Survivorship bias: The report only analyzes winning tech companies. Where are the cautionary tales? What happened to companies that traded at 80x PE in previous cycles?",
+        "False precision: AVGO's overall_score is 8.4 and GOOGL is 8.3. This implies a meaningful 0.1 difference on a subjective scoring system. That is noise, not signal."
+    ],
+    "biases_detected": [
+        "RECENCY BIAS: The entire thesis is built on the assumption that current AI capex growth rates are sustainable for 3-5 years. No analysis of historical capex cycles (dot-com, cloud buildout) that eventually normalized.",
+        "CONFIRMATION BIAS: Every data point cited supports the bull case. The report selectively quotes revenue growth rates but ignores decelerating growth rates (CRWD from 30% to 22%, NOW from 24% to 20%).",
+        "ANCHORING BIAS: NVDA's 65% revenue growth anchors expectations. But FY2025 was 126% growth -- the 65% already represents massive deceleration. This is framed as positive when it is actually a slowdown.",
+        "NARRATIVE FALLACY: 'AI supercycle' is a narrative, not an analysis. The dot-com was also a 'supercycle' until it wasn't. Where is the framework for distinguishing between secular and cyclical?",
+        "AUTHORITY BIAS: Multiple references to analyst price targets and consensus estimates without questioning whether consensus is correctly calibrated for cycle risk."
+    ],
+    "questions_to_answer": [
+        "If hyperscaler capex growth decelerates from 40% to 15% (still positive growth), what happens to NVDA's revenue? Model this scenario explicitly.",
+        "AVGO has $66B in debt from VMware. What is the debt maturity schedule? What happens to the thesis if rates stay elevated and refinancing costs rise 200bps?",
+        "TSM's Arizona fab costs are 3-4x higher than Taiwan. How does this affect long-term margin structure if geopolitical pressure forces more US manufacturing?",
+        "PLTR's U.S. commercial revenue grew 115% -- from what base? Is this sustainable or is it a small-base effect that will naturally decelerate?",
+        "What percentage of the $700B hyperscaler capex is actually incremental versus replacement of existing infrastructure?",
+        "If the AI capex cycle mirrors the cloud buildout of 2018-2020, when does the 'digestion period' begin? What is the historical analog?",
+        "CRWD had a catastrophic outage in July 2024. The report claims 'no lasting churn impact.' What is the actual customer retention data by cohort post-outage? 'Fully absorbed' is a claim, not evidence."
+    ],
+    "improvement_demands": [
+        "Add a SELL or AVOID section. If everything is a buy, the analyst is not doing their job. Identify at least 3 technology companies that are SELLS and explain why.",
+        "Include a scenario analysis table for each pick: base case, bull case, bear case with probability weights and price targets for each.",
+        "Provide explicit position sizing: What percentage of a technology allocation should go to each pick and why?",
+        "Add a correlation matrix showing how correlated these 8 picks are to each other and to the SOX index. If they all move together, this is one bet, not eight.",
+        "Quantify the FCF impact of current capex cycles for each hyperscaler pick (GOOGL, AMZN implied). Show FCF yield at current and projected levels.",
+        "Include at least one historical cycle analog (dot-com, 2018 cloud, 2021 semiconductor) with comparison metrics.",
+        "Fix the scoring inconsistencies. If the formula is stated, the scores must match the formula output. Currently they do not."
+    ],
+    "verdict": "NEEDS_WORK"
+}

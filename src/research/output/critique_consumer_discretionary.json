@@ -1,0 +1,56 @@
+{
+    "sector": "consumer_discretionary",
+    "agent_name": "consumer_discretionary_judge",
+    "timestamp": "2026-04-04T14:00:00Z",
+    "overall_quality_score": 70,
+    "thesis_rigor_score": 72,
+    "risk_assessment_score": 68,
+    "data_quality_score": 70,
+    "contrarian_thinking_score": 65,
+    "actionability_score": 62,
+    "major_flaws": [
+        "AMZN at 20% allocation dominates the portfolio but the thesis is primarily about AWS and advertising, not consumer discretionary. If the thesis is about cloud computing, this belongs in technology. Sector classification matters for portfolio construction.",
+        "The report rates the sector outlook as 'Neutral-to-Cautious' yet puts 86% of the consumer confidence discussion into risks while recommending 7 buys. The macro view and the stock picks are disconnected.",
+        "DHI at 9.5x PE is called 'deep value' but the report acknowledges housing starts are flat in 2026 with a potential 2027 recovery. Buying a cyclical at a seemingly low PE when earnings may be at peak is a classic value trap.",
+        "CMG lost its CEO Brian Niccol yet is recommended as a BUY at 35x forward. The report says 'post-Niccol management transition creating uncertainty' in the bear case but does not adequately weigh this. CEO departures at premium-valuation growth stocks are historically punishing.",
+        "No discussion of how TSLA's avoid rating interacts with the broader EV ecosystem. If TSLA is struggling, what does that mean for the consumer discretionary spending environment overall?"
+    ],
+    "missing_analysis": [
+        "AMZN's e-commerce segment is barely analyzed. What is the North America retail margin trajectory? What is the 3P vs 1P mix evolution? The bull case is entirely about AWS and ads.",
+        "BKNG at 15.6x forward PE -- the report does not explain why this is cheap. What is BKNG's historical PE range? Is 15.6x actually below the 5-year average or above it?",
+        "TJX as a 'tariff beneficiary' needs quantification. How much excess inventory is flowing to off-price channels? What is the historical correlation between tariff periods and TJX comp growth?",
+        "MELI at 38x forward with $10.9B Brazil investment -- what is the expected ROIC on this investment? When does it become accretive? The scale of investment relative to market cap ($110B) is significant.",
+        "No analysis of cross-border e-commerce competition for MELI. Shopee, Shein, and Temu are all aggressively expanding in LatAm. Market share data is missing.",
+        "Missing: Consumer credit data analysis. If consumer credit delinquencies are rising, what is the impact on discretionary spending across all picks?",
+        "No comparative valuation analysis between BKNG and ABNB (watchlist). If BKNG is 15.6x and ABNB is 25.4x, what justifies the gap beyond the report's brief mention?"
+    ],
+    "logical_fallacies": [
+        "The TJX thesis assumes tariffs are net positive because they create excess inventory. But tariffs also raise consumer prices and reduce spending power. The second-order effect is ignored.",
+        "DHI is praised for Warren Buffett's Berkshire Hathaway homebuilder investments as 'validating the long-term thesis.' This is a pure appeal to authority. Buffett's position size and cost basis are unknown, and he has made mistakes (Kraft Heinz).",
+        "MCD is called 'the premier defensive play in consumer discretionary' -- but if you want defensive, why are you in consumer discretionary at all? This contradicts the sector's nature."
+    ],
+    "biases_detected": [
+        "AUTHORITY BIAS: Multiple references to BMO Capital, Berkshire Hathaway, and analyst consensus as thesis support rather than independent analysis.",
+        "RECENCY BIAS: TSLA is avoided primarily because of recent delivery misses and stock decline. If the analysis were done 6 months ago with different price action, would the conclusion change?",
+        "CONFIRMATION BIAS: AMZN's bear case acknowledges consumer spending slowdown but then the thesis ignores it because AWS offsets. That is cherry-picking which business segment matters.",
+        "ANCHORING BIAS: BKNG's 25-for-1 stock split is listed as a catalyst. Stock splits are financially irrelevant events. This suggests anchoring on share price rather than valuation.",
+        "NARRATIVE FALLACY: The 'barbell approach' portfolio construction narrative sounds sophisticated but is just owning some growth stocks and some value stocks. Every portfolio is a barbell if you describe it that way."
+    ],
+    "questions_to_answer": [
+        "If consumer confidence drops another 10 points (from already recessionary levels), which of these 7 picks would you cut first and why?",
+        "AMZN's $200B capex plan -- what is the ROIC expectation? What if cloud growth decelerates to 15% while capex remains elevated?",
+        "DHI net margins are 9.9% vs Lennar at 5.4%. What explains this gap? Is it sustainable or is Lennar's approach (lower margins, higher volume) more defensible in a downturn?",
+        "MELI's credit book is growing rapidly in Latin America. What are the default rates? How do they compare to traditional lenders? What happens to the credit book in a Brazilian recession?",
+        "If GLP-1 adoption reduces caloric intake by 20-30% in adopted populations, what is the quantified impact on MCD's same-store sales?",
+        "CMG's 350-370 new restaurant openings -- what is the typical payback period? How does new unit productivity compare to existing stores?"
+    ],
+    "improvement_demands": [
+        "Reclassify AMZN analysis by segment: consumer discretionary (retail), technology (AWS), and communication services (advertising). Score each segment separately.",
+        "Add a consumer health scorecard: credit card delinquency rates, savings rate trends, employment data, wage growth -- and link each metric to specific picks.",
+        "Provide a scenario matrix: recession, stagflation, soft landing, recovery -- with expected performance for each pick in each scenario.",
+        "Quantify the tariff impact on each pick's margins. TJX benefits, NKE gets hurt -- but by how much in dollars?",
+        "Remove the stock split 'catalyst' for BKNG. It is not a fundamental catalyst and including it diminishes analytical credibility.",
+        "Add a watchlist-to-buy conversion trigger for LULU, ABNB, HD, SBUX. At what price/metric does each become actionable?"
+    ],
+    "verdict": "NEEDS_WORK"
+}

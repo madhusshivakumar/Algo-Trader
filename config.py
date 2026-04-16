@@ -131,6 +131,15 @@ class Config:
     MTF_ENABLED = os.getenv("MTF_ENABLED", "true").lower() == "true"
     MTF_WEIGHT = max(0.0, min(float(os.getenv("MTF_WEIGHT", "0.15")), 0.5))
 
+    # ── Modifier A/B Framework (Sprint 6D) ────────────────────────────
+    # Logs every modifier application (before/after signal snapshot) so the
+    # weekly performance job can measure whether each modifier is actually
+    # contributing positive Sharpe. Cheap to run (JSONL append). If disabled,
+    # the weekly report simply has no data and auto-disable won't fire.
+    MODIFIER_AB_ENABLED = os.getenv("MODIFIER_AB_ENABLED", "true").lower() == "true"
+    MODIFIER_AB_MAX_MB = float(os.getenv("MODIFIER_AB_MAX_MB", "50"))
+    MODIFIER_AB_REPORT_DAYS = int(os.getenv("MODIFIER_AB_REPORT_DAYS", "30"))
+
     # ── Position Reconciliation ────────────────────────────────────────
     POSITION_RECONCILIATION_ENABLED = os.getenv("POSITION_RECONCILIATION_ENABLED", "true").lower() == "true"
     RECONCILIATION_INTERVAL_CYCLES = max(1, int(os.getenv("RECONCILIATION_INTERVAL_CYCLES", "10")))
@@ -167,12 +176,64 @@ class Config:
     MEAN_VARIANCE_RISK_FREE_RATE = float(os.getenv("MEAN_VARIANCE_RISK_FREE_RATE", "0.05"))
     MAX_SINGLE_POSITION_PCT = float(os.getenv("MAX_SINGLE_POSITION_PCT", "0.25"))
 
+    # ── Pre-trade Liquidity Gate (Sprint 5C) ────────────────────────
+    # Skip a buy if the bid-ask spread exceeds these thresholds (in basis points).
+    # 50 bps = 0.5% spread (typical for mid-cap stocks during active hours).
+    # Crypto spreads are naturally wider, especially outside peak hours.
+    LIQUIDITY_GATE_ENABLED = os.getenv("LIQUIDITY_GATE_ENABLED", "true").lower() == "true"
+    MAX_SPREAD_BPS_EQUITY = float(os.getenv("MAX_SPREAD_BPS_EQUITY", "50"))
+    MAX_SPREAD_BPS_CRYPTO = float(os.getenv("MAX_SPREAD_BPS_CRYPTO", "100"))
+
+    # ── User Profile (capital-tier-aware defaults) ──────────────────
+    # When set, overrides auto-detection. One of: beginner, hobbyist, learner.
+    # Unknown values fall back to auto-detect (see core/user_profile.py).
+    USER_PROFILE = os.getenv("USER_PROFILE", "").strip().lower() or None
+    _PROFILE = None  # lazy-populated by Config.get_profile()
+
+    # ── Regime Detector (Sprint 6C) ─────────────────────────────────
+    # Uses SPY's realized vol as a VIX proxy. Refreshed once per interval via
+    # the engine loop — tight polling burns broker calls for no gain because
+    # daily vol doesn't swing intraday.
+    REGIME_VOL_WINDOW = int(os.getenv("REGIME_VOL_WINDOW", "20"))
+    REGIME_UPDATE_INTERVAL_SEC = int(os.getenv("REGIME_UPDATE_INTERVAL_SEC", "3600"))
+    REGIME_HISTORY_MAX = int(os.getenv("REGIME_HISTORY_MAX", "500"))
+
     # ── Alerting ──────────────────────────────────────────────────────
     ALERTING_ENABLED = os.getenv("ALERTING_ENABLED", "false").lower() == "true"
     SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")
     DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL", "")
     ALERT_ON_TRADE = os.getenv("ALERT_ON_TRADE", "true").lower() == "true"
     ALERT_ON_ERROR = os.getenv("ALERT_ON_ERROR", "true").lower() == "true"
+
+    @classmethod
+    def get_profile(cls, equity: float | None = None):
+        """Return the resolved UserProfile (cached after first call with equity).
+
+        Args:
+            equity: Current account equity. First call must supply it (or the engine
+                should call `set_profile_from_equity()` at startup). Subsequent calls
+                return the cached profile.
+
+        Returns:
+            A `core.user_profile.UserProfile` instance.
+        """
+        from core.user_profile import resolve_profile
+        if cls._PROFILE is None:
+            if equity is None:
+                equity = cls.STARTING_CAPITAL
+            cls._PROFILE = resolve_profile(equity=equity, override=cls.USER_PROFILE)
+        return cls._PROFILE
+
+    @classmethod
+    def set_profile_from_equity(cls, equity: float):
+        """Explicitly initialize/refresh the profile from current account equity.
+
+        Called by the engine on startup once it queries the broker for real balance.
+        Safe to call multiple times — each call re-resolves.
+        """
+        from core.user_profile import resolve_profile
+        cls._PROFILE = resolve_profile(equity=equity, override=cls.USER_PROFILE)
+        return cls._PROFILE
 
     @classmethod
     def is_paper(cls) -> bool:
@@ -193,6 +254,11 @@ class Config:
         current_time = now.time()
         return cls.MARKET_OPEN <= current_time < cls.MARKET_CLOSE
 
+    # Sprint 5G: paper→live promotion gate state (set by validate())
+    _LIVE_GATE_RESULT = None  # GateResult or None
+    _LIVE_GATE_OVERRIDE_USED = False
+    _LIVE_GATE_FORCED_PAPER = False  # True if we downgraded live→paper
+
     @classmethod
     def validate(cls):
         if not cls.ALPACA_API_KEY or cls.ALPACA_API_KEY == "your_api_key_here":
@@ -211,3 +277,41 @@ class Config:
             raise ValueError(f"DAILY_DRAWDOWN_LIMIT must be (0, 1.0], got {cls.DAILY_DRAWDOWN_LIMIT}")
         if cls.LLM_ANALYST_ENABLED and not cls.ANTHROPIC_API_KEY:
             raise ValueError("LLM_ANALYST_ENABLED requires ANTHROPIC_API_KEY")
+
+        # Sprint 5G: enforce paper→live promotion gate.
+        # If TRADING_MODE=live but the bot hasn't validated 30+ days of paper
+        # with worst day-loss >= -3%, force back to paper. Override requires
+        # the awkward I_UNDERSTAND_THE_RISK=yes-really env var.
+        from core.live_gate import check_live_mode_allowed
+        from utils.logger import log
+        db_path = os.getenv("DB_PATH", "trades.db")
+        effective_mode, gate_result, override_used = check_live_mode_allowed(
+            cls.TRADING_MODE, db_path=db_path,
+        )
+        cls._LIVE_GATE_RESULT = gate_result
+        cls._LIVE_GATE_OVERRIDE_USED = override_used
+        cls._LIVE_GATE_FORCED_PAPER = (
+            cls.TRADING_MODE == "live" and effective_mode == "paper"
+        )
+        if cls._LIVE_GATE_FORCED_PAPER and gate_result is not None:
+            log.warning(
+                "=" * 64
+            )
+            log.warning(
+                "PAPER→LIVE GATE: TRADING_MODE=live requested but validation failed."
+            )
+            log.warning(f"  Reason: {gate_result.reason}")
+            log.warning(
+                f"  Forcing TRADING_MODE=paper. To override, set "
+                f"I_UNDERSTAND_THE_RISK=yes-really in your .env."
+            )
+            log.warning("=" * 64)
+            cls.TRADING_MODE = "paper"
+        elif override_used:
+            log.warning(
+                "=" * 64
+            )
+            log.warning(
+                "PAPER→LIVE GATE OVERRIDDEN — bot will trade with REAL MONEY."
+            )
+            log.warning("=" * 64)

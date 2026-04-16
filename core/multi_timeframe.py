@@ -196,8 +196,24 @@ def analyze_timeframes(df: pd.DataFrame,
     return MTFAnalysis(trends=trends, alignment=alignment, confidence=confidence)
 
 
+def _ab_log(symbol: str | None, before: dict, after: dict) -> None:
+    """Best-effort A/B logger — mirrors the helper in core.signal_modifiers.
+
+    Lazy import keeps this module importable even if analytics is missing,
+    and swallows any error so instrumentation never breaks signal flow.
+    """
+    if symbol is None:
+        return
+    try:
+        from analytics.modifier_ab import log_delta
+        log_delta(symbol, "mtf", before, after)
+    except Exception:
+        pass
+
+
 def apply_mtf_filter(signal: dict, df: pd.DataFrame,
-                     weight: float = 0.15) -> dict:
+                     weight: float = 0.15,
+                     symbol: str | None = None) -> dict:
     """Apply multi-timeframe analysis as a signal modifier.
 
     - Buy signals are boosted when higher timeframes are bullish,
@@ -210,15 +226,24 @@ def apply_mtf_filter(signal: dict, df: pd.DataFrame,
         signal: Signal dict with action/reason/strength.
         df: 1-minute OHLCV DataFrame.
         weight: How much MTF analysis affects strength (0.0-0.5).
+        symbol: Trading symbol — used only for Sprint 6D A/B instrumentation.
+            Optional to preserve backward-compatible test call sites.
 
     Returns:
         Modified signal dict with mtf_alignment and mtf_confidence keys added.
     """
+    # Sprint 6D: capture pre-modifier state so we can emit an A/B record
+    # regardless of which branch we exit through.
+    before = {"action": signal.get("action", "hold"),
+              "strength": signal.get("strength", 0.0)}
+
     if signal["action"] == "hold":
+        _ab_log(symbol, before, signal)
         return signal
 
     if df is None or len(df) < 60:
         # Need at least 60 1-min bars for meaningful higher-TF analysis
+        _ab_log(symbol, before, signal)
         return signal
 
     analysis = analyze_timeframes(df)
@@ -254,4 +279,5 @@ def apply_mtf_filter(signal: dict, df: pd.DataFrame,
             signal["strength"] = max(0.3, strength - penalty)
             signal["reason"] += f" [MTF: bullish -{penalty:.0%}]"
 
+    _ab_log(symbol, before, signal)
     return signal

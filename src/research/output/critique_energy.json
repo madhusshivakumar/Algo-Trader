@@ -1,0 +1,60 @@
+{
+    "sector": "energy",
+    "agent_name": "energy_judge",
+    "timestamp": "2026-04-04T14:00:00Z",
+    "overall_quality_score": 64,
+    "thesis_rigor_score": 60,
+    "risk_assessment_score": 52,
+    "data_quality_score": 68,
+    "contrarian_thinking_score": 40,
+    "actionability_score": 42,
+    "major_flaws": [
+        "The ENTIRE thesis is built on $110+/bbl oil driven by Strait of Hormuz disruption. The report even acknowledges EIA forecasts Brent at $64/b by 2027. This means the base case for 7 of 8 picks is a geopolitical premium that is explicitly expected to compress. Every single E&P and integrated pick is essentially a bet that geopolitical tensions persist.",
+        "All 8 picks are BUY or STRONG_BUY. Zero sells in a sector trading at 33% YTD return after a massive geopolitical premium? This is peak-cycle cheerleading, not analysis.",
+        "FANG at 11.5x forward PE is rated 9/10 on valuation. But E&P companies always look cheap at cycle peaks because earnings are inflated by commodity prices. This is the most dangerous trap in energy investing and the report walks right into it.",
+        "XOM at $670B market cap with current oil above $110/bbl has a forward PE of 17.84, which the report calls 'high end of historical range.' If it is at the high end of the range, why is it a STRONG_BUY?",
+        "No position-level commodity sensitivity analysis. What happens to each pick's EPS at $80 oil? $70? $60? This is the single most important analysis for energy stocks and it is completely absent.",
+        "ET's management_score of 7 acknowledges governance concerns under Kelcy Warren but then gives an overall_score of 8.1. Governance problems at MLPs have historically destroyed value (see: Kinder Morgan 2014). This is underweighted."
+    ],
+    "missing_analysis": [
+        "No oil price scenario analysis. Show me EPS for each pick at $60, $80, $100, $110, $120 oil. Without this, the entire analysis is worthless for risk management.",
+        "No OPEC+ supply response modeling. OPEC+ has 5+ million bpd of spare capacity. If they accelerate production increases, what happens to the price floor?",
+        "LNG at 2.8x debt-to-equity with capital-intensive expansion -- no analysis of debt maturity schedule, interest coverage ratio, or refinancing risk. This is a leveraged play on LNG prices.",
+        "Missing entirely: natural gas price analysis for WMB and ET. Henry Hub at $3.80/MMBtu -- what is the 12-month forward curve? What is breakeven for these midstream names?",
+        "No analysis of ESG-driven capital flight impact on energy valuations. How much institutional capital is structurally unable to own fossil fuel stocks? This creates a persistent valuation discount.",
+        "COP's 'underlying production declined 2.6%' adjusted for Marathon -- this is buried in a bear case bullet. Organic production decline at the world's largest independent E&P is a major concern that deserves its own analysis.",
+        "No renewable energy competition analysis. At what oil price do EVs, solar, and wind make fossil fuel demand structurally decline? This long-term demand question is hand-waved away.",
+        "Devon-Coterra merger ($58B) is mentioned as a theme but neither company is analyzed. Why are they excluded?"
+    ],
+    "logical_fallacies": [
+        "The report simultaneously argues that (a) the geopolitical premium is driving prices above fundamentals and (b) energy stocks are attractive buys at current prices. These are contradictory positions unless you believe the premium is permanent, which the report does not claim.",
+        "FANG is praised for 'sub-$35/bbl breakeven' as a bull point. But if breakeven is $35 and oil is $110, earnings are inflated by 3x above breakeven. This is a cyclical peak signal, not a safety indicator.",
+        "Chevron's thesis claims the market has 'not fully priced in' the FCF inflection. CVX is at $428B market cap and up 33% YTD. The market has priced in quite a lot. The burden of proof is on the analyst to show what specifically is being missed.",
+        "EOG is praised as 'highest-quality' and 'cleanest balance sheet' -- these are qualitative superlatives without quantitative comparison. How does EOG's ROIC compare to FANG, COP, and Devon?"
+    ],
+    "biases_detected": [
+        "EXTREME RECENCY BIAS: Brent at $110+/bbl from Strait of Hormuz disruption is treated as the new normal. In 2020, oil went negative. In 2014, oil collapsed 60% in 6 months. This report shows zero historical humility.",
+        "CONFIRMATION BIAS: Every positive data point (high oil prices, strong FCF, buybacks) is highlighted. The EIA's own forecast of $64/b by 2027 is mentioned once in the outlook and then ignored in every pick.",
+        "ANCHORING BIAS: Current $110+/bbl price anchors all earnings estimates and valuations. But forward curves trade significantly lower. The report uses spot prices rather than forward curves.",
+        "NARRATIVE FALLACY: 'Strait of Hormuz disruption' and 'M&A consolidation wave' are narratives layered on top of cyclical peak dynamics. This reads like a late-2007 energy report.",
+        "SURVIVORSHIP BIAS: Only the winning energy companies are analyzed. Where are the companies that overleveraged during previous oil booms and got destroyed (Chesapeake, California Resources)?"
+    ],
+    "questions_to_answer": [
+        "At $70/bbl Brent (EIA's own near-term forecast), what is the EPS for FANG, COP, XOM, and CVX? Show the sensitivity table.",
+        "If the Strait of Hormuz situation resolves diplomatically within 6 months, what is the fair value of oil? How much downside does that imply for each pick?",
+        "LNG has $2.8B debt-to-equity. What is the interest coverage ratio? What happens to the thesis if LNG spot prices collapse 50%?",
+        "OPEC+ has agreed to increase production by 206,000 b/d in April. What if they accelerate to 500,000 b/d or 1,000,000 b/d? What is the price impact?",
+        "The report says 'energy transition recalibration' extends the timeline for hydrocarbons. What specific data supports this claim? Global EV sales grew 22% in 2025 -- that does not sound like recalibration.",
+        "What is the correlation between these 8 picks and the WTI crude price? If it is above 0.85, this is one trade, not eight."
+    ],
+    "improvement_demands": [
+        "ADD A COMMODITY SENSITIVITY TABLE for every pick. This is non-negotiable for energy analysis. EPS at $60, $70, $80, $90, $100, $110 oil.",
+        "Include at least 2 SELL recommendations. Not every energy stock benefits equally from high oil prices. Who is overextended?",
+        "Model the geopolitical premium explicitly. What is 'fair' oil without the Hormuz premium? $70-80? Adjust all valuations accordingly.",
+        "Add a position sizing framework based on oil price conviction. If you think $110 is temporary, position sizes should be smaller.",
+        "Include a hedging strategy. If 8 of 8 picks are long oil, what is the portfolio hedge?",
+        "Analyze the forward oil curve versus spot. Using spot prices for a forward-looking investment thesis is analytically lazy.",
+        "Add historical cycle analysis: How did energy stocks perform 12-18 months after previous geopolitical-driven oil spikes?"
+    ],
+    "verdict": "NEEDS_WORK"
+}

@@ -2,6 +2,11 @@
 
 Each modifier reads from a JSON data file written by its corresponding agent.
 If the data file is missing or the feature is disabled, the signal passes through unchanged.
+
+Sprint 6D: every modifier emits an A/B record via `analytics.modifier_ab.log_delta`
+so the weekly performance job can measure whether the modifier is actually
+pulling its weight. Logging is best-effort and wrapped in a try/except so a
+bad disk or permissions error never breaks the signal path.
 """
 
 import json
@@ -9,6 +14,21 @@ import os
 from datetime import datetime
 
 from config import Config
+
+
+def _ab_log(symbol: str, modifier_name: str, before: dict, after: dict) -> None:
+    """Best-effort call into the A/B logger. Swallows any error.
+
+    Kept as a private helper so modifier functions stay readable and the
+    modifier_ab import is lazy (avoids a circular import during module load
+    since analytics imports Config, which imports parts of core).
+    """
+    try:
+        from analytics.modifier_ab import log_delta
+        log_delta(symbol, modifier_name, before, after)
+    except Exception:
+        # A/B instrumentation must never influence live trading.
+        pass
 
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 _SENTIMENT_FILE = os.path.join(_DATA_DIR, "sentiment", "scores.json")
@@ -57,24 +77,33 @@ def apply_sentiment(signal: dict, symbol: str, weight: float = 0.15) -> dict:
     - Sell signals get boosted by negative sentiment, dampened by positive
     - If sentiment strongly opposes the signal direction, strength is reduced by 30%
     """
+    # Sprint 6D: snapshot before-state so the A/B logger can record the
+    # delta. Shallow copy is sufficient (we only read action + strength).
+    before = {"action": signal.get("action", "hold"),
+              "strength": signal.get("strength", 0.0)}
+
     data = _load_json(_SENTIMENT_FILE)
 
     # v3: Skip stale data when freshness check is enabled
     if Config.SENTIMENT_FRESHNESS_CHECK and not validate_data_freshness(data, Config.SENTIMENT_MAX_AGE_HOURS):
+        _ab_log(symbol, "sentiment", before, signal)
         return signal
 
     sym_data = data.get("scores", {}).get(symbol)
     if sym_data is None:
+        _ab_log(symbol, "sentiment", before, signal)
         return signal
 
     sent_score = sym_data.get("sentiment_score", 0)
     if not isinstance(sent_score, (int, float)):
+        _ab_log(symbol, "sentiment", before, signal)
         return signal
 
     modifier = sent_score * weight
 
     if signal["action"] == "hold":
         signal["sentiment_score"] = round(sent_score, 3)
+        _ab_log(symbol, "sentiment", before, signal)
         return signal
 
     if signal["action"] == "buy":
@@ -89,6 +118,7 @@ def apply_sentiment(signal: dict, symbol: str, weight: float = 0.15) -> dict:
     signal["strength"] = _clamp(signal["strength"])
     signal["sentiment_score"] = round(sent_score, 3)
     signal["reason"] = signal.get("reason", "") + f" | sentiment={sent_score:+.2f}"
+    _ab_log(symbol, "sentiment", before, signal)
     return signal
 
 
@@ -102,24 +132,31 @@ def apply_llm_conviction(signal: dict, symbol: str, weight: float = 0.2) -> dict
     - Sell signals get boosted by bearish conviction, dampened by bullish
     - If conviction strongly opposes the signal direction, strength is reduced by 30%
     """
+    before = {"action": signal.get("action", "hold"),
+              "strength": signal.get("strength", 0.0)}
+
     data = _load_json(_LLM_FILE)
 
     # v3: Skip stale data when freshness check is enabled
     if Config.LLM_FRESHNESS_CHECK and not validate_data_freshness(data, Config.LLM_MAX_AGE_HOURS):
+        _ab_log(symbol, "llm", before, signal)
         return signal
 
     sym_data = data.get("convictions", {}).get(symbol)
     if sym_data is None:
+        _ab_log(symbol, "llm", before, signal)
         return signal
 
     conviction = sym_data.get("score", 0)
     if not isinstance(conviction, (int, float)):
+        _ab_log(symbol, "llm", before, signal)
         return signal
 
     modifier = conviction * weight
 
     if signal["action"] == "hold":
         signal["llm_conviction"] = round(conviction, 3)
+        _ab_log(symbol, "llm", before, signal)
         return signal
 
     if signal["action"] == "buy":
@@ -134,6 +171,7 @@ def apply_llm_conviction(signal: dict, symbol: str, weight: float = 0.2) -> dict
     signal["strength"] = _clamp(signal["strength"])
     signal["llm_conviction"] = round(conviction, 3)
     signal["reason"] = signal.get("reason", "") + f" | llm={conviction:+.2f}"
+    _ab_log(symbol, "llm", before, signal)
     return signal
 
 
@@ -173,12 +211,17 @@ def apply_earnings_blackout(signal: dict, symbol: str) -> dict:
     - Sell signals: pass through unchanged
     - Hold signals: annotated with earnings_blackout flag
     """
+    before = {"action": signal.get("action", "hold"),
+              "strength": signal.get("strength", 0.0)}
+
     if Config.is_crypto(symbol):
+        # No log here — crypto path is a structural no-op, not a decision.
         return signal
 
     data = _get_earnings_data()
     sym_data = data.get("earnings", {}).get(symbol)
     if not sym_data or not sym_data.get("in_blackout", False):
+        _ab_log(symbol, "earnings_blackout", before, signal)
         return signal
 
     days_until = sym_data.get("days_until")
@@ -198,4 +241,5 @@ def apply_earnings_blackout(signal: dict, symbol: str) -> dict:
         signal["reason"] = signal.get("reason", "") + f" | earnings_blackout({days_until}d)"
 
     # Sell signals pass through unchanged — selling before earnings is fine
+    _ab_log(symbol, "earnings_blackout", before, signal)
     return signal

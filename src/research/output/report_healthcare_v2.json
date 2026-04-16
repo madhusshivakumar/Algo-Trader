@@ -1,0 +1,955 @@
+{
+  "sector": "Healthcare",
+  "report_date": "2026-04-04",
+  "analyst": "Healthcare Sector Expert",
+  "version": "2.0",
+  "iteration": 2,
+  "v1_score": 72,
+  "v1_verdict": "NEEDS_WORK",
+  "executive_summary": "The healthcare sector presents differentiated investment opportunities in April 2026, but conviction levels must reflect the wide dispersion of risk-reward profiles. Eli Lilly dominates GLP-1 with ~60% US market share, but at 27x forward PE requires DCF validation under pricing-pressure scenarios. AbbVie has largely replaced Humira losses with Skyrizi/Rinvoq (combined $31.6B 2026 guidance) but the transition is ongoing, not complete, with Humira still declining 26% operationally. Intuitive Surgical's da Vinci 5 adoption is accelerating but at 57x trailing PE, entry prices must be precisely defined. Key sector headwinds include IRA drug pricing expansion to 15 drugs in 2027 (Part B inclusion in 2028), GLP-1 competitive crowding from Amgen MariTide, Roche CT-996/CT-388, and Viking VK2735, and major patent cliffs at Merck (Keytruda 2028, $32.7B peak at risk) and Pfizer (Prevnar 2026, Ibrance/Xtandi 2027). We recommend 5 BUY picks with graduated conviction, 2 explicit SELL recommendations (MRK, PFE), and detailed scenario analysis with volatility-calibrated position sizing.",
+  "macro_context": {
+    "sector_tailwinds": [
+      "GLP-1/obesity drug TAM expanding with Medicare Part D coverage at $50/month copay cap effective April 2026",
+      "Aging demographics driving demand across pharma, devices, and managed care",
+      "Biotech funding recovery improving life sciences tools demand cycle",
+      "Robotic surgery adoption accelerating globally with da Vinci 5 and competitor platforms",
+      "GLP-1 supply constraints largely resolved per FDA as of 2025, removing volume bottleneck",
+      "Conservative healthcare valuations vs S&P 500 creating selective entry points"
+    ],
+    "sector_headwinds": [
+      "IRA Medicare drug price negotiations: 10 drugs effective Jan 2026, 15 more for 2027, Part B expansion in 2028",
+      "Tariff uncertainty on pharmaceutical imports and medical device supply chains",
+      "Managed care margin compression: CMS Medicare Advantage rate increase only 0.09% vs 10% cost trend",
+      "Major patent cliffs: Keytruda (2028, $32.7B peak), Prevnar (2026), Ibrance/Xtandi (2027), denosumab (2026)",
+      "GLP-1 pricing pressure: 70% Novo price cuts, Lilly direct-to-consumer discounts, potential IRA inclusion",
+      "GLP-1 competitive crowding: 6+ new entrants expected 2027-2029 eroding pricing power"
+    ],
+    "key_themes": [
+      "GLP-1 competitive landscape evolution: Amgen MariTide, Roche CT-996, Viking VK2735 entering 2027-2029",
+      "IRA drug pricing expansion: Part B inclusion in 2028 cycle creates new risk vector for physician-administered drugs",
+      "Patent cliff management: $300B+ in pharma revenue losing protection by 2030 across the sector",
+      "Biosimilar and generic competition dynamics reshaping revenue predictability",
+      "MedTech innovation cycles: robotic surgery, structural heart, neurovascular"
+    ]
+  },
+  "universe_analyzed": {
+    "total_companies_screened": 20,
+    "subsectors_covered": [
+      "Large Cap Pharma",
+      "Biotech",
+      "Medical Devices",
+      "Managed Care",
+      "Life Sciences Tools"
+    ]
+  },
+  "scoring_methodology": {
+    "formula": "(Moat * 0.30) + (Management * 0.20) + (Growth * 0.30) + (Valuation * 0.20)",
+    "scale": "1-10 per dimension",
+    "moat_criteria": "Patent protection, market share, switching costs, network effects, brand, regulatory barriers",
+    "management_criteria": "Capital allocation track record, strategic vision, operational execution, guidance credibility",
+    "growth_criteria": "Revenue growth rate, EPS growth, pipeline value, TAM expansion, market share trajectory",
+    "valuation_criteria": "Forward PE vs growth (PEG), historical range, sector relative, DCF implied upside",
+    "conviction_calibration": {
+      "HIGH": "Score >= 8.0, clear catalyst path, favorable risk-reward, DCF-supported valuation",
+      "MODERATE": "Score 7.0-7.9, thesis intact but meaningful execution risk or valuation concern",
+      "LOW": "Score < 7.0, material headwinds outweigh near-term catalysts"
+    },
+    "score_verification": {
+      "LLY": "formula: (9*0.30)+(9*0.20)+(10*0.30)+(6*0.20) = 2.70+1.80+3.00+1.20 = 8.70",
+      "ABBV": "formula: (9*0.30)+(9*0.20)+(8*0.30)+(8*0.20) = 2.70+1.80+2.40+1.60 = 8.50",
+      "ISRG": "formula: (10*0.30)+(9*0.20)+(8*0.30)+(5*0.20) = 3.00+1.80+2.40+1.00 = 8.20 [v2: valuation score reduced from 6 to 5 given 57x trailing PE]",
+      "VRTX": "formula: (9*0.30)+(8*0.20)+(9*0.30)+(7*0.20) = 2.70+1.60+2.70+1.40 = 8.40",
+      "BSX": "formula: (8*0.30)+(9*0.20)+(9*0.30)+(7*0.20) = 2.40+1.80+2.70+1.40 = 8.30",
+      "AZN": "formula: (8*0.30)+(8*0.20)+(8*0.30)+(8*0.20) = 2.40+1.60+2.40+1.60 = 8.00",
+      "TMO": "formula: (9*0.30)+(8*0.20)+(6*0.30)+(7*0.20) = 2.70+1.60+1.80+1.40 = 7.50 [v2: growth score reduced from 7 to 6 given 3-4% organic guidance]",
+      "MRK_SELL": "formula: (7*0.30)+(7*0.20)+(4*0.30)+(7*0.20) = 2.10+1.40+1.20+1.40 = 6.10 [v2: growth score reduced from 5 to 4]",
+      "PFE_SELL": "formula: (6*0.30)+(5*0.20)+(4*0.30)+(7*0.20) = 1.80+1.00+1.20+1.40 = 5.40 [v2: growth score reduced from 5 to 4]"
+    }
+  },
+  "company_scores": [
+    {
+      "ticker": "LLY",
+      "name": "Eli Lilly and Company",
+      "subsector": "Large Cap Pharma",
+      "market_cap_billions": 854,
+      "current_price": 935.58,
+      "scores": {
+        "moat": 9,
+        "management": 9,
+        "growth": 10,
+        "valuation": 6
+      },
+      "overall_score": 8.7,
+      "score_math": "(9*0.30)+(9*0.20)+(10*0.30)+(6*0.20) = 2.70+1.80+3.00+1.20 = 8.70",
+      "conviction": "HIGH",
+      "key_metrics": {
+        "revenue_2026_guidance_billions": "80-83",
+        "revenue_growth_yoy_pct": 25,
+        "forward_pe": 27.56,
+        "trailing_pe": 40.77,
+        "peg_ratio": 1.22,
+        "us_glp1_market_share_pct": 60,
+        "pipeline_highlights": "Tirzepatide (Mounjaro/Zepbound) dominant GLP-1, orforglipron oral obesity pill Phase 3, Kisunla Alzheimer's EU approved"
+      },
+      "thesis": "Eli Lilly is the GLP-1 market leader with approximately 60% US prescription share. Revenue guidance of $80-83B implies 25% growth, the highest in large-cap pharma. Tirzepatide patent protection extends into the late 2030s. Medicare Part D $50 copay cap for Zepbound starting April 2026 is a volume catalyst. However, the 27x forward PE requires validation under pricing-pressure scenarios. Our DCF shows fair value of $880 in the bear case (GLP-1 growth slows to 15%) and $1,180 in the base case, implying current price is fairly valued with upside dependent on execution.",
+      "dcf_scenario_analysis": {
+        "methodology": "10-year DCF, 9% WACC, 3% terminal growth, revenue deceleration curve modeled",
+        "base_case": {
+          "revenue_cagr_2026_2030": "20%",
+          "glp1_pricing_assumption": "Moderate erosion, 5% annual net price decline starting 2028",
+          "fair_value": 1180,
+          "probability_pct": 50
+        },
+        "bull_case": {
+          "revenue_cagr_2026_2030": "25%",
+          "glp1_pricing_assumption": "Pricing power maintained, oral orforglipron expands TAM",
+          "fair_value": 1400,
+          "probability_pct": 25
+        },
+        "bear_case": {
+          "revenue_cagr_2026_2030": "15%",
+          "glp1_pricing_assumption": "IRA negotiation of Mounjaro by 2028, 40% Medicare price cut, competitive erosion from MariTide/CT-996",
+          "fair_value": 880,
+          "probability_pct": 25
+        },
+        "probability_weighted_fair_value": 1110
+      },
+      "risks": [
+        "GLP-1 pricing pressure from government negotiation and competitive dynamics; IRA could select Mounjaro for 2028 or 2029 negotiation cycle",
+        "Competitive crowding: Amgen MariTide (monthly dosing, Phase 3 2027), Roche CT-996 oral (Phase 2), Viking VK2735 (Phase 3 2025), Tern TERN-601",
+        "High valuation leaves limited margin of safety if growth decelerates from 25% to 15%; bear case fair value is $880, 6% below current price",
+        "Orforglipron Phase 3 data risk vs Novo oral Wegovy already launched with 50K weekly scripts",
+        "Manufacturing scale-up risk despite multi-billion facility investments"
+      ]
+    },
+    {
+      "ticker": "ABBV",
+      "name": "AbbVie Inc.",
+      "subsector": "Large Cap Pharma",
+      "market_cap_billions": 365,
+      "current_price": 205.00,
+      "scores": {
+        "moat": 9,
+        "management": 9,
+        "growth": 8,
+        "valuation": 8
+      },
+      "overall_score": 8.5,
+      "score_math": "(9*0.30)+(9*0.20)+(8*0.30)+(8*0.20) = 2.70+1.80+2.40+1.60 = 8.50",
+      "conviction": "HIGH",
+      "key_metrics": {
+        "revenue_2025_actual_billions": 61.2,
+        "revenue_2026_guidance_billions": 67,
+        "revenue_growth_yoy_pct": 9.5,
+        "skyrizi_2026_sales_billions": 21.5,
+        "rinvoq_2026_sales_billions": 10.1,
+        "humira_2026_sales_billions": 2.9,
+        "eps_2026_guidance": "14.37-14.57",
+        "dividend_increase_streak_years": 54,
+        "skyrizi_patent_expiry": "US composition of matter 2033, biosimilar entry anticipated post-2028",
+        "rinvoq_patent_expiry": "US composition of matter 2033, generic entry blocked until April 2037 per settlements"
+      },
+      "thesis": "AbbVie is executing a franchise transition from Humira to Skyrizi/Rinvoq, though this transition is ongoing (Humira still declining 26% operationally) rather than complete. Combined Skyrizi/Rinvoq sales of $31.6B in 2026 guidance exceed peak Humira by $4.5B+. Critically, patent protection is robust: Skyrizi biosimilar entry is not expected until post-2028, and Rinvoq generic entry is blocked until April 2037 per settlement agreements. This provides a multi-year runway before loss-of-exclusivity becomes a concern. At approximately 14x 2026 EPS with a 54-year dividend streak, the risk-reward is favorable.",
+      "risks": [
+        "Humira biosimilar erosion is ongoing (down 26% operationally); transition is not yet complete",
+        "IRA pricing risk: Rinvoq eligible for selection in 2027 for implementation in 2029; Skyrizi could follow in subsequent rounds",
+        "IBD competition from J&J and emerging therapies could cap market share gains",
+        "Neuroscience franchise (Botox) growth decelerating",
+        "If IRA negotiates Skyrizi at 40% discount (precedent from first 10 drugs), revenue impact could be $2-4B annually"
+      ]
+    },
+    {
+      "ticker": "VRTX",
+      "name": "Vertex Pharmaceuticals Inc.",
+      "subsector": "Biotech",
+      "market_cap_billions": 120,
+      "scores": {
+        "moat": 9,
+        "management": 8,
+        "growth": 9,
+        "valuation": 7
+      },
+      "overall_score": 8.4,
+      "score_math": "(9*0.30)+(8*0.20)+(9*0.30)+(7*0.20) = 2.70+1.60+2.70+1.40 = 8.40",
+      "conviction": "HIGH",
+      "key_metrics": {
+        "cystic_fibrosis_market_dominance_pct": 95,
+        "journavx_prescription_growth_2026": "3x vs 2025",
+        "casgevy_revenue_trajectory": "Ramping 2026+",
+        "pipeline_diversification": "Pain (JOURNAVX), kidney (povetacicept), gene therapy (CASGEVY), autoimmune",
+        "analyst_consensus_target": 537.64
+      },
+      "thesis": "Vertex is building beyond its CF dominance (95% market share, ~$10B annual) with a stacked 2026-2028 catalyst calendar. JOURNAVX (non-opioid pain) prescriptions expected to triple in 2026, though the absolute revenue base remains early-stage and commercial inflection is the key monitor. CASGEVY gene therapy is ramping but manufacturing complexity constrains volume near-term. Povetacicept for kidney disease and autoimmune pipeline candidates (myasthenia gravis) provide additional $1B+ launch opportunities. The company remains CF-dependent today, but the diversification trajectory is credible with multiple shots on goal.",
+      "risks": [
+        "CF still represents the vast majority of revenue; diversification is directional, not achieved",
+        "JOURNAVX commercial adoption may be slower than projected due to payer resistance in competitive pain market",
+        "CASGEVY gene therapy manufacturing complexity limits near-term volume",
+        "Autoimmune pipeline is early stage with execution risk"
+      ]
+    },
+    {
+      "ticker": "BSX",
+      "name": "Boston Scientific Corporation",
+      "subsector": "Medical Devices",
+      "market_cap_billions": 150,
+      "scores": {
+        "moat": 8,
+        "management": 9,
+        "growth": 9,
+        "valuation": 7
+      },
+      "overall_score": 8.3,
+      "score_math": "(8*0.30)+(9*0.20)+(9*0.30)+(7*0.20) = 2.40+1.80+2.70+1.40 = 8.30",
+      "conviction": "HIGH",
+      "key_metrics": {
+        "revenue_2025_actual_billions": 20.07,
+        "revenue_growth_2025_organic_pct": 15.8,
+        "revenue_growth_2026_guidance_organic_pct": "10-11",
+        "eps_2026_guidance": "3.43-3.49",
+        "penumbra_acquisition_value_billions": 14.5,
+        "key_growth_areas": "Electrophysiology (FARAPULSE), structural heart, neuromodulation, endoscopy"
+      },
+      "thesis": "Boston Scientific delivered 15.8% organic growth in 2025 and guides 10-11% for 2026, the strongest organic growth profile in large-cap medtech. FARAPULSE pulsed field ablation, structural heart, and neuromodulation franchises all growing double digits. Management has consistently beaten guidance for multiple years. The $14.5B Penumbra acquisition carries integration risk but re-enters neurovascular with a market-leading position.",
+      "risks": [
+        "Penumbra acquisition at $14.5B carries integration and ROIC risk; revenue multiple is premium",
+        "FARAPULSE competition intensifying from Medtronic and Abbott in EP space",
+        "Tariff exposure on medical device supply chains",
+        "Premium valuation relative to medtech peers"
+      ]
+    },
+    {
+      "ticker": "ISRG",
+      "name": "Intuitive Surgical Inc.",
+      "subsector": "Medical Devices",
+      "market_cap_billions": 161,
+      "current_price": 454.29,
+      "scores": {
+        "moat": 10,
+        "management": 9,
+        "growth": 8,
+        "valuation": 5
+      },
+      "overall_score": 8.2,
+      "score_math": "(10*0.30)+(9*0.20)+(8*0.30)+(5*0.20) = 3.00+1.80+2.40+1.00 = 8.20 [v2: valuation reduced from 6 to 5, score from 8.3 to 8.2]",
+      "conviction": "MODERATE",
+      "conviction_rationale": "Downgraded from HIGH to MODERATE. The installed-base moat is genuine but not unassailable -- Medtronic Hugo and J&J Ottava are emerging competitors. At 57x trailing PE (PEG 2.99), the valuation requires near-perfect execution. Hospital capital budget constraints in a potential recession are a material risk to da Vinci 5 placements at $1.8-2.5M per unit.",
+      "key_metrics": {
+        "revenue_2025_actual_billions": 10.06,
+        "revenue_growth_2025_pct": 21,
+        "da_vinci_procedure_growth_2026_guidance_pct": "13-15",
+        "da_vinci_5_placements_2025": 870,
+        "da_vinci_5_price_per_unit_millions": "1.8-2.5",
+        "international_procedure_share_pct": 35,
+        "trailing_pe": 57.37,
+        "forward_pe": 45.97,
+        "peg_ratio": 2.99,
+        "recurring_revenue_pct": 85
+      },
+      "thesis": "Intuitive Surgical has a strong installed base moat with 60%+ robotic surgery market share and 85% recurring revenue from instruments and accessories. Da Vinci 5 placements more than doubled YoY (870 vs 362 in 2024). International procedures grew 23%. However, the moat faces emerging threats from Medtronic Hugo and J&J Ottava. At 57x trailing PE with PEG of 2.99, the stock is priced for perfection. Hospital capital budgets ($1.8-2.5M per system) are vulnerable to recession, and international government budgets (Japan, UK) may slow placements. The pay-per-use model mitigates but does not eliminate capex sensitivity.",
+      "entry_prices": {
+        "aggressive_entry": "$400 (12% below current, ~50x trailing PE)",
+        "base_entry": "$375 (17% below current, ~47x trailing PE, aligns with 10% correction)",
+        "conservative_entry": "$340 (25% below current, ~43x trailing PE, significant market stress)"
+      },
+      "recession_stress_test": {
+        "scenario": "15% hospital capex cut",
+        "impact": "Da Vinci 5 placements decline from expected 1000+ to 700-750. Revenue growth decelerates from 13-15% to 6-8%. Recurring revenue (85%) provides floor. Stock could trade to 40-45x trailing PE = $320-360 range.",
+        "probability_pct": 20
+      },
+      "risks": [
+        "Premium valuation at 57x trailing PE (PEG 2.99) leaves no margin of safety",
+        "Competition from Medtronic Hugo and J&J Ottava robotic platforms gaining traction",
+        "Hospital capital budget constraints: da Vinci 5 at $1.8-2.5M per system, government budgets in Japan and UK constraining international growth",
+        "Tariff impact on capital equipment purchasing decisions",
+        "In recession scenario, placements could decline 25-30% while recurring revenue provides only partial offset"
+      ]
+    },
+    {
+      "ticker": "AZN",
+      "name": "AstraZeneca PLC",
+      "subsector": "Large Cap Pharma",
+      "market_cap_billions": 250,
+      "scores": {
+        "moat": 8,
+        "management": 8,
+        "growth": 8,
+        "valuation": 8
+      },
+      "overall_score": 8.0,
+      "score_math": "(8*0.30)+(8*0.20)+(8*0.30)+(8*0.20) = 2.40+1.60+2.40+1.60 = 8.00",
+      "conviction": "MODERATE",
+      "conviction_rationale": "Downgraded from HIGH to MODERATE. Strong oncology pipeline with 20+ Phase 3 readouts, but China fraud investigation overhang, Enhertu shared economics with Daiichi Sankyo, and Tagrisso late-decade patent risk create meaningful uncertainty. Binary Phase 3 outcomes cut both ways.",
+      "key_metrics": {
+        "revenue_2025_actual_billions": 58.7,
+        "revenue_growth_2025_cer_pct": 8,
+        "oncology_revenue_2025_billions": 25.6,
+        "enhertu_sales_billions": 2.78,
+        "enhertu_growth_pct": 40,
+        "phase3_readouts_expected_2026": "20+",
+        "revenue_target_2030_billions": 80
+      },
+      "thesis": "AstraZeneca has the deepest oncology pipeline in the industry with 20+ Phase 3 readouts in 2026. Enhertu (40% growth) is tracking toward $14.3B peak. The $80B 2030 revenue target from a $58.7B 2025 base is ambitious but supported by pipeline breadth. However, China regulatory risk persists, Enhertu economics are shared 50/50 with Daiichi Sankyo, and multiple Phase 3 binary outcomes introduce volatility. Best suited for investors who want oncology exposure without GLP-1 concentration risk.",
+      "risks": [
+        "China regulatory and fraud investigation overhang",
+        "Tagrisso patent expiration risk in late decade",
+        "Enhertu partnership economics shared 50/50 with Daiichi Sankyo",
+        "Pipeline binary risk from 20+ Phase 3 readouts -- misses would be punished",
+        "Ambitious $80B 2030 target requires near-flawless pipeline execution"
+      ]
+    },
+    {
+      "ticker": "TMO",
+      "name": "Thermo Fisher Scientific Inc.",
+      "subsector": "Life Sciences Tools",
+      "market_cap_billions": 200,
+      "scores": {
+        "moat": 9,
+        "management": 8,
+        "growth": 6,
+        "valuation": 7
+      },
+      "overall_score": 7.5,
+      "score_math": "(9*0.30)+(8*0.20)+(6*0.30)+(7*0.20) = 2.70+1.60+1.80+1.40 = 7.50 [v2: growth score reduced from 7 to 6; overall from 7.8 to 7.5]",
+      "conviction": "MODERATE",
+      "conviction_rationale": "Downgraded from HIGH to MODERATE. Growth score reduced from 7 to 6 to reflect 3-4% organic growth guidance, which is below TMO's historical 6-7% average. The company remains the essential infrastructure provider for biotech/pharma R&D, and Life Sciences Solutions grew 13% in Q4 2025, but the blended organic growth rate does not warrant a 7/10 growth score. The Clario acquisition ($0.45 EPS accretion) and biotech funding recovery provide potential upside to guidance.",
+      "key_metrics": {
+        "revenue_2026_guidance_billions": "46.3-47.2",
+        "organic_growth_guidance_2026_pct": "3-4",
+        "historical_organic_growth_avg_pct": "6-7",
+        "eps_growth_guidance_2026_pct": "6-8",
+        "eps_guidance_2026": "24.22-24.80",
+        "life_sciences_solutions_q4_growth_pct": 13,
+        "clario_acquisition_eps_uplift": 0.45
+      },
+      "thesis": "Thermo Fisher is the picks-and-shovels play on biotech recovery, but 3-4% organic growth guidance is materially below its historical 6-7% average. Life Sciences Solutions segment (13% Q4 growth) shows the recovery is underway but unevenly distributed across the business. The Clario acquisition adds $0.45 EPS. As the largest life sciences tools company globally, TMO captures outsized share of any biotech spending recovery. However, the growth profile warrants MODERATE conviction, not HIGH, until organic growth re-accelerates toward historical norms.",
+      "risks": [
+        "Organic growth of 3-4% is below historical average of 6-7%, creating execution risk on growth expectations",
+        "Biotech funding recovery could stall if macro conditions deteriorate",
+        "Tariff impact on instrument supply chains and customer budgets",
+        "Integration risk from continued M&A strategy"
+      ]
+    }
+  ],
+  "sell_recommendations": [
+    {
+      "ticker": "MRK",
+      "name": "Merck & Co.",
+      "recommendation": "SELL",
+      "current_price": 120.84,
+      "subsector": "Large Cap Pharma",
+      "scores": {
+        "moat": 7,
+        "management": 7,
+        "growth": 4,
+        "valuation": 7
+      },
+      "overall_score": 6.1,
+      "score_math": "(7*0.30)+(7*0.20)+(4*0.30)+(7*0.20) = 2.10+1.40+1.20+1.40 = 6.10",
+      "rationale": "Keytruda represents the single largest patent cliff in pharmaceutical history, with $32.7B peak sales projected in 2026 and US patent expiry for the IV formulation in 2028. Revenue guidance of $65.5-67B includes $2.5B headwind from generic competition and Medicare pricing. The company is attempting to diversify with $3B in cost cuts and a dedicated cancer unit, but the gap to fill is $23B+. Januvia/Janumet lose patent protection in 2026, Lynparza in 2027, compounding the cliff. While Merck has pipeline depth, the 2-year timeline to Keytruda LOE creates a structural overhang that limits upside.",
+      "key_risks": [
+        "Keytruda $32.7B peak revenue at risk from 2028 patent expiry -- largest single-drug cliff in history",
+        "Januvia/Janumet patent loss 2026, Lynparza 2027 compound the revenue gap",
+        "2026 guidance of $65.5-67B missed analyst consensus of $67.6B",
+        "$3B cost cutting insufficient to offset $23B+ revenue gap",
+        "IRA negotiation of Keytruda would accelerate revenue erosion ahead of patent cliff"
+      ],
+      "target_price": 95,
+      "target_rationale": "At 12x trough earnings estimate of ~$8 EPS post-Keytruda cliff (2029), fair value is approximately $95. Current price of $121 implies 21% downside risk.",
+      "when_to_reconsider": "Revisit SELL if Merck announces a transformative acquisition (>$20B) that credibly fills the Keytruda gap, or if subcutaneous Keytruda formulation meaningfully extends exclusivity beyond 2028."
+    },
+    {
+      "ticker": "PFE",
+      "name": "Pfizer Inc.",
+      "recommendation": "SELL",
+      "current_price": 28.32,
+      "subsector": "Large Cap Pharma",
+      "scores": {
+        "moat": 6,
+        "management": 5,
+        "growth": 4,
+        "valuation": 7
+      },
+      "overall_score": 5.4,
+      "score_math": "(6*0.30)+(5*0.20)+(4*0.30)+(7*0.20) = 1.80+1.00+1.20+1.40 = 5.40",
+      "rationale": "Pfizer faces a $21B revenue gap from patent losses (Prevnar 2026, Ibrance 2027, Xtandi 2027) compounded by continued COVID revenue normalization. The $43B Seagen acquisition and $10B Metsera deal are long-duration bets that will not materially contribute until 2028-2030. Revenue guidance of $59.5-62.5B includes $3B combined headwind from patent losses and COVID decline. Management targets $25B in risk-adjusted revenue by 2030 from recent BD, but this requires near-flawless execution across 20 planned pivotal trials in 2026. At $28, the stock appears cheap on a P/E basis, but this is a value trap until pipeline execution provides evidence of successful pivot. The obesity pipeline (Metsera) is years behind Lilly and Novo.",
+      "key_risks": [
+        "Prevnar patent loss 2026, Ibrance and Xtandi 2027 creating $21B+ revenue gap",
+        "$43B Seagen integration still maturing; Padcev is growing but cannot offset total losses alone",
+        "Metsera obesity candidates are early-stage, years behind LLY and NVO",
+        "COVID franchise (Paxlovid, Comirnaty) in structural decline",
+        "Management credibility damaged by post-COVID guidance misses"
+      ],
+      "target_price": 23,
+      "target_rationale": "At 8x trough earnings estimate of ~$2.90 EPS in 2027-2028 (peak patent cliff impact), fair value is approximately $23. Current price of $28 implies 18% downside risk.",
+      "when_to_reconsider": "Revisit SELL if Padcev/Seagen portfolio exceeds $15B combined revenue run-rate, or if obesity pipeline produces competitive Phase 2+ data."
+    }
+  ],
+  "additional_companies_analyzed": [
+    {
+      "ticker": "JNJ",
+      "name": "Johnson & Johnson",
+      "subsector": "Diversified Healthcare",
+      "overall_score": 7.8,
+      "conviction": "MODERATE",
+      "brief": "Strong pipeline with DARZALEX crossing $14B, OTTAVA robotic surgery submission in 2026, and 6.7% revenue growth guidance. Stock up 38% in 6 months. Solid but slower growth profile than top picks.",
+      "scores": { "moat": 9, "management": 8, "growth": 7, "valuation": 8 }
+    },
+    {
+      "ticker": "NVO",
+      "name": "Novo Nordisk",
+      "subsector": "Large Cap Pharma",
+      "overall_score": 6.8,
+      "conviction": "MODERATE",
+      "brief": "Oral Wegovy launch promising (50K weekly scripts in 3 weeks) but company guides 5-13% revenue and profit decline in 2026. Lost GLP-1 market share to Lilly. Stock down 40-45% from highs. CagriSema trial disappointment adds overhang. Potential deep value or value trap.",
+      "scores": { "moat": 7, "management": 7, "growth": 5, "valuation": 8 }
+    },
+    {
+      "ticker": "UNH",
+      "name": "UnitedHealth Group",
+      "subsector": "Managed Care",
+      "overall_score": 5.8,
+      "conviction": "LOW",
+      "brief": "Stock declined 23% in under a month to ~$259. First revenue decline since 1980s expected. Losing 1.3-1.4M Medicare Advantage members. CMS rate increases of 0.09% vs 10% cost trend. MLR in low-to-mid 85% range. Near-term headwinds severe.",
+      "scores": { "moat": 8, "management": 5, "growth": 3, "valuation": 7 }
+    },
+    {
+      "ticker": "AMGN",
+      "name": "Amgen Inc.",
+      "subsector": "Biotech",
+      "overall_score": 6.7,
+      "conviction": "MODERATE",
+      "brief": "MariTide obesity drug is key catalyst but Phase 3 data not until 2027. Full Phase 2 showed up to 16% weight loss at 52 weeks -- inferior to Zepbound. Monthly dosing is differentiated. Revenue guidance $37-38.4B implies only 3% growth. Denosumab biosimilar competition creates $5B headwind.",
+      "scores": { "moat": 7, "management": 7, "growth": 6, "valuation": 7 }
+    },
+    {
+      "ticker": "REGN",
+      "name": "Regeneron Pharmaceuticals",
+      "subsector": "Biotech",
+      "overall_score": 7.5,
+      "conviction": "MODERATE",
+      "brief": "Dupixent global sales surged 32% to $4.9B quarterly. EYLEA HD up 66%. Strong pipeline execution. Limited near-term upside at current valuation.",
+      "scores": { "moat": 8, "management": 8, "growth": 8, "valuation": 6 }
+    },
+    {
+      "ticker": "GILD",
+      "name": "Gilead Sciences",
+      "subsector": "Biotech",
+      "overall_score": 6.5,
+      "conviction": "LOW",
+      "brief": "HIV franchise stable but Veklury declining. Cell therapy franchise down 10%. Lenacapavir for PrEP is long-term catalyst but largely priced in.",
+      "scores": { "moat": 7, "management": 7, "growth": 5, "valuation": 8 }
+    },
+    {
+      "ticker": "DHR",
+      "name": "Danaher Corporation",
+      "subsector": "Life Sciences Tools",
+      "overall_score": 7.3,
+      "conviction": "MODERATE",
+      "brief": "Bioprocessing recovery gaining momentum. Benefits from biotech funding recovery similarly to TMO but with narrower focus.",
+      "scores": { "moat": 8, "management": 8, "growth": 7, "valuation": 7 }
+    },
+    {
+      "ticker": "SYK",
+      "name": "Stryker Corporation",
+      "subsector": "Medical Devices",
+      "overall_score": 7.5,
+      "conviction": "MODERATE",
+      "brief": "Strong medtech franchise in orthopedics and Mako robotic surgery. Consistent mid-to-high single digit organic growth. Premium valuation justified by execution.",
+      "scores": { "moat": 8, "management": 8, "growth": 7, "valuation": 7 }
+    }
+  ],
+  "conviction_picks": [
+    {
+      "rank": 1,
+      "ticker": "LLY",
+      "name": "Eli Lilly and Company",
+      "overall_score": 8.7,
+      "conviction": "HIGH",
+      "position_sizing": "OVERWEIGHT (15% max allocation)",
+      "entry_strategy": {
+        "current_price": 935.58,
+        "aggressive_entry": 935,
+        "base_entry": 880,
+        "conservative_entry": 820,
+        "max_entry_pe": 30,
+        "rationale": "Current price is near probability-weighted fair value of $1,110. Aggressive buyers can enter at current levels for 19% upside to base case. Conservative buyers should wait for $880 (bear case fair value) or below. Do NOT buy above 30x forward PE."
+      },
+      "stop_loss": {
+        "level_pct": 18,
+        "absolute_price": 767,
+        "rationale": "LLY 52-week range is $625-$1,004, implying routine 38% drawdowns. A 15% trailing stop would trigger on normal volatility. 18% stop at $767 is below the probability-weighted bear case and represents a fundamental thesis break.",
+        "volatility_basis": "52-week beta 1.15, average true range ~$25/day, historical max drawdown 38%"
+      },
+      "price_target_rationale": "Probability-weighted DCF: 50% base ($1,180) + 25% bull ($1,400) + 25% bear ($880) = $1,110. At current $936, implies 19% upside.",
+      "catalyst_timeline": [
+        "April 2026: Medicare Part D $50 copay for Zepbound takes effect",
+        "H1 2026: Orforglipron oral obesity pill Phase 3 data updates",
+        "2026: Continued Mounjaro/Zepbound volume ramp toward $80-83B revenue",
+        "2026-2027: Kisunla (Alzheimer's) global launch expansion"
+      ]
+    },
+    {
+      "rank": 2,
+      "ticker": "ABBV",
+      "name": "AbbVie Inc.",
+      "overall_score": 8.5,
+      "conviction": "HIGH",
+      "position_sizing": "OVERWEIGHT (15% max allocation)",
+      "entry_strategy": {
+        "current_price": 205.00,
+        "aggressive_entry": 205,
+        "base_entry": 195,
+        "conservative_entry": 180,
+        "max_entry_pe": 16,
+        "rationale": "At ~14x 2026 EPS of $14.50, ABBV offers best value among top picks. Dividend yield (3.5%+) provides downside cushion. Buy at current levels or accumulate below $195."
+      },
+      "stop_loss": {
+        "level_pct": 14,
+        "absolute_price": 176,
+        "rationale": "ABBV has lower volatility than LLY (beta ~0.7). 14% stop at $176 is calibrated to historical drawdown patterns and represents a break below multi-year support.",
+        "volatility_basis": "52-week beta 0.7, dividend support at 4%+ yield, lower volatility pharma profile"
+      },
+      "price_target_rationale": "At 18x 2026 EPS of $14.50, target ~$261. Skyrizi/Rinvoq growth runway to $31.6B+ and patent protection through 2033+ supports premium multiple.",
+      "catalyst_timeline": [
+        "Q1-Q4 2026: Skyrizi/Rinvoq combined sales tracking toward $31.6B",
+        "2026: New IBD indications and market share gains",
+        "Ongoing: 54-year dividend growth streak continuation",
+        "2026-2027: Neuroscience pipeline readouts"
+      ]
+    },
+    {
+      "rank": 3,
+      "ticker": "VRTX",
+      "name": "Vertex Pharmaceuticals Inc.",
+      "overall_score": 8.4,
+      "conviction": "HIGH",
+      "position_sizing": "EQUAL WEIGHT (10% max allocation)",
+      "entry_strategy": {
+        "current_price": null,
+        "aggressive_entry": 470,
+        "base_entry": 440,
+        "conservative_entry": 410,
+        "max_entry_pe": null,
+        "rationale": "Buy below $470 for 14% upside to consensus $538 target. Stacked catalyst calendar de-risks entry timing."
+      },
+      "stop_loss": {
+        "level_pct": 16,
+        "absolute_price": null,
+        "rationale": "Biotech stocks have higher volatility. 16% stop calibrated to VRTX historical drawdowns, which have been moderate given CF revenue stability.",
+        "volatility_basis": "Biotech sector beta ~1.1, CF revenue provides earnings floor"
+      },
+      "price_target_rationale": "28 analysts average target $538. Multiple pipeline catalysts (JOURNAVX, CASGEVY, povetacicept) could drive target revisions higher.",
+      "catalyst_timeline": [
+        "2026: JOURNAVX prescriptions tripling, commercial inflection point",
+        "2026: CASGEVY revenue ramp in sickle cell and beta-thalassemia",
+        "H2 2026: VX-828 next-gen CF corrector data",
+        "2026-2027: Povetacicept and autoimmune pipeline progression"
+      ]
+    },
+    {
+      "rank": 4,
+      "ticker": "BSX",
+      "name": "Boston Scientific Corporation",
+      "overall_score": 8.3,
+      "conviction": "HIGH",
+      "position_sizing": "EQUAL WEIGHT (10% max allocation)",
+      "entry_strategy": {
+        "aggressive_entry": "current levels",
+        "base_entry": "any 5-7% pullback on Penumbra integration concerns",
+        "conservative_entry": "any 10%+ pullback",
+        "rationale": "Best organic growth in medtech (10-11% guidance). Consistent guidance beats justify premium."
+      },
+      "stop_loss": {
+        "level_pct": 15,
+        "rationale": "Medtech stocks have moderate volatility. 15% trailing stop aligns with BSX historical drawdown patterns.",
+        "volatility_basis": "Medtech sector beta ~0.9, consistent revenue growth reduces volatility"
+      },
+      "price_target_rationale": "10-11% organic growth at premium medtech multiples. EPS of $3.43-3.49 growing mid-teens.",
+      "catalyst_timeline": [
+        "2026: FARAPULSE continued adoption, EP market share gains",
+        "H2 2026: Penumbra acquisition closing",
+        "2026: Structural heart and neuromodulation franchise growth",
+        "Ongoing: Consistent guidance beats"
+      ]
+    },
+    {
+      "rank": 5,
+      "ticker": "ISRG",
+      "name": "Intuitive Surgical Inc.",
+      "overall_score": 8.2,
+      "conviction": "MODERATE",
+      "position_sizing": "UNDERWEIGHT (5% max allocation)",
+      "entry_strategy": {
+        "current_price": 454.29,
+        "aggressive_entry": 400,
+        "base_entry": 375,
+        "conservative_entry": 340,
+        "max_entry_pe_trailing": 47,
+        "rationale": "Do NOT buy at current 57x trailing PE. Wait for correction to $375-400 range (47-50x PE), which aligns with historical valuation troughs during growth deceleration fears. At $340 (25% pullback), risk-reward becomes compelling."
+      },
+      "stop_loss": {
+        "level_pct": 20,
+        "rationale": "High-beta medtech with wide historical drawdowns. ISRG has seen 30%+ drawdowns in prior cycles. 20% stop is calibrated to avoid triggering on normal volatility while protecting against fundamental deterioration.",
+        "volatility_basis": "Beta ~1.3, historical max drawdown 35%+, high PE amplifies downside moves"
+      },
+      "price_target_rationale": "13-15% procedure growth supports mid-teens revenue growth. Installed base razor/blade model drives recurring revenue compounding. At 50x forward PE, fair value is ~$550 if growth sustains.",
+      "catalyst_timeline": [
+        "2026: Da Vinci 5 placement acceleration targeting 1000+",
+        "2026: International expansion beyond 35% procedure share",
+        "2026: Ion lung biopsy and SP platform adoption",
+        "Risk: Hospital capital budgets, recession sensitivity"
+      ]
+    }
+  ],
+  "portfolio_construction": {
+    "recommended_allocation": {
+      "large_cap_pharma": {
+        "weight_pct": 40,
+        "picks": ["LLY", "ABBV"],
+        "note": "Reduced from 45% by removing AZN from overweight. AZN moved to MODERATE conviction."
+      },
+      "biotech": {
+        "weight_pct": 20,
+        "picks": ["VRTX"]
+      },
+      "medical_devices": {
+        "weight_pct": 25,
+        "picks": ["BSX", "ISRG"],
+        "note": "ISRG at reduced 5% allocation given valuation. BSX at 15% preferred device exposure."
+      },
+      "life_sciences_tools": {
+        "weight_pct": 10,
+        "picks": ["TMO"],
+        "note": "TMO at MODERATE conviction. Monitor organic growth trajectory for upgrade."
+      },
+      "cash_reserve": {
+        "weight_pct": 5,
+        "note": "Dry powder for ISRG entry at $375-400 or opportunistic sector correction purchases"
+      }
+    },
+    "risk_management": {
+      "max_single_position_pct": 15,
+      "stop_loss_calibration": {
+        "methodology": "Stop-losses calibrated to individual stock volatility (beta, ATR, historical max drawdown) rather than blanket percentage",
+        "LLY": "18% trailing ($767) -- high beta 1.15, wide 52-week range",
+        "ABBV": "14% trailing ($176) -- low beta 0.7, dividend support",
+        "VRTX": "16% trailing -- moderate biotech volatility, CF revenue floor",
+        "BSX": "15% trailing -- moderate medtech volatility",
+        "ISRG": "20% trailing -- high beta 1.3, PE compression risk",
+        "TMO": "14% trailing -- defensive profile, low beta ~0.8",
+        "AZN": "15% trailing -- standard pharma volatility"
+      },
+      "rebalance_trigger": "Quarterly or on >20% position move",
+      "sector_hedge": "Underweight managed care (UNH, CI) as hedge against regulatory/Medicare risk"
+    }
+  },
+  "sector_risks": {
+    "regulatory": {
+      "risk_level": "MEDIUM-HIGH",
+      "details": "IRA drug price negotiations expanding: 10 drugs effective Jan 2026, 15 more for 2027, Part B expansion in 2028. Medicare Advantage rate inadequacy. FDA approval pace stable but political interference risk exists."
+    },
+    "competitive": {
+      "risk_level": "HIGH",
+      "details": "GLP-1 market seeing rapid new entrants (Amgen, Roche, Viking, Tern). Biosimilar competition intensifying across top drugs. Medtech innovation cycles accelerating with multiple robotic surgery platforms."
+    },
+    "macro": {
+      "risk_level": "MEDIUM",
+      "details": "Tariff uncertainty on pharmaceutical and device supply chains. Healthcare generally defensive in downturns but hospital capex and biotech funding are cyclically sensitive."
+    },
+    "patent_cliff": {
+      "risk_level": "HIGH",
+      "details": "Major patent expirations: Keytruda (2028, $32.7B), Prevnar (2026), Ibrance/Xtandi (2027), denosumab (2026). Combined revenue at risk exceeds $80B across the sector by 2030."
+    }
+  },
+  "v2_improvements": {
+    "changes_from_v1": [
+      "Conviction levels now graduated: 3 HIGH (LLY, ABBV, VRTX, BSX), 3 MODERATE (ISRG, AZN, TMO), 2 SELL (MRK, PFE)",
+      "Added DCF scenario analysis for LLY with base/bull/bear probability-weighted targets",
+      "Added 2 explicit SELL recommendations (MRK, PFE) with target prices and rationale",
+      "ISRG downgraded to MODERATE with specific entry prices ($400/$375/$340)",
+      "TMO growth score reduced from 7 to 6, conviction downgraded to MODERATE",
+      "Stop-losses calibrated to individual stock volatility instead of blanket 15%",
+      "Added comprehensive GLP-1 competitive matrix",
+      "Added quantified IRA impact analysis per pick",
+      "Added AbbVie patent expiration and biosimilar timelines",
+      "Added ISRG hospital capex stress test",
+      "Added peer valuation comparison table",
+      "Added GLP-1 manufacturing capacity analysis",
+      "Score math verified for every pick"
+    ],
+    "sell_recommendations": {
+      "MRK": {
+        "recommendation": "SELL",
+        "score": 6.1,
+        "target_price": 95,
+        "downside_pct": 21,
+        "primary_reason": "Keytruda patent cliff 2028 -- largest single-drug cliff in pharmaceutical history ($32.7B peak)",
+        "secondary_reasons": ["Januvia/Janumet LOE 2026", "Lynparza LOE 2027", "2026 guidance missed consensus"]
+      },
+      "PFE": {
+        "recommendation": "SELL",
+        "score": 5.4,
+        "target_price": 23,
+        "downside_pct": 18,
+        "primary_reason": "Triple patent cliff (Prevnar 2026, Ibrance/Xtandi 2027) with $21B+ revenue gap and no near-term offset",
+        "secondary_reasons": ["COVID franchise structural decline", "Seagen/Metsera investments years from payoff", "Management credibility damaged"]
+      }
+    },
+    "scenario_analysis": {
+      "LLY_dcf": {
+        "base_case": {"fair_value": 1180, "probability_pct": 50, "revenue_cagr": "20%"},
+        "bull_case": {"fair_value": 1400, "probability_pct": 25, "revenue_cagr": "25%"},
+        "bear_case": {"fair_value": 880, "probability_pct": 25, "revenue_cagr": "15%"},
+        "probability_weighted": 1110
+      },
+      "ISRG_recession_stress_test": {
+        "scenario": "15% hospital capex cut",
+        "da_vinci_5_placement_decline": "1000+ to 700-750",
+        "revenue_growth_impact": "13-15% to 6-8%",
+        "valuation_compression": "57x to 40-45x PE",
+        "implied_price_range": "$320-360",
+        "probability_pct": 20
+      },
+      "ABBV_ira_stress_test": {
+        "scenario": "IRA negotiates Rinvoq in 2029 at 40% Medicare discount",
+        "revenue_at_risk_billions": "2-4",
+        "probability_pct": 40,
+        "mitigant": "Rinvoq generic entry blocked until April 2037; Skyrizi patent through 2033"
+      }
+    },
+    "position_sizing": {
+      "methodology": "Position sizes calibrated to conviction level and individual stock volatility",
+      "HIGH_conviction": {
+        "max_allocation_pct": 15,
+        "picks": ["LLY", "ABBV", "VRTX", "BSX"]
+      },
+      "MODERATE_conviction": {
+        "max_allocation_pct": 10,
+        "picks": ["AZN", "TMO"]
+      },
+      "MODERATE_reduced": {
+        "max_allocation_pct": 5,
+        "picks": ["ISRG"],
+        "note": "Reduced due to extreme valuation; allocate more at specific entry prices"
+      },
+      "SELL": {
+        "allocation_pct": 0,
+        "picks": ["MRK", "PFE"]
+      },
+      "entry_prices_summary": {
+        "LLY": {"aggressive": 935, "base": 880, "conservative": 820},
+        "ABBV": {"aggressive": 205, "base": 195, "conservative": 180},
+        "VRTX": {"aggressive": 470, "base": 440, "conservative": 410},
+        "BSX": {"aggressive": "current", "base": "5-7% pullback", "conservative": "10%+ pullback"},
+        "ISRG": {"aggressive": 400, "base": 375, "conservative": 340}
+      }
+    },
+    "ira_impact_analysis": {
+      "overview": "The Inflation Reduction Act expands Medicare drug price negotiation annually: 10 drugs effective 2026, 15 more for 2027, Part B inclusion starting 2028. Precedent from first 10 drugs shows 38-79% discounts off list price.",
+      "per_pick_impact": {
+        "LLY": {
+          "drug_at_risk": "Mounjaro/Zepbound (tirzepatide)",
+          "eligible_for_negotiation": "Potentially 2028 or 2029 cycle",
+          "revenue_at_risk_billions": "8-15 (Medicare portion of $40B+ total tirzepatide revenue)",
+          "discount_range_pct": "38-50 (based on IRA precedent)",
+          "net_revenue_impact_billions": "3-7.5 annually",
+          "probability_of_selection_pct": 60,
+          "timeline": "Earliest impact 2030 if selected in 2028 cycle",
+          "mitigant": "Oral orforglipron may not be selected if approved after tirzepatide; volume growth could partially offset price cuts"
+        },
+        "ABBV": {
+          "drugs_at_risk": "Rinvoq (eligible 2027 for 2029 implementation), Skyrizi (later cycle)",
+          "rinvoq_revenue_at_risk_billions": "2-4 (Medicare portion of $10B+ Rinvoq revenue)",
+          "skyrizi_revenue_at_risk_billions": "4-8 (Medicare portion of $21B+ Skyrizi revenue)",
+          "discount_range_pct": "38-50",
+          "net_revenue_impact_billions": "1.5-4 combined annually",
+          "probability_of_rinvoq_selection_pct": 50,
+          "probability_of_skyrizi_selection_pct": 35,
+          "timeline": "Rinvoq earliest impact 2029; Skyrizi 2030+",
+          "mitigant": "Patent protection (Rinvoq generic blocked to 2037, Skyrizi biosimilar post-2028) means IRA is the earlier risk vector, not LOE"
+        },
+        "VRTX": {
+          "drugs_at_risk": "Trikafta (CF), JOURNAVX (pain)",
+          "revenue_at_risk_billions": "1-3",
+          "probability_pct": 30,
+          "mitigant": "Orphan drug protections and small Medicare CF population limit selection probability"
+        },
+        "ISRG": {
+          "impact": "MINIMAL -- devices not subject to IRA drug price negotiation",
+          "indirect_risk": "Hospital budget reallocation if drug savings do not flow to capex"
+        },
+        "BSX": {
+          "impact": "MINIMAL -- devices not subject to IRA drug price negotiation"
+        },
+        "AZN": {
+          "drugs_at_risk": "Tagrisso, Imfinzi (Part B inclusion 2028 creates new risk)",
+          "revenue_at_risk_billions": "2-5",
+          "probability_pct": 45,
+          "timeline": "Part B drugs eligible starting 2028 cycle, impact 2030+",
+          "mitigant": "Broad oncology portfolio diversifies risk across many drugs rather than concentrated exposure"
+        },
+        "TMO": {
+          "impact": "MINIMAL -- life sciences tools not subject to IRA negotiation",
+          "indirect_benefit": "IRA savings may redirect to R&D spending, benefiting tools demand"
+        }
+      }
+    },
+    "glp1_competitive_matrix": {
+      "overview": "The GLP-1/obesity market is transitioning from a Lilly-Novo duopoly to a crowded competitive landscape with 6+ new entrants expected by 2029. This creates both pricing pressure risk and total addressable market expansion.",
+      "current_market": {
+        "total_market_size_2025_billions": 50,
+        "projected_market_size_2030_billions": "130-150",
+        "lilly_share_pct": 60,
+        "novo_share_pct": 37,
+        "others_pct": 3
+      },
+      "competitors": [
+        {
+          "company": "Eli Lilly",
+          "ticker": "LLY",
+          "drug": "Tirzepatide (Mounjaro/Zepbound)",
+          "mechanism": "Dual GIP/GLP-1 agonist",
+          "status": "Marketed, market leader",
+          "weight_loss_efficacy": "20-25%",
+          "dosing": "Weekly injection",
+          "differentiation": "Best-in-class efficacy, first-mover in dual agonist",
+          "next_gen": "Orforglipron (oral, Phase 3), retatrutide (triple agonist, Phase 3)"
+        },
+        {
+          "company": "Novo Nordisk",
+          "ticker": "NVO",
+          "drug": "Semaglutide (Ozempic/Wegovy/oral Wegovy)",
+          "mechanism": "GLP-1 agonist",
+          "status": "Marketed, losing share",
+          "weight_loss_efficacy": "15-17%",
+          "dosing": "Weekly injection or daily oral",
+          "differentiation": "Oral formulation launched (50K weekly scripts), established brand",
+          "next_gen": "CagriSema (amylin/GLP-1, Phase 3 disappointed), survodutide"
+        },
+        {
+          "company": "Amgen",
+          "ticker": "AMGN",
+          "drug": "MariTide",
+          "mechanism": "GLP-1 agonist / GIP antagonist (antibody-peptide conjugate)",
+          "status": "Phase 2 complete, Phase 3 expected 2025-2027",
+          "weight_loss_efficacy": "Up to 16% at 52 weeks (Phase 2)",
+          "dosing": "Monthly or less frequent",
+          "differentiation": "Monthly dosing convenience, no plateau at 52 weeks",
+          "expected_launch": "2027-2028",
+          "key_risk": "Efficacy appears inferior to Zepbound (16% vs 20-25%); dosing convenience may not offset",
+          "competitive_threat_to_LLY": "LOW-MODERATE"
+        },
+        {
+          "company": "Roche",
+          "ticker": "RHHBY",
+          "drug": "CT-996 (oral) and CT-388 (dual agonist)",
+          "mechanism": "GLP-1 agonist (oral) / dual GIP-GLP-1 (injectable)",
+          "status": "Phase 2 (acquired via $2.7B Carmot Therapeutics deal)",
+          "weight_loss_efficacy": "TBD (Phase 2 data pending)",
+          "dosing": "Oral (CT-996) and injectable (CT-388)",
+          "differentiation": "Oral formulation race with Lilly; Roche manufacturing scale",
+          "expected_launch": "2028-2029",
+          "key_risk": "Late to market, efficacy unproven at scale",
+          "competitive_threat_to_LLY": "MODERATE (oral form could differentiate)"
+        },
+        {
+          "company": "Viking Therapeutics",
+          "ticker": "VKTX",
+          "drug": "VK2735",
+          "mechanism": "Dual GIP/GLP-1 agonist",
+          "status": "Phase 2 complete, Phase 3 injectable started 2025",
+          "weight_loss_efficacy": "14.7% at 13 weeks (Phase 2)",
+          "dosing": "Weekly injection and oral formulation",
+          "differentiation": "Strong early data, both oral and injectable programs",
+          "expected_launch": "2028-2029",
+          "key_risk": "Small company, manufacturing and commercialization risk",
+          "competitive_threat_to_LLY": "LOW (scale disadvantage)"
+        },
+        {
+          "company": "Pfizer",
+          "ticker": "PFE",
+          "drug": "Metsera portfolio (ultra-long-acting)",
+          "mechanism": "GLP-1 based (ultra-long-acting)",
+          "status": "Early stage (acquired via ~$10B deal)",
+          "weight_loss_efficacy": "TBD",
+          "dosing": "Potentially monthly or less frequent",
+          "differentiation": "Ultra-long-acting dosing",
+          "expected_launch": "2029+",
+          "key_risk": "Very early stage, previous GLP-1 failures (danuglipron, lotiglipron)",
+          "competitive_threat_to_LLY": "LOW"
+        },
+        {
+          "company": "AstraZeneca",
+          "ticker": "AZN",
+          "drug": "Undisclosed GLP-1 program",
+          "mechanism": "GLP-1 based",
+          "status": "Phase 1",
+          "expected_launch": "2029+",
+          "competitive_threat_to_LLY": "LOW (very early)"
+        }
+      ],
+      "investment_implications": [
+        "GLP-1 TAM is expanding faster than competitive dilution, supporting LLY growth near-term",
+        "Pricing pressure is the primary risk: as competitors enter, payer leverage increases",
+        "Oral formulations (orforglipron, CT-996, oral Wegovy) could expand the market 2-3x by reducing injection hesitancy",
+        "MariTide monthly dosing is differentiated but 16% efficacy vs 20-25% for Zepbound limits competitive threat",
+        "By 2029-2030, LLY share likely declines from 60% to 40-45% even as absolute revenue grows due to TAM expansion",
+        "Manufacturing capacity constraints have largely resolved per FDA, removing a key supply-side moat for incumbents"
+      ]
+    },
+    "peer_comparison": {
+      "peg_ratio_comparison": {
+        "description": "Comparative valuation on PEG basis (Price/Earnings to Growth) -- lower is more attractive",
+        "data": [
+          {"ticker": "LLY", "forward_pe": 27.56, "earnings_growth_est_pct": 22, "peg_ratio": 1.22, "assessment": "Reasonable for growth rate, but bear case risk if growth slows to 15% (implied PEG 1.84)"},
+          {"ticker": "NVO", "forward_pe": 18, "earnings_growth_est_pct": -8, "peg_ratio": "N/A (negative growth)", "assessment": "Not meaningful -- company guiding for revenue and profit decline in 2026"},
+          {"ticker": "AMGN", "forward_pe": 14.5, "earnings_growth_est_pct": 5, "peg_ratio": 2.9, "assessment": "Expensive on PEG basis given only 3% revenue growth; MariTide optionality not yet in earnings"},
+          {"ticker": "PFE", "forward_pe": 9.5, "earnings_growth_est_pct": 4, "peg_ratio": 2.4, "assessment": "Optically cheap but growth is ex-COVID normalization, not organic. Patent cliff compression ahead."},
+          {"ticker": "ABBV", "forward_pe": 14.2, "earnings_growth_est_pct": 45, "peg_ratio": 0.32, "assessment": "Most attractive PEG in group -- 45% EPS jump in 2026 from Humira cliff cycling makes this exceptional value"},
+          {"ticker": "AZN", "forward_pe": 16, "earnings_growth_est_pct": 12, "peg_ratio": 1.33, "assessment": "Reasonable value with diversified oncology growth engine"}
+        ],
+        "key_takeaway": "ABBV offers the best PEG value at 0.32 due to 45% EPS jump from Humira cliff cycling. LLY at 1.22 PEG is fair but not cheap. NVO is uninvestable on PEG basis with negative growth. AMGN is expensive for its growth rate without MariTide contribution."
+      }
+    },
+    "glp1_manufacturing_analysis": {
+      "status": "Supply constraints largely resolved as of 2025",
+      "details": {
+        "fda_shortage_resolution": "FDA declared semaglutide and tirzepatide shortages resolved in 2025",
+        "lilly_capacity": "Multi-billion dollar facility buildouts in the US underway; supply now meets national demand",
+        "novo_capacity": "$4.1B fill-finish plant in Clayton, NC; $220M raw ingredients plant in Denmark; $409M quality control hub",
+        "remaining_risks": "Localized supply disruptions still occur; CDMO workforce competition; compounding pharmacy uncertainty",
+        "shift_in_risk": "Primary risk has shifted from manufacturing constraints to pricing and insurance coverage"
+      },
+      "investment_implication": "Supply resolution removes a key competitive moat for Lilly and Novo. New entrants face lower barriers to manufacturing scale-up via CDMO partnerships. This is net negative for incumbents' pricing power long-term."
+    },
+    "abbvie_patent_timeline": {
+      "skyrizi": {
+        "us_composition_of_matter_expiry": 2033,
+        "biosimilar_entry_expected": "Post-2028 earliest, likely 2033+",
+        "additional_patents": "Multiple method-of-use patents extend protection",
+        "ira_risk": "Could be selected for Medicare negotiation in future rounds"
+      },
+      "rinvoq": {
+        "us_composition_of_matter_expiry": 2033,
+        "fda_orange_book_patents_extend_to": 2038,
+        "generic_entry_blocked_until": "April 2037 per settlement agreements with all generic filers",
+        "note": "Rinvoq is a small molecule (JAK inhibitor), so faces generic not biosimilar competition",
+        "ira_risk": "Eligible for selection in 2027 for implementation in 2029"
+      },
+      "investment_implication": "Patent protection is robust. Rinvoq generic entry blocked until 2037 provides a 11-year runway from today. The more proximate risk is IRA price negotiation (2029 earliest for Rinvoq), not loss of exclusivity."
+    }
+  },
+  "data_sources": [
+    "Company earnings reports and investor presentations (Q4 2025 / FY2025)",
+    "SEC filings (10-K, 10-Q)",
+    "Analyst consensus estimates (CFRA, Goldman Sachs, Wells Fargo, Bernstein, Guggenheim)",
+    "CMS Medicare Advantage rate notices and IRA implementation guidance",
+    "FDA drug shortage databases and approval tracking",
+    "DrugPatentWatch for patent expiration data",
+    "JMCP.org research on anticipated IRA drug selections for 2028",
+    "Fierce Pharma, BioPharma Dive for competitive intelligence",
+    "StockAnalysis.com, Yahoo Finance, GuruFocus for valuation metrics",
+    "Company 8-K filings for da Vinci 5 placement data",
+    "GenomeWeb for Thermo Fisher guidance details"
+  ]
+}

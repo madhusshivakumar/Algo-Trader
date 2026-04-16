@@ -86,9 +86,93 @@ class RiskManager:
             return True
         return False
 
+    def check_intraday_halt(self, current_equity: float,
+                           max_daily_loss_usd: float,
+                           unrealized_pnl: float = 0.0) -> bool:
+        """Sprint 5D: Dollar-aware intraday P&L circuit breaker.
+
+        Halts trading when today's realized loss exceeds the profile's
+        dollar-based threshold, OR when unrealized losses are 1.5x that (early
+        warning). Profile-aware caps mean a $800 account halts at $24 (Beginner
+        3%-or-$50 cap), not the $80 that a pure 10% daily DD would allow.
+
+        Args:
+            current_equity: The broker's current account equity.
+            max_daily_loss_usd: The profile's dollar threshold
+                (from UserProfile.max_daily_loss_usd(equity)).
+            unrealized_pnl: Sum of mark-to-market for open positions
+                (0 for fully-realized accounting, negative for open losses).
+
+        Returns:
+            True if trading should halt, False otherwise.
+        """
+        self.check_daily_reset(current_equity)
+
+        if self.daily_start_equity <= 0 or max_daily_loss_usd <= 0:
+            return False
+
+        # Realized loss = how far current equity (excluding open MTM) is below start
+        # current_equity already includes unrealized PnL in most broker APIs, so we
+        # decompose: realized = (current_equity - unrealized) - daily_start
+        realized_pnl = (current_equity - unrealized_pnl) - self.daily_start_equity
+        threshold = max_daily_loss_usd
+
+        if realized_pnl <= -threshold:
+            self.halted = True
+            self.halt_reason = (
+                f"Intraday realized loss ${realized_pnl:.2f} breached "
+                f"threshold -${threshold:.2f}"
+            )
+            log.warning(self.halt_reason)
+            return True
+
+        # Unrealized early-warning (1.5x realized threshold): paper loss but not yet taken
+        early_warn_threshold = threshold * 1.5
+        if unrealized_pnl <= -early_warn_threshold:
+            self.halted = True
+            self.halt_reason = (
+                f"Intraday unrealized loss ${unrealized_pnl:.2f} breached "
+                f"early-warning threshold -${early_warn_threshold:.2f}"
+            )
+            log.warning(self.halt_reason)
+            return True
+
+        return False
+
     def calculate_position_size(self, equity: float) -> float:
         """Calculate max dollar amount for a new position."""
         return equity * Config.MAX_POSITION_PCT
+
+    def estimate_var_pct(self, df: pd.DataFrame, confidence: float = 0.95) -> float:
+        """Sprint 5F: parametric VaR estimate from recent returns.
+
+        Returns the expected worst-case loss fraction at the given confidence
+        level — e.g. 0.05 means "we expect to lose at most 5% of position value
+        in 95% of outcomes". Used to cap individual position sizes so a single
+        trade can't risk more than `profile.max_var_contribution_pct` of equity.
+
+        Parametric (normal-distribution) approach: VaR ≈ z * sigma where z is
+        the standard score for the confidence level (1.645 for 95%, 2.326 for 99%).
+        Faster than Monte Carlo and good enough for a per-trade pre-trade gate.
+
+        Returns 0.0 if there's not enough data to estimate (caller should treat
+        as "no constraint" — fail-open).
+        """
+        if df is None or len(df) < 10:
+            return 0.0
+        try:
+            closes = df["close"].astype(float).values
+        except (KeyError, AttributeError):
+            return 0.0
+        if len(closes) < 2:
+            return 0.0
+        # Bar-to-bar returns
+        returns = np.diff(closes) / closes[:-1]
+        # Standard scores for common confidence levels
+        z_scores = {0.95: 1.645, 0.99: 2.326}
+        z = z_scores.get(round(confidence, 2), 1.645)
+        sigma = float(np.std(returns, ddof=1)) if len(returns) > 1 else 0.0
+        return max(0.0, z * sigma)
 
     def should_stop_loss(self, symbol: str, current_price: float) -> bool:
         """Check if trailing stop was hit for a position."""

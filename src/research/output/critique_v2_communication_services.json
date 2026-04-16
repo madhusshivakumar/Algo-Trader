@@ -1,0 +1,42 @@
+{
+    "sector": "communication_services",
+    "v1_score": 69,
+    "v2_score": 82,
+    "improvement_delta": 13,
+    "thesis_rigor_score": 85,
+    "risk_assessment_score": 83,
+    "data_quality_score": 84,
+    "contrarian_thinking_score": 78,
+    "actionability_score": 80,
+    "feedback_addressed": [
+        "Resolved GOOGL duplication: GOOGL owned by Communication Services with sector-specific thesis (Search, YouTube, ad tech); Technology report may reference for Cloud/AI but primary coverage lives here",
+        "Added 2 SELL recommendations: SNAP and PINS with structural headwinds and regulatory risk",
+        "Quantified AI incremental revenue: GOOGL $76-80B (Cloud + Gemini + AI Overviews); META Advantage+ $60B run rate",
+        "Modeled DOJ antitrust scenarios for GOOGL with probability weights: Search case (behavioral remedies 55%, stricter 20%, weakened 25%) and Ad Tech case (behavioral 45%, AdX divestiture 35%, full breakup 15%)",
+        "Added portfolio allocation weights: GOOGL 22%, META 20%, NFLX 14%, TMUS 14%, DIS 12%, TTWO 8%, SPOT 5%",
+        "Added META ex-Reality Labs analysis: core Family of Apps PE at 18.1x excluding $19.2B annual Reality Labs losses",
+        "Added correlation analysis: GOOGL-META 0.87 correlation, combined weight capped at 42%, TMUS at 0.15 correlation for diversification",
+        "Added SPOT ad revenue decline explanation: Q4 decline was currency-driven, constant-currency +4%, strategic pivot to premium formats",
+        "Added content cost analysis: NFLX $20B (39% of revenue), DIS $24B (50/50 sports/entertainment)",
+        "Added TikTok regulatory update: ban averted via USDS JV, residual algorithm licensing risk"
+    ],
+    "feedback_ignored": [
+        "DIS ESPN standalone app TAM analysis still lacks specific subscriber target and break-even subscriber level -- mentioned as key catalyst but not quantified with numbers",
+        "TTWO GTA VI downside scenario (50M vs 100M+ consensus copies) is acknowledged as a risk but no explicit EPS impact modeling provided"
+    ],
+    "remaining_flaws": [
+        "SPOT at 65x PE downgraded to HOLD but still allocated 5% -- the margin expansion timeline is still not quantified with specific dates for when 15% or 20% margins are expected",
+        "TTWO at 8% allocation with a single-catalyst thesis (GTA VI) at 45x PE remains a binary bet that could lose 40%+ if the game underperforms",
+        "Combined GOOGL + META at 42% is acknowledged as concentration risk but the mitigation is just a cap, not a strategy for what to do if digital advertising enters a downturn",
+        "NFLX content cost analysis at 39% of revenue lacks comparison to historical content spend ratio and whether the trend is rising or falling"
+    ],
+    "what_impressed": [
+        "GOOGL antitrust scenario analysis with 7 sub-scenarios across 2 cases and probability-weighted EPS impact of -$0.35 to -$0.55 is institutional-quality regulatory risk modeling",
+        "META ex-Reality Labs PE of 18.1x reframes the investment case: the core ad business is genuinely cheap, and Reality Labs is a call option that currently destroys value",
+        "GOOGL sector ownership resolution with explicit statement that primary coverage lives in Communication Services eliminates the portfolio double-count risk",
+        "Correlation matrix showing TMUS at 0.15 vs GOOGL/META and combined ad concentration cap at 42% demonstrates portfolio construction awareness",
+        "AI revenue quantification with specific dollar amounts (GOOGL $76-80B, Gemini $1.2B subscriptions) moves from v1 vague AI monetization inflection to concrete numbers",
+        "SNAP and PINS SELL recommendations add genuine short-side conviction to a portfolio that was previously all long"
+    ],
+    "verdict": "STRONG"
+}

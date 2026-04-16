@@ -1,0 +1,798 @@
+{
+  "sector": "Financials",
+  "report_version": "v2",
+  "report_date": "2026-04-04",
+  "analyst": "claude-research-agent",
+  "iteration": 2,
+  "previous_score": 65,
+  "v2_improvements": {
+    "sell_recommendations": [
+      {
+        "ticker": "BLK",
+        "name": "BlackRock Inc.",
+        "recommendation": "SELL",
+        "conviction": "MEDIUM",
+        "rationale": "TTM P/E of 26.5x is 32% above its 10-year median of 20.1x. Forward P/E of 19.5x still prices in flawless execution of the GIP private markets integration -- a business where BLK has no track record competing against BX, KKR, and APO who have decades of PE/infrastructure investing expertise. Fee compression in passive ETFs (iShares core funds averaging 3-7bps) is structural. In a recession scenario, AUM declines 20-25% mechanically reducing fee revenue by $3-4B. The 13% base fee growth in 2025 was driven by market appreciation, not organic alpha. At $939 per share, the risk/reward is skewed negative. Fair value estimate: $780-820 (forward P/E of 16-17x on normalized $48 EPS).",
+        "entry_criteria_to_reverse": "Buy below $780 (16x forward earnings) or if private markets fundraising exceeds $80B annually by 2027",
+        "stop_loss": "Cover short above $1,050 (12% above current)"
+      }
+    ],
+    "recession_stress_test": {
+      "methodology": "Model 2008-style and 2022-style downturns with sector-specific revenue impacts. Base case uses consensus 2026 estimates. Mild recession assumes 15-20% revenue decline in cyclical lines. Severe recession assumes 35-45% decline in deal activity with credit losses doubling.",
+      "scenarios": {
+        "base_case": {
+          "description": "Consensus: M&A volumes +10% YoY, rates at 3.25-3.50% by year-end, unemployment stays below 4.5%",
+          "probability": "55%"
+        },
+        "mild_recession": {
+          "description": "M&A volumes -20%, 2 additional rate cuts, unemployment rises to 5.0%, charge-offs up 50bps",
+          "probability": "30%"
+        },
+        "severe_recession": {
+          "description": "M&A volumes -40% (2022-level freeze), 4 emergency cuts, unemployment 6.0%+, charge-offs double to 5.8%",
+          "probability": "15%"
+        }
+      },
+      "eps_by_scenario": {
+        "JPM": {
+          "base": 19.50,
+          "mild_recession": 15.80,
+          "severe_recession": 11.20,
+          "sensitivity_note": "Each 50bp increase in charge-off rate reduces EPS by ~$1.80. NII declines $4-6B if rates cut 100bp below guidance assumptions. Credit reserve build of $3-5B in severe scenario."
+        },
+        "GS": {
+          "base": 58.00,
+          "mild_recession": 38.50,
+          "severe_recession": 22.00,
+          "sensitivity_note": "Advisory revenue is 35% of total. A 40% M&A decline drops advisory revenue from ~$8.5B to ~$5.1B. Trading revenue may partially offset via volatility but FICC/Equities historically decline 15-20% in severe downturns. 2022 precedent: GS EPS fell from $59 to $30 when M&A froze."
+        },
+        "V": {
+          "base": 11.80,
+          "mild_recession": 10.40,
+          "severe_recession": 8.90,
+          "sensitivity_note": "Cross-border transactions (highest margin) decline 10-15% in recession. Domestic payment volumes are more resilient (-3 to -5% in mild downturn). Value-added services have some contractual minimums providing floor."
+        },
+        "MS": {
+          "base": 10.50,
+          "mild_recession": 7.80,
+          "severe_recession": 5.20,
+          "sensitivity_note": "Wealth management AUM declines 15-25% in severe downturn, reducing fee revenue by $2-3B. Advisory revenue follows GS pattern. Negative FCF of -$3.1B worsens to -$6B+ in severe scenario, constraining buybacks and dividends."
+        },
+        "C": {
+          "base": 10.00,
+          "mild_recession": 7.20,
+          "severe_recession": 4.50,
+          "sensitivity_note": "Large credit card portfolio (>$150B) means charge-off sensitivity is highest among picks. Each 100bp increase in card charge-offs costs ~$1.5B pre-tax. International exposure adds FX translation risk in downturn."
+        },
+        "PGR": {
+          "base": 15.40,
+          "mild_recession": 13.20,
+          "severe_recession": 10.50,
+          "sensitivity_note": "Insurance is relatively recession-resistant (people must insure cars). Combined ratio may worsen 3-5 points as frequency increases with distressed driving patterns. Investment portfolio yields decline with rate cuts."
+        }
+      }
+    },
+    "credit_cycle_analysis": {
+      "current_state": {
+        "credit_card_delinquency_rate_q4_2025": "2.90%",
+        "credit_card_charge_off_rate_q4_2025": "4.10%",
+        "historical_average_delinquency": "2.70%",
+        "historical_average_charge_off": "3.50%",
+        "direction": "Delinquencies stabilizing as of Q3 2025 after rising from 2022 lows. Charge-offs still above 10-year average.",
+        "small_bank_delinquency_rate": "6.60%",
+        "large_bank_implied_delinquency_rate": "2.90%"
+      },
+      "analysis": "Credit metrics are above historical averages but the rate of deterioration has slowed. The 4.1% charge-off rate is 60bps above the 10-year average of 3.5%, indicating we are past the benign part of the cycle but not yet in distress. The bifurcation between large banks (2.9% delinquency) and smaller banks (6.6%) is a critical risk signal -- smaller bank stress often leads large bank stress by 2-3 quarters. The February 2026 data from S&P Global shows delinquency rates at top issuers were stable month-over-month at 1.30%, but net loss rates ticked up to 1.97% from 1.87%, suggesting losses are still working through the system.",
+      "eps_sensitivity_table": {
+        "description": "EPS impact per 100bp increase in system-wide charge-off rate",
+        "JPM": -1.80,
+        "C": -2.20,
+        "BAC": -1.60,
+        "note": "JPM and C have the largest credit card portfolios among our coverage. C's higher sensitivity reflects its proportionally larger consumer lending book relative to total revenue."
+      },
+      "scenario_charge_offs": {
+        "base_2026": "4.0-4.2% (stable near current levels)",
+        "mild_stress": "5.0-5.5% (2019 levels, manageable)",
+        "severe_stress": "7.0-8.0% (approaching 2010 levels, significant EPS headwind)"
+      }
+    },
+    "position_sizing": {
+      "methodology": "Risk-parity adjusted with 2% max single-name loss tolerance. Position sizes inversely weighted by recession EPS drawdown severity. Stop-losses set at 1.5x ATR below entry or key technical support.",
+      "positions": {
+        "JPM": {
+          "weight": "22%",
+          "entry": "Current levels ($255-265)",
+          "stop_loss": "$228 (-13%, below 200-day MA support)",
+          "take_profit": "$310 (+18%, at 16x forward EPS)",
+          "risk_reward_ratio": "1.4:1"
+        },
+        "GS": {
+          "weight": "15%",
+          "entry": "Below $900 (15.5x forward EPS)",
+          "stop_loss": "$780 (-13%, 2022 breakout level)",
+          "take_profit": "$1,050 (+17%, 18x forward EPS)",
+          "risk_reward_ratio": "1.3:1",
+          "note": "Reduced from v1 18% due to M&A cyclicality risk. Wait for pullback to entry zone."
+        },
+        "V": {
+          "weight": "18%",
+          "entry": "Below $310 (26x forward EPS)",
+          "stop_loss": "$268 (-14%, below 52-week support)",
+          "take_profit": "$380 (+23%)",
+          "risk_reward_ratio": "1.6:1"
+        },
+        "C": {
+          "weight": "12%",
+          "entry": "Below $85 (8.5x forward EPS)",
+          "stop_loss": "$72 (-15%, below transformation-era support)",
+          "take_profit": "$115 (+35%, 11.5x forward EPS)",
+          "risk_reward_ratio": "2.3:1",
+          "note": "Contrarian pick. Highest risk-reward in the portfolio."
+        },
+        "MS": {
+          "weight": "12%",
+          "entry": "Current levels ($105-115)",
+          "stop_loss": "$93 (-14%)",
+          "take_profit": "$135 (+22%)",
+          "risk_reward_ratio": "1.6:1",
+          "note": "Reduced from v1 14% due to negative FCF concern."
+        },
+        "PGR": {
+          "weight": "14%",
+          "entry": "Below $200 (13x forward EPS)",
+          "stop_loss": "$172 (-14%, below 200-day MA)",
+          "take_profit": "$245 (+23%)",
+          "risk_reward_ratio": "1.6:1",
+          "note": "Upgraded from HOLD to BUY. 40% ROE with sub-88% combined ratios is underappreciated."
+        },
+        "BLK": {
+          "weight": "0%",
+          "action": "SELL/AVOID",
+          "note": "Removed from portfolio. 32% above 10-year median P/E with unproven private markets strategy."
+        },
+        "MA": {
+          "weight": "0%",
+          "action": "CONSOLIDATE INTO V",
+          "note": "Removed. 95%+ correlation with V. V selected over MA due to: (1) lower forward P/E (23.5x vs 25.5x), (2) larger network with more pricing power to absorb CCCA impact, (3) stronger free cash flow generation. MA is a fine company but owning both is redundant."
+        }
+      },
+      "portfolio_total_weight": "93%",
+      "cash_reserve": "7% -- dry powder for recession entry opportunities"
+    },
+    "scenario_analysis": {
+      "ccca_impact": {
+        "description": "Credit Card Competition Act revenue-at-risk analysis",
+        "background": "The CCCA requires issuers to enable at least two unaffiliated payment networks per credit card, with the two largest networks (V and MA) unable to be the sole pair. CMSPI estimates $17B in annual merchant savings from routing competition.",
+        "visa_impact": {
+          "us_credit_interchange_pct_of_revenue": "~25%",
+          "estimated_revenue_at_risk_if_passed": "$4.0-5.5B (10-14% of total revenue)",
+          "probability_of_passage_2026": "25-30%",
+          "expected_value_impact": "-$1.0-1.7B annually",
+          "mitigants": "Value-added services (security, tokenization, analytics) are not subject to routing competition. International revenue (~45% of total) is unaffected. Visa has pricing power to shift toward non-interchange revenue streams."
+        },
+        "rationale_for_picking_v_over_ma": "Visa's larger scale provides more pricing power to absorb interchange compression. Visa's forward P/E of 23.5x vs MA's 25.5x offers better margin of safety. Both face identical CCCA risk, but V has a larger international business (45% vs 35% of revenue) which is CCCA-immune."
+      },
+      "m_and_a_reversion": {
+        "description": "What if the M&A supercycle ends?",
+        "current_state": "Q1 2026 global M&A at $1.38T (+52% YoY). GS advisory fees +41% YoY. Sponsor exits 3x Q1 2025.",
+        "base_case": "M&A volumes grow 10% in 2026, driven by AI infrastructure and biotech consolidation",
+        "reversion_to_mean": "M&A volumes return to 2018-2019 average (~$3.4T annually vs ~$5.5T 2026 run-rate). GS advisory revenue falls 35-40%. GS EPS declines to $38-42 range.",
+        "trigger_signals": [
+          "Sponsor exit volume declining 2 consecutive quarters",
+          "High-yield spreads widening above 500bps",
+          "CEO confidence index below 50",
+          "Fed signaling rate hikes or tightening"
+        ],
+        "portfolio_action": "If any 2 of 4 triggers fire, reduce GS to 8% weight and rotate into defensive positions (PGR, V)."
+      },
+      "deposit_beta_and_nim_compression": {
+        "description": "JPM NII sensitivity to rate environment",
+        "current_nim": "3.06% as of Feb 2026",
+        "jpm_nii_guidance": "$104.5B for 2026 (assumes 2 rate cuts, IORB declining ~92bps YoY)",
+        "downside_scenario": "If 4 cuts instead of 2, deposit repricing lags create 15-25bp NIM compression. NII could fall to $96-98B, a $6.5-8.5B shortfall vs guidance.",
+        "deposit_beta_context": "Deposit margin compression is the primary headwind cited by JPM CFO. As rates decline, deposit costs lag asset repricing, compressing spreads. However, JPM's scale in non-interest-bearing deposits (>$600B) provides structural NIM advantage vs peers."
+      },
+      "basel_iii_endgame": {
+        "description": "Regulatory capital impact on bank profitability",
+        "current_status": "Regulators released scaled-back re-proposal in March 2026. Net effect: CET1 requirements for Cat I/II banks decrease 4.8%, for Cat III/IV banks decrease 5.2%. This is significantly less onerous than the original 2023 proposal which called for 16% average increase.",
+        "impact_on_picks": {
+          "JPM": "Net positive. Lower capital requirements free up $8-12B for buybacks or lending. CET1 ratio of ~15% provides substantial buffer.",
+          "GS": "Mixed. Trading book capital requirements increase substantially, but lending requirements decrease. Net impact roughly neutral given GS's asset-light model.",
+          "C": "Positive. Lower requirements help Citigroup meet its 10-11% ROTCE target without needing to shrink the balance sheet as aggressively.",
+          "MS": "Modestly positive. Wealth management assets are treated favorably under revised rules."
+        }
+      },
+      "insurance_cycle_analysis_pgr": {
+        "description": "Progressive's position in the insurance cycle",
+        "current_combined_ratio": "84.4% (January 2026)",
+        "industry_combined_ratio_forecast": "97.1% (2026), 98.9% (2027) per S&P GMI",
+        "cycle_position": "The hard market that began in 2022 is transitioning to a competitive phase. PGR gained ~2 points of personal auto market share in 2025 but net premiums written growth slowed to 4% in January 2026 (from 17%+ in mid-2025). Industry-wide rate adequacy is improving, meaning competitors can now price more aggressively.",
+        "reversion_risk": "PGR's 84-87% combined ratio is 10-13 points below its long-term target of 96%. Historical mean reversion suggests combined ratios will drift toward 90-93% over 2-3 years as competition intensifies. This still represents excellent profitability but the delta from current levels represents a ~$2-3 EPS headwind.",
+        "thesis_impact": "Despite cycle headwinds, PGR's usage-based insurance data advantage and underwriting discipline create a structural moat. The company consistently maintains combined ratios 5-8 points below industry average through full cycles. Upgrading to BUY because 40% ROE is not being priced in by the market, even after accounting for mean reversion to 90-93% combined ratios."
+      }
+    }
+  },
+  "market_conditions": {
+    "fed_funds_rate": "3.50-3.75%",
+    "yield_curve": "steepening, short-term rates declining faster than long-term",
+    "credit_cycle": "Late-mid cycle. Charge-offs at 4.1% (60bps above 10-year avg of 3.5%). Delinquencies stabilizing at 2.9%. Small bank stress at 6.6% delinquency is a leading indicator to watch.",
+    "m_and_a_activity": "Supercycle Q1 2026: $1.38T volume (+52% YoY). GS advisory fees +41%. Sponsor exits 3x prior year. Driven by AI infrastructure and biotech consolidation. WARNING: Peak-cycle indicators are emerging.",
+    "regulatory_environment": "Basel III endgame scaled back significantly in March 2026. CET1 requirements reduced 4.8-7.8% vs original proposal. Net positive for bank profitability.",
+    "ccca_status": "Credit Card Competition Act reintroduced in 2026. 25-30% probability of passage. If passed, $17B in annual merchant savings implies $4-6B annual revenue risk for V/MA combined.",
+    "sector_outlook": "Positive but late-cycle risks building. Credit normalization, M&A reversion risk, and rate uncertainty create a more nuanced environment than v1 acknowledged."
+  },
+  "subsector_analysis": {
+    "banks": {
+      "outlook": "positive with caution",
+      "valuation_framework": "Banks should be valued on P/TBV (price to tangible book value) and ROTCE, not P/E relative to other sectors. JPM at 2.3x TBV with 17-18% ROTCE is attractive. C at 0.7x TBV with 10-11% ROTCE target is a value opportunity. Bank P/Es are structurally lower than the market because of embedded credit cycle risk -- a 14.9x P/E for JPM is not 'cheap vs tech' but is reasonable for a bank with best-in-class credit quality.",
+      "drivers": [
+        "Interest rates stabilizing at 3.5-3.75% with steepening curve supports NIMs",
+        "Investment banking fees surging on M&A wave (JPM mid-to-high-teens growth, C +84% advisory)",
+        "Basel III endgame scaled back, freeing capital for buybacks",
+        "Credit quality stable at large banks despite small bank stress"
+      ],
+      "risks": [
+        "Credit charge-offs at 4.1% and rising -- each 100bp costs JPM ~$1.80 EPS",
+        "Deposit beta compression as rates decline (JPM NII could miss by $6-8B)",
+        "Small bank delinquency at 6.6% historically leads large bank stress by 2-3 quarters",
+        "CEO succession risk at JPM (Dimon departure creates uncertainty)"
+      ]
+    },
+    "insurance": {
+      "outlook": "transitioning from hard to competitive market",
+      "drivers": [
+        "PGR combined ratios at 84-87% are historically exceptional",
+        "Rising investment income from higher rates on float",
+        "Usage-based insurance creates structural data advantage"
+      ],
+      "risks": [
+        "Hard market ending: industry combined ratios forecast to rise to 97.1% (2026) and 98.9% (2027)",
+        "PGR premium growth decelerated from 17% to 4% in January 2026",
+        "Mean reversion in combined ratios will compress PGR margins over 2-3 years",
+        "Climate-related catastrophe losses increasing"
+      ]
+    },
+    "capital_markets": {
+      "outlook": "cyclically positive, structurally concentrated",
+      "drivers": [
+        "M&A supercycle: Q1 2026 deal volume $1.38T (+52% YoY)",
+        "GS #1 globally with $438.9B Q1 deal volume and 41% advisory fee growth",
+        "IPO pipeline rebuilding, sponsor exits 3x prior year",
+        "AI infrastructure deals creating new megadeal category"
+      ],
+      "risks": [
+        "Peak-cycle risk: GS 2022 precedent saw EPS collapse from $59 to $30 when deals froze",
+        "Revenue concentration: 35%+ of GS revenue is deal-dependent",
+        "MS negative FCF of -$3.1B constrains capital flexibility in downturn",
+        "Trading revenue mean-reverts when volatility normalizes"
+      ]
+    },
+    "payments": {
+      "outlook": "positive with regulatory overhang",
+      "drivers": [
+        "Digital payments secular growth at 8-12% globally",
+        "Value-added services growing 20-25% (higher margin than core interchange)",
+        "Cross-border travel recovery sustaining premium transaction fees",
+        "Stablecoin integration expanding addressable market"
+      ],
+      "risks": [
+        "CCCA passage could cost V $4-5.5B in annual revenue (10-14% of total)",
+        "Fintech disruption: Stripe, Adyen, Block building alternative rails for B2B and cross-border",
+        "Consumer spending deceleration in recession scenario reduces transaction volumes 3-5%"
+      ]
+    }
+  },
+  "companies_analyzed": [
+    {
+      "ticker": "JPM",
+      "name": "JPMorgan Chase & Co.",
+      "subsector": "Banks",
+      "market_cap_billions": 770,
+      "key_metrics": {
+        "pe_ratio_ttm": 14.88,
+        "price_to_tangible_book": 2.3,
+        "rotce_target": "17-18%",
+        "nii_guidance_2026": "$104.5B",
+        "nim_current": "3.06%",
+        "cet1_ratio": "~15%",
+        "credit_card_charge_off_rate": "~3.0%",
+        "total_assets": "$4.4T"
+      },
+      "thesis": "Best-in-class universal bank trading at 2.3x tangible book value with 17-18% ROTCE -- the highest among megabanks. NII guidance of $104.5B assumes 2 rate cuts; even in a 4-cut scenario, $96-98B NII is still industry-leading. The real catalyst is the investment banking fee surge (mid-to-high-teens growth) and the $15B+ annual buyback capacity freed by Basel III scaled-back requirements. Credit quality is pristine at the top-100 bank level (2.9% delinquency vs 6.6% at smaller banks), providing relative safety if the cycle turns. The key risk is that NII has peaked and fee income must compensate -- but with M&A deal flow at record levels, this substitution is happening.",
+      "recession_eps_impact": {
+        "base": 19.50,
+        "mild": 15.80,
+        "severe": 11.20
+      },
+      "entry_criteria": "Attractive below $265 (13.5x forward EPS). Fully valued above $310 (16x forward).",
+      "exit_criteria": "Sell if ROTCE falls below 14% for 2 consecutive quarters, or if credit card charge-offs exceed 5.0%.",
+      "catalysts": [
+        "Q1 2026 earnings April 14 -- consensus beatable on IB fees",
+        "Basel III scaled-back rules free $8-12B for buybacks",
+        "M&A advisory surge from $1.38T Q1 pipeline",
+        "Potential NII upside if rate cuts are fewer than 2"
+      ],
+      "risks": [
+        "NII miss if 4+ rate cuts materialize (-$6.5-8.5B vs guidance)",
+        "Credit charge-off normalization: each 100bp costs ~$1.80 EPS",
+        "Small bank stress (6.6% delinquency) as leading indicator for large bank contagion",
+        "CEO succession: Dimon departure historically causes 10-15% drawdown at major banks"
+      ],
+      "scores": {
+        "moat": 9,
+        "management": 9,
+        "growth": 7,
+        "valuation": 8
+      },
+      "overall_score": 8.2,
+      "recommendation": "STRONG BUY",
+      "conviction": "HIGH",
+      "weight": "22%"
+    },
+    {
+      "ticker": "GS",
+      "name": "Goldman Sachs Group Inc.",
+      "subsector": "Capital Markets",
+      "market_cap_billions": 195,
+      "key_metrics": {
+        "pe_ratio_ttm": 17.65,
+        "pe_ratio_forward": 16.0,
+        "eps_2025_actual": 51.95,
+        "eps_estimate_2026": 58.00,
+        "net_margin": "32.59%",
+        "q1_2026_advisory_volume": "$438.9B",
+        "advisory_fee_growth_yoy": "+41%"
+      },
+      "thesis": "GS is the premier M&A advisory franchise, and the current deal supercycle ($1.38T in Q1 alone, +52% YoY) is the strongest since 2021. The refocused strategy post-Marcus exit has improved capital allocation. However, v1 failed to model the downside: in 2022, when M&A froze, GS EPS collapsed from $59 to $30. Advisory revenue is ~35% of total, making GS the most cyclically exposed pick. At 16x forward EPS on peak-cycle earnings, the stock is not cheap -- it is priced for continuation. Reducing weight from 18% to 15% and requiring a pullback to $900 for entry.",
+      "recession_eps_impact": {
+        "base": 58.00,
+        "mild": 38.50,
+        "severe": 22.00
+      },
+      "m_and_a_reversion_analysis": {
+        "current_run_rate": "$5.5T annualized",
+        "2018_2019_average": "$3.4T",
+        "reversion_eps_estimate": "$38-42",
+        "trigger_signals": "Sponsor exit volume declining 2 quarters; HY spreads >500bps; CEO confidence <50"
+      },
+      "entry_criteria": "Attractive below $900 (15.5x forward EPS on $58 base). Current price of ~$929 is at the edge of the entry zone.",
+      "exit_criteria": "Sell if M&A volumes decline 20%+ for 2 consecutive quarters, or if 2 of 4 reversion triggers fire.",
+      "catalysts": [
+        "M&A supercycle continuation driven by AI and biotech consolidation",
+        "IPO pipeline reopening adds to capital markets fees",
+        "Post-Marcus strategic clarity improving returns",
+        "Q1 2026 earnings April 13 likely to beat on advisory"
+      ],
+      "risks": [
+        "Peak-cycle earnings risk: 2022 precedent showed EPS can halve when deals freeze",
+        "35%+ revenue concentration in deal-dependent advisory",
+        "Net margin of 32.6% is peak-cycle -- not a structural level",
+        "Job cuts signal management hedging on sustainability of current volumes"
+      ],
+      "scores": {
+        "moat": 9,
+        "management": 8,
+        "growth": 8,
+        "valuation": 6
+      },
+      "overall_score": 7.8,
+      "recommendation": "BUY",
+      "conviction": "MEDIUM-HIGH",
+      "weight": "15%",
+      "v2_change": "Downgraded from STRONG BUY to BUY, reduced weight from 18% to 15%, added explicit M&A reversion scenario."
+    },
+    {
+      "ticker": "V",
+      "name": "Visa Inc.",
+      "subsector": "Payments",
+      "market_cap_billions": 620,
+      "key_metrics": {
+        "pe_ratio_ttm": 27.72,
+        "pe_ratio_forward": 23.46,
+        "revenue_fy2025": "$40.0B",
+        "revenue_growth_yoy": "11%",
+        "eps_growth_yoy": "14%",
+        "international_revenue_pct": "~45%",
+        "us_credit_interchange_pct_revenue": "~25%"
+      },
+      "thesis": "V is selected as the sole payments network pick over MA. Rationale: (1) V trades at 23.5x forward vs MA at 25.5x -- a 2-point P/E discount for the larger network. (2) V's 45% international revenue exposure vs MA's 35% provides better insulation from CCCA risk (which only affects U.S. credit interchange). (3) V and MA have 95%+ correlation -- owning both is redundant, not diversified. The CCCA is the key risk: if passed, $4-5.5B in annual revenue (10-14% of total) is at risk. However, the 25-30% probability of passage and V's ability to shift toward non-interchange revenue (value-added services growing 20%+) mitigate this. The network moat remains the strongest in financial services -- 200+ countries, billions of credentials, and switching costs that increase with scale.",
+      "ccca_impact_analysis": {
+        "us_credit_interchange_revenue": "$10-11B",
+        "estimated_loss_if_ccca_passes": "$4.0-5.5B (assumes 40-50% of US credit interchange at risk)",
+        "probability_weighted_annual_impact": "-$1.0-1.7B",
+        "mitigants": "Value-added services not subject to routing. International revenue (45%) unaffected. Historical precedent: Durbin Amendment (debit) reduced debit interchange but Visa adapted by growing other revenue streams."
+      },
+      "recession_eps_impact": {
+        "base": 11.80,
+        "mild": 10.40,
+        "severe": 8.90
+      },
+      "entry_criteria": "Attractive below $310 (26x forward EPS). Current forward P/E of 23.5x is in the bottom decile of its sector, suggesting value.",
+      "exit_criteria": "Sell if CCCA passes with no transition period, or if payment volume growth turns negative for 2 quarters.",
+      "catalysts": [
+        "Value-added services revenue accelerating at 20%+ growth",
+        "Cross-border travel recovery sustaining premium fees",
+        "Stablecoin integration expanding TAM",
+        "Forward P/E in bottom 10% of financial services sector"
+      ],
+      "risks": [
+        "CCCA passage: 10-14% revenue at risk (probability 25-30%)",
+        "Fintech disruption: Stripe, Adyen building alternative payment rails",
+        "Consumer spending slowdown reduces transaction volumes 3-5%",
+        "Premium valuation leaves limited upside if growth decelerates"
+      ],
+      "scores": {
+        "moat": 10,
+        "management": 8,
+        "growth": 8,
+        "valuation": 7
+      },
+      "overall_score": 8.3,
+      "recommendation": "BUY",
+      "conviction": "HIGH",
+      "weight": "18%",
+      "v2_change": "Consolidated from V+MA (34% combined) to V only (18%). Justified sole selection with forward P/E, international revenue mix, and correlation data."
+    },
+    {
+      "ticker": "C",
+      "name": "Citigroup Inc.",
+      "subsector": "Banks",
+      "market_cap_billions": 120,
+      "key_metrics": {
+        "pe_ratio_forward": 8.5,
+        "price_to_tangible_book": 0.7,
+        "rotce_target_2026": "10-11%",
+        "eps_estimate_2026": 10.00,
+        "advisory_fee_growth_q4_2025": "+84%",
+        "efficiency_ratio_target": "~60%",
+        "share_buyback_2025": "$13B"
+      },
+      "thesis": "CONTRARIAN PICK. Citigroup is the most hated large bank, trading at 0.7x tangible book value -- a 50%+ discount to JPM's 2.3x. The market is pricing in perpetual underperformance, but Fraser's transformation is shifting from 'planning' to 'monetization' in 2026. Q4 2025 advisory fees surged 84% YoY, revenue hit a 15-year high of $84B, and all 5 business segments posted records. The ROTCE target of 10-11% is below JPM's 17-18%, but the delta is closing: if C reaches even 12% ROTCE, the stock re-rates to 1.0x TBV, implying 40%+ upside. The risk is execution -- Fraser's memo warning of 'bad old habits' suggests the culture change is incomplete. Basel III scaled-back rules are a net positive, freeing capital for the $20B buyback program. EPS consensus of $10 for 2026 represents 31% growth over 2025.",
+      "recession_eps_impact": {
+        "base": 10.00,
+        "mild": 7.20,
+        "severe": 4.50
+      },
+      "entry_criteria": "Attractive below $85 (8.5x forward EPS, 0.7x TBV). Deep value entry below $70.",
+      "exit_criteria": "Sell if ROTCE fails to reach 9% by Q4 2026, or if credit card charge-offs exceed 6% (C has largest card book exposure).",
+      "catalysts": [
+        "Transformation moving from planning to monetization in 2026",
+        "Advisory fees surging (+84% Q4) as C re-enters top-4 globally",
+        "Basel III scaled back, freeing capital for $20B buyback",
+        "31% EPS growth consensus for 2026",
+        "0.7x TBV provides deep margin of safety"
+      ],
+      "risks": [
+        "Execution risk: turnaround has been slow, culture change incomplete",
+        "Largest credit card portfolio among megabanks creates highest charge-off sensitivity",
+        "International exposure adds FX and geopolitical risk",
+        "10-11% ROTCE target still well below peer levels"
+      ],
+      "scores": {
+        "moat": 6,
+        "management": 7,
+        "growth": 8,
+        "valuation": 9
+      },
+      "overall_score": 7.4,
+      "recommendation": "BUY",
+      "conviction": "MEDIUM",
+      "weight": "12%",
+      "v2_change": "NEW ADDITION. Contrarian pick from beaten-down financials. Replaces MA allocation. Highest risk-reward ratio (2.3:1) in portfolio."
+    },
+    {
+      "ticker": "MS",
+      "name": "Morgan Stanley",
+      "subsector": "Capital Markets / Wealth Management",
+      "market_cap_billions": 165,
+      "key_metrics": {
+        "pe_ratio_ttm": 16.25,
+        "pe_ratio_forward": 14.60,
+        "pre_tax_profit_margin": "34.4%",
+        "total_client_assets": "$8T+",
+        "wealth_management_aum": "$1T+",
+        "free_cash_flow_ttm": "-$3.1B",
+        "full_year_2025_revenue": "$70.6B",
+        "full_year_2025_eps": 10.21
+      },
+      "thesis": "MS has successfully transformed into a wealth management-led franchise with $8T+ in client assets generating recurring fee-based revenue. However, the negative FCF of -$3.1B (and historically as low as -$37B in 2023) is a structural issue that v1 failed to properly address. For an investment bank, negative FCF is partly an accounting artifact of how client assets and trading inventories flow through the cash flow statement -- but it does constrain dividend growth and buyback capacity during stress periods. In a severe downturn, FCF could worsen to -$6B+, limiting MS's ability to return capital precisely when the stock is cheapest. The wealth management model provides more stability than pure IB (GS), but the M&A advisory component still adds meaningful cyclicality. Reducing weight from 14% to 12%.",
+      "negative_fcf_analysis": {
+        "ttm_fcf": "-$3.1B",
+        "explanation": "Investment bank FCF is distorted by changes in trading assets, client deposits, and securities inventory. MS's wealth management and lending businesses consume capital as they grow. This is not a sign of operating distress but does limit capital return flexibility.",
+        "severe_recession_fcf_estimate": "-$6B to -$10B",
+        "capital_adequacy": "CET1 ratio provides adequate buffer. Dividend is covered by net income ($16.9B in 2025), not FCF.",
+        "thesis_impact": "Negative FCF means MS cannot aggressively buy back stock in a downturn. This limits the compounding benefit that JPM enjoys. Weight reduced accordingly."
+      },
+      "recession_eps_impact": {
+        "base": 10.50,
+        "mild": 7.80,
+        "severe": 5.20
+      },
+      "entry_criteria": "Attractive at 14x forward EPS or below ($147 on $10.50 EPS). Current ~$110 represents value.",
+      "exit_criteria": "Sell if wealth management net new asset flows turn negative for 2 consecutive quarters.",
+      "catalysts": [
+        "Wealth management AUM growth at 15.8% CAGR continues driving fee revenue",
+        "M&A advisory benefits from deal supercycle",
+        "E*TRADE integration driving retail client growth",
+        "Forward P/E of 14.6x offers value for a transforming franchise"
+      ],
+      "risks": [
+        "Negative FCF of -$3.1B constrains buybacks and dividends in downturn",
+        "FCF could worsen to -$6B+ in severe recession",
+        "AUM-based fees decline mechanically in market downturn (15-25% drawdown)",
+        "Advisory revenue cyclicality mirrors GS pattern"
+      ],
+      "scores": {
+        "moat": 8,
+        "management": 8,
+        "growth": 7,
+        "valuation": 8
+      },
+      "overall_score": 7.7,
+      "recommendation": "BUY",
+      "conviction": "MEDIUM-HIGH",
+      "weight": "12%",
+      "v2_change": "Reduced weight from 14% to 12%. Added quantified FCF analysis and recession FCF estimate. Negative FCF impact on thesis explicitly modeled."
+    },
+    {
+      "ticker": "PGR",
+      "name": "Progressive Corporation",
+      "subsector": "Insurance",
+      "market_cap_billions": 125,
+      "key_metrics": {
+        "combined_ratio_jan_2026": "84.4%",
+        "combined_ratio_2025": "87.4%",
+        "industry_combined_ratio_2026e": "97.1%",
+        "industry_combined_ratio_2027e": "98.9%",
+        "roe": "40%",
+        "eps_estimate_2026": 15.40,
+        "net_premiums_growth_jan_2026": "4%",
+        "market_share_personal_auto": "~18.5%"
+      },
+      "thesis": "UPGRADED from HOLD to BUY. The v1 critique was right to question why a 40% ROE company was only rated HOLD. PGR's combined ratio of 84-87% is 10-13 points below its 96% target and 10+ points below the industry forecast of 97%. Yes, the hard market is transitioning to a competitive phase (premiums growth slowed from 17% to 4%), and mean reversion will push combined ratios toward 90-93% over 2-3 years. But even at 93%, PGR generates exceptional returns. The usage-based insurance technology advantage creates a structural moat that persists through cycles -- PGR consistently maintains combined ratios 5-8 points below industry average. The insurance business is also naturally recession-resistant (car insurance is legally required). At $212, PGR trades at ~14x earnings, which does not fully reflect the durability of the franchise.",
+      "insurance_cycle_position": {
+        "current_phase": "Late hard market transitioning to competitive",
+        "combined_ratio_trajectory": "84% -> 90-93% over 2-3 years (mean reversion)",
+        "eps_headwind_from_reversion": "-$2 to -$3 over 2 years",
+        "structural_advantage": "5-8 point combined ratio advantage vs industry through full cycle",
+        "market_share_trend": "Gained ~2 points in 2025, growth slowing but share retention expected"
+      },
+      "recession_eps_impact": {
+        "base": 15.40,
+        "mild": 13.20,
+        "severe": 10.50
+      },
+      "entry_criteria": "Attractive below $200 (13x forward EPS). Aggressively accumulate below $180.",
+      "exit_criteria": "Sell if combined ratio exceeds 96% for 2 consecutive quarters, or if market share loss exceeds 1 point annually.",
+      "catalysts": [
+        "40% ROE not fully reflected in 14x earnings multiple",
+        "Insurance is recession-resistant (legally required coverage)",
+        "Usage-based insurance technology creates structural data moat",
+        "Competitors still struggling with loss ratios (industry at 97%)"
+      ],
+      "risks": [
+        "Hard market ending: premium growth decelerated from 17% to 4%",
+        "Combined ratio mean reversion from 84% toward 90-93% over 2-3 years",
+        "Catastrophe losses from severe weather events",
+        "Rate filing regulatory scrutiny expected to increase in 2026"
+      ],
+      "scores": {
+        "moat": 8,
+        "management": 9,
+        "growth": 6,
+        "valuation": 7
+      },
+      "overall_score": 7.5,
+      "recommendation": "BUY",
+      "conviction": "MEDIUM-HIGH",
+      "weight": "14%",
+      "v2_change": "Upgraded from HOLD/ACCUMULATE to BUY. Weight increased. Added full insurance cycle analysis and mean-reversion modeling."
+    },
+    {
+      "ticker": "BLK",
+      "name": "BlackRock Inc.",
+      "subsector": "Asset Management",
+      "market_cap_billions": 140,
+      "key_metrics": {
+        "pe_ratio_ttm": 26.52,
+        "pe_ratio_forward": 19.50,
+        "ten_year_median_pe": 20.11,
+        "premium_to_median": "32%",
+        "eps_ttm": 35.42
+      },
+      "thesis": "DOWNGRADED TO SELL. The v1 report acknowledged BLK trades at a 32% premium to its 10-year median P/E but still rated it BUY -- a logical contradiction. The private markets expansion via GIP is unproven: BLK is competing against BX (40 years of PE experience), KKR, and APO in a space where relationships, track record, and IRR history matter. BLK's core ETF business faces structural fee compression (iShares core funds at 3-7bps). In a recession, AUM declines 20-25% mechanically, reducing fee revenue by $3-4B. The 13% base fee growth in 2025 was market-appreciation-driven, not organic. Fair value estimate: $780-820 at 16-17x normalized $48 EPS.",
+      "recession_eps_impact": {
+        "base": 48.00,
+        "mild": 38.00,
+        "severe": 28.00
+      },
+      "scores": {
+        "moat": 9,
+        "management": 8,
+        "growth": 6,
+        "valuation": 4
+      },
+      "overall_score": 6.8,
+      "recommendation": "SELL",
+      "conviction": "MEDIUM",
+      "weight": "0%",
+      "v2_change": "Downgraded from BUY to SELL. Removed from portfolio. Valuation score reduced from 6 to 4 to reflect 32% premium to 10-year median and unproven private markets strategy."
+    }
+  ],
+  "companies_reviewed_not_selected": [
+    {
+      "ticker": "MA",
+      "name": "Mastercard Incorporated",
+      "reason": "CONSOLIDATED INTO V. MA and V have 95%+ return correlation. MA trades at 25.5x forward vs V at 23.5x. MA has higher growth (17% rev vs 11%) but smaller international mix (35% vs 45%), making it more exposed to CCCA. V offers better risk-adjusted return. Owning both was identified in v1 critique as lazy portfolio construction -- corrected.",
+      "would_buy_if": "MA drops below 22x forward P/E (below $365) while V stays above 27x, making MA the relative value."
+    },
+    {
+      "ticker": "PYPL",
+      "name": "PayPal Holdings",
+      "reason": "Considered as contrarian pick but rejected. CEO departure (Chriss replaced), shares down 24% YTD, 2026 profit guidance of low-single-digit growth. Citi cut price target to $42 from $60. The turnaround lacks a credible catalyst with new leadership transition creating 6-12 months of strategic uncertainty. C offers better contrarian value with clearer execution milestones.",
+      "would_buy_if": "Below $40 (5x forward P/E) if new CEO articulates clear strategy with margin expansion targets."
+    },
+    {
+      "ticker": "SOFI",
+      "name": "SoFi Technologies",
+      "reason": "Impressive growth (30% revenue, 57% EPS growth) but forward P/E of 32x prices in perfection. Lending-heavy model carries credit cycle risk -- in a recession, SOFI's younger/lower-income borrower base would see disproportionate charge-off increases. Hold consensus from 14 analysts.",
+      "would_buy_if": "Below 18x forward earnings on a credit scare that proves temporary."
+    },
+    {
+      "ticker": "BRK.B",
+      "name": "Berkshire Hathaway",
+      "reason": "Dominant franchise but $373B cash pile signals lack of deployment opportunities. Post-Buffett transition risk. 2025 operating earnings down 6.2%. Market cap of $1.1T limits relative upside."
+    },
+    {
+      "ticker": "BAC",
+      "name": "Bank of America",
+      "reason": "Solid fundamentals but lacks JPM's diversification and C's deep-value discount. NII growing 5-7% but growth trajectory is modest. Prefer JPM for quality bank exposure and C for value."
+    }
+  ],
+  "top_picks": [
+    {
+      "rank": 1,
+      "ticker": "JPM",
+      "overall_score": 8.2,
+      "conviction": "HIGH",
+      "weight": "22%",
+      "rationale": "Best-in-class bank with 17-18% ROTCE at 2.3x TBV. NII of $104.5B + surging IB fees. Basel III easing frees capital for buybacks. Most defensive large-cap financial with credit quality vastly superior to small banks.",
+      "recession_eps_range": "$11.20 - $19.50"
+    },
+    {
+      "rank": 2,
+      "ticker": "V",
+      "overall_score": 8.3,
+      "conviction": "HIGH",
+      "weight": "18%",
+      "rationale": "Sole payments pick (consolidating from V+MA). Strongest network moat in financials. Forward P/E in bottom decile of sector. 45% international revenue insulates from CCCA. Value-added services growing 20%+ diversify beyond interchange.",
+      "recession_eps_range": "$8.90 - $11.80"
+    },
+    {
+      "rank": 3,
+      "ticker": "GS",
+      "overall_score": 7.8,
+      "conviction": "MEDIUM-HIGH",
+      "weight": "15%",
+      "rationale": "Premier M&A franchise riding $1.38T Q1 deal wave. But weight reduced and conviction lowered from v1 to reflect peak-cycle risk. 2022 precedent: EPS halved when deals froze. Wait for $900 entry.",
+      "recession_eps_range": "$22.00 - $58.00"
+    },
+    {
+      "rank": 4,
+      "ticker": "PGR",
+      "overall_score": 7.5,
+      "conviction": "MEDIUM-HIGH",
+      "weight": "14%",
+      "rationale": "Upgraded from HOLD. 40% ROE with 84% combined ratio is not priced into 14x earnings. Insurance is recession-resistant. Mean reversion to 90-93% combined ratio still produces excellent returns. Structural data advantage persists through cycles.",
+      "recession_eps_range": "$10.50 - $15.40"
+    },
+    {
+      "rank": 5,
+      "ticker": "C",
+      "overall_score": 7.4,
+      "conviction": "MEDIUM",
+      "weight": "12%",
+      "rationale": "CONTRARIAN PICK. 0.7x TBV with 31% EPS growth consensus. Transformation shifting from planning to monetization. Highest risk-reward (2.3:1) in portfolio. Advisory fees +84% show franchise revival.",
+      "recession_eps_range": "$4.50 - $10.00"
+    },
+    {
+      "rank": 6,
+      "ticker": "MS",
+      "overall_score": 7.7,
+      "conviction": "MEDIUM-HIGH",
+      "weight": "12%",
+      "rationale": "Wealth management transformation provides stability but negative FCF constrains capital returns in stress. Weight reduced from v1 to reflect FCF risk. 14.6x forward P/E offers value for the franchise quality.",
+      "recession_eps_range": "$5.20 - $10.50"
+    }
+  ],
+  "sell_recommendations": [
+    {
+      "ticker": "BLK",
+      "recommendation": "SELL",
+      "conviction": "MEDIUM",
+      "rationale": "32% above 10-year median P/E with unproven private markets strategy competing against BX/KKR/APO. Core ETF fee compression is structural. Market-appreciation-driven growth is not organic. Fair value $780-820.",
+      "cover_criteria": "Below $780 (16x normalized EPS) or if private markets fundraising demonstrably exceeds $80B annually."
+    }
+  ],
+  "portfolio_construction": {
+    "total_picks": 6,
+    "sell_picks": 1,
+    "subsector_allocation": {
+      "banks": "34% (JPM 22% + C 12%)",
+      "capital_markets_wealth": "27% (GS 15% + MS 12%)",
+      "payments": "18% (V)",
+      "insurance": "14% (PGR)",
+      "cash_reserve": "7%"
+    },
+    "style_tilt": "Quality growth with value anchors and contrarian exposure",
+    "average_forward_pe": 15.8,
+    "key_themes": [
+      "Bank-specific valuation: P/TBV and ROTCE, not P/E vs tech (addresses critique)",
+      "M&A supercycle beneficiaries with explicit reversion scenarios (GS, MS, JPM)",
+      "Payments secular growth with quantified regulatory risk (V)",
+      "Insurance cycle positioning with mean-reversion modeling (PGR)",
+      "Contrarian deep-value turnaround (C)"
+    ],
+    "v1_to_v2_changes": [
+      "REMOVED MA: Consolidated into V (95%+ correlation, V has better risk-adjusted profile)",
+      "REMOVED BLK: Downgraded to SELL (32% above median P/E, unproven private markets)",
+      "ADDED C: Contrarian pick at 0.7x TBV with 31% EPS growth (addresses missing contrarian requirement)",
+      "UPGRADED PGR: From HOLD to BUY (40% ROE was underappreciated in v1)",
+      "REDUCED GS: From STRONG BUY/18% to BUY/15% (peak-cycle risk acknowledged)",
+      "REDUCED MS: From 14% to 12% (negative FCF quantified and thesis impact modeled)",
+      "ADDED 7% cash reserve for recession entry opportunities"
+    ]
+  },
+  "scoring_methodology": {
+    "formula": "(Moat * 0.30) + (Management * 0.20) + (Growth * 0.30) + (Valuation * 0.20)",
+    "scale": "1-10 per factor",
+    "moat_criteria": "Competitive advantages, switching costs, network effects, scale, brand",
+    "management_criteria": "Capital allocation track record, strategic vision, shareholder alignment, execution",
+    "growth_criteria": "Revenue growth rate, earnings growth, addressable market expansion, secular tailwinds",
+    "valuation_criteria": "P/TBV for banks, P/E relative to growth and SECTOR history (not cross-sector), EV/EBITDA, FCF yield"
+  },
+  "metadata": {
+    "data_sources": [
+      "Goldman Sachs 2026 Global M&A Outlook",
+      "S&P Global Market Intelligence - credit card delinquency data Feb 2026",
+      "FRED - credit card charge-off and delinquency rate series",
+      "ABA Banking Journal - Basel III endgame re-proposal March 2026",
+      "Brookings Institution - Basel III capital requirements analysis",
+      "KTS Law / Lexology - Credit Card Competition Act of 2026 analysis",
+      "CMSPI - $17B merchant savings estimate from CCCA",
+      "JPMorgan investor relations - NII guidance $104.5B",
+      "Citigroup Q4 2025 earnings and investor presentations",
+      "Morgan Stanley Q4 2025 earnings ($70.6B revenue, $16.9B net income)",
+      "Progressive monthly results and S&P GMI insurance outlook",
+      "BlackRock valuation data (GuruFocus, Yahoo Finance, Simply Wall St)",
+      "PayPal Q4 2025 earnings and CEO transition coverage",
+      "Motley Fool, Carrier Management - insurance cycle analysis"
+    ],
+    "generation_timestamp": "2026-04-04T14:30:00Z",
+    "judge_feedback_addressed": {
+      "m_and_a_downside_model": "Added recession stress test with GS EPS at $22 in severe scenario (-62% from base). M&A reversion triggers defined.",
+      "v_ma_consolidation": "Consolidated to V only. Justified with forward P/E, international revenue mix, and 95%+ correlation data.",
+      "bank_pe_methodology": "Replaced P/E-vs-tech framing with P/TBV and ROTCE bank-specific metrics.",
+      "ms_negative_fcf": "Quantified FCF impact: -$3.1B current, -$6 to -$10B in severe recession. Constrains buyback capacity. Weight reduced.",
+      "credit_cycle_analysis": "Added full section: charge-off rate 4.1% vs 3.5% avg, small bank stress at 6.6%, EPS sensitivity per 100bp.",
+      "blk_valuation_contradiction": "Resolved by downgrading BLK to SELL. 32% premium to median PE cannot coexist with BUY rating.",
+      "recession_stress_test": "Added for all picks with base/mild/severe EPS scenarios.",
+      "ccca_dollar_estimate": "V revenue at risk: $4.0-5.5B (10-14% of total). Probability-weighted: -$1.0-1.7B annually.",
+      "deposit_betas_nim": "Added JPM NIM analysis: 3.06% current, $6.5-8.5B NII shortfall if 4 cuts vs 2.",
+      "basel_iii_impact": "Added analysis: scaled-back rules reduce CET1 requirements 4.8-7.8%. Net positive for banks.",
+      "insurance_cycle": "Added PGR cycle analysis: hard market ending, combined ratios reverting from 84% to 90-93% over 2-3 years.",
+      "contrarian_pick": "Added C at 0.7x TBV with 2.3:1 risk-reward. Considered PYPL and SOFI but C has clearest catalyst path.",
+      "sell_recommendation": "BLK downgraded to SELL.",
+      "position_sizing_stop_losses": "Added for all picks with entry/exit criteria and stop-losses.",
+      "entry_exit_criteria": "Explicit for every pick."
+    },
+    "next_review_triggers": [
+      "Q1 2026 bank earnings starting April 13 (GS) and April 14 (JPM, C, MS)",
+      "Federal Reserve rate decision -- if 4+ cuts signaled, reduce JPM NII estimate",
+      "M&A volume data -- if sponsor exits decline 2 consecutive quarters, reduce GS weight",
+      "Credit card charge-off data -- if exceeds 5.0%, reassess JPM and C",
+      "CCCA legislative progress -- if committee vote passes, reassess V position size",
+      "PGR monthly combined ratio -- if exceeds 93% for 3 months, reassess thesis"
+    ]
+  }
+}

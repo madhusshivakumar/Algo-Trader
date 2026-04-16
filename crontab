@@ -1,13 +1,17 @@
 # ============================================================
 #  Algo Trader — Agent Schedule
 #
-#  Pre-market agents (earnings, sentiment, scanner, LLM) run
-#  on engine startup via scripts/entrypoint.sh (~2-3 min).
-#
-#  This crontab handles post-market and weekly jobs only.
+#  Pre-market agents run on a fixed schedule (not just on startup)
+#  so the 1000+ stock universe is always fresh before market open.
 #  Times are US Eastern (container TZ=America/New_York).
 #  DST is handled automatically.
 # ============================================================
+
+# ── Pre-Market (weekdays) ─────────────────────────────────────
+# Market scanner v2 — dynamic 1000+ universe selection (5:45 AM ET)
+# Runs before bot startup (6:30 AM) so fresh symbols are ready.
+# With snapshot pre-filtering this completes in ~60-90s.
+45 5 * * 1-5 cd /app && python agents/market_scanner.py >> /app/logs/agents.log 2>&1
 
 # ── Post-Market (weekdays) ────────────────────────────────────
 # Trade analyzer — daily P&L report (5:03 PM ET)

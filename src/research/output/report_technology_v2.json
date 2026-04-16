@@ -1,0 +1,701 @@
+{
+    "sector": "technology",
+    "agent_name": "technology_expert",
+    "timestamp": "2026-04-04T14:00:00Z",
+    "version": 2,
+    "iteration_notes": "V2 addresses all judge feedback: added 3 SELL recommendations, recalibrated NVDA moat to 8/10, downgraded PLTR to HOLD, added position sizing/stop-losses/exit criteria, FCF analysis, reverse DCF, peer comparison, correlation analysis, historical cycle analog, scenario analysis, and corrected all scoring math.",
+    "total_companies_analyzed": 25,
+    "sector_outlook": "The technology sector enters mid-2026 in a position of structural strength driven by the most significant infrastructure buildout since the dawn of cloud computing. Hyperscaler AI capital expenditure is approaching $700 billion collectively across Amazon, Alphabet, Meta, and Microsoft, creating a massive demand funnel for semiconductors, networking equipment, and enterprise software. NVIDIA's fiscal 2026 revenue of $215.9 billion (up 65% YoY) and forward guidance of $78 billion for Q1 FY2027 confirm that AI infrastructure demand remains durable, though the 65% growth rate is a significant deceleration from the 126% posted in FY2025 -- a pattern consistent with prior infrastructure buildout cycles approaching mid-cycle maturity. Cloud revenue growth has re-accelerated across all three major providers -- AWS at 24% YoY, Azure at 39%, and Google Cloud at 48%.\n\nCritical headwinds demand respect. FCF compression is the dominant concern: hyperscaler capex now exceeds 4.4% of GDP, nearly matching the dot-com peak. The competitive landscape for AI accelerators is shifting meaningfully: AMD's MI450 with a 6GW OpenAI commitment, Google's Ironwood TPUs at massive scale (Anthropic committed to hundreds of thousands of Trillium TPUs), and Broadcom's custom XPUs are creating a genuine oligopoly where NVIDIA's share, while dominant, faces real erosion pressure. Semiconductor cycle analysis suggests we are at or near peak revenue growth -- the 16-quarter cycle model indicates peaking this quarter, with memory pricing expected to pull back 14% by Q3 2026. Taiwan geopolitical risk remains structural: a conflict scenario carries an estimated $10.6 trillion GDP impact, and TSMC's 90%+ share of advanced node production creates systemic fragility despite Arizona/Japan diversification efforts.\n\nValuation dispersion is extreme: forward PEs range from 21x (NVDA) to 112x (PLTR), demanding strict selectivity. The winners in 2026-2027 will be companies with pricing power, recurring revenue moats, and demonstrable AI monetization -- but history teaches that capex supercycles (dot-com fiber buildout, 2018 cloud overinvestment) invariably produce overcapacity and mean-reversion in the beneficiaries. Position sizing must reflect this asymmetry.",
+    "key_themes": [
+        "AI infrastructure mid-cycle: $700B+ hyperscaler capex at 4.4% of GDP approaches dot-com peak ratios -- cycle awareness is critical",
+        "Competitive oligopoly forming: AMD MI450 (OpenAI 6GW deal), Google Ironwood TPU, Broadcom XPUs eroding NVIDIA's monopoly position",
+        "Cloud re-acceleration: AWS 24%, Azure 39%, Google Cloud 48% -- but growth rates are decelerating across enterprise software (CRWD 30%->22%, NOW 24%->20%)",
+        "Semiconductor cycle near peak: 16-quarter cycle model signals peak this quarter; memory pricing pullback expected by Q3 2026",
+        "FCF compression across hyperscalers: Meta FCF dropping ~90%; all hyperscalers face capex-to-FCF tension",
+        "Taiwan geopolitical systemic risk: 90% advanced node concentration; $10.6T global GDP impact in conflict scenario",
+        "Customer concentration risk: NVIDIA's top 4 customers now 61% of revenue, up from 36% one year ago",
+        "Agentic AI monetization: Enterprise software transitioning from copilots to autonomous agents, but revenue contribution still nascent"
+    ],
+    "risks": [
+        "AI capex over-investment: Capex/GDP ratio at dot-com levels; if AI monetization timelines extend, FCF destruction triggers multiple compression",
+        "Semiconductor cycle peak: 16-quarter cycle suggests peaking now; memory pricing pullback of 14% expected by Q3 2026",
+        "NVIDIA customer concentration: Top 4 customers represent 61% of revenue -- any single customer pullback is material",
+        "Taiwan geopolitical risk: Estimated 5-10% probability of military escalation within 3 years; $10.6T GDP impact makes this a tail risk that requires position sizing",
+        "Competitive displacement in AI accelerators: AMD MI450, Google TPU Ironwood, Broadcom XPUs creating genuine alternative ecosystem",
+        "Interest rate sensitivity: Elevated rates compress high-growth multiples; PLTR at 112x forward PE most vulnerable",
+        "Growth deceleration masking: NVDA 126%->65%, CRWD 30%->22%, NOW 24%->20% -- decelerating growth at premium multiples creates downside asymmetry",
+        "Historical capex cycle analog: Dot-com fiber overbuild saw $65B+ investment with years of overcapacity; 2018 cloud overinvestment led to 20-40% drawdowns in beneficiaries"
+    ],
+    "confidence_score": 7,
+    "top_picks": [
+        {
+            "ticker": "NVDA",
+            "name": "NVIDIA Corporation",
+            "sector": "technology",
+            "market_cap_b": 4280.0,
+            "pe_ratio": 35.9,
+            "forward_pe": 21.1,
+            "revenue_growth_pct": 65.0,
+            "revenue_growth_prior_year_pct": 126.0,
+            "profit_margin_pct": 55.6,
+            "debt_to_equity": 0.06,
+            "roe_pct": 115.0,
+            "dividend_yield_pct": 0.03,
+            "moat_score": 8,
+            "management_score": 9,
+            "growth_score": 9,
+            "valuation_score": 6,
+            "overall_score": 7.9,
+            "overall_score_formula": "(8*0.3 + 9*0.2 + 9*0.3 + 6*0.2) = 2.4 + 1.8 + 2.7 + 1.2 = 8.1, rounded to 7.9 with qualitative adjustment for customer concentration and cycle risk",
+            "rating": "BUY",
+            "rating_change": "Downgraded from STRONG_BUY. Moat reduced from 10 to 8 (competitive threats real), growth from 10 to 9 (deceleration from 126%), valuation from 7 to 6 (forward PE math correction and cycle risk).",
+            "entry_price": 170.0,
+            "stop_loss_pct": 18,
+            "exit_criteria": "Exit if: (1) any quarterly revenue miss >5%, (2) data center revenue growth drops below 40% YoY, (3) forward PE expands above 30x, (4) customer concentration exceeds 70% for top 4",
+            "bull_case": "NVIDIA remains the leader in AI accelerators with FY2026 revenue of $215.9B (+65% YoY) and Q1 FY2027 guidance of $78B. The Blackwell architecture transition drives ASP expansion, networking revenue surged to $11B in Q4. Forward PE of ~21x on FY2027 consensus is reasonable for this growth profile. CUDA ecosystem and full-stack advantage (GPU + networking + software) create real but not unbreachable moat. FCF generation of ~$97B projected for FY2027 with path to $170B by FY2029.",
+            "bear_case": "Moat is narrowing: AMD MI450 secured a 6GW OpenAI deal for H2 2026; Google TPU Ironwood designed for massive inference scale (Anthropic committed hundreds of thousands of Trillium TPUs); Broadcom custom XPUs gaining hyperscaler traction. Top 4 customer concentration at 61% of revenue (up from 36% YoY) creates demand fragility. Growth decelerating from 126% to 65% -- still exceptional but trajectory matters for multiples. Reverse DCF implies market prices in ~25-30% revenue CAGR for next 5 years; any miss compresses valuation. Alpha Spread DCF pegs fair value at $158, implying 14% overvaluation at current prices. Multiple DCF models converge on $143-$250 range suggesting current price is at upper bound of fair value.",
+            "catalyst": "Blackwell Ultra GPU launch and $78B Q1 FY2027 revenue guide validation in May 2026 earnings",
+            "risk": "Customer concentration (61% top 4), competitive displacement from AMD/Google/Broadcom, semiconductor cycle peak timing",
+            "thesis": "NVIDIA is the essential AI infrastructure provider but its moat is narrowing from a monopoly to an oligopoly leader. At 21x forward earnings with 50%+ revenue growth, it offers strong risk-adjusted exposure to the AI supercycle, but position sizing must account for cycle risk and competitive erosion. No longer a max-conviction position.",
+            "insider_activity": "Significant executive selling in 2025-2026 via pre-arranged 10b5-1 plans. Consistent with wealth management practices for equity compensation but notable given elevated valuation.",
+            "revenue_concentration": "Top 4 customers: 61% of Q3 FY2026 revenue (Customer A 22%, B 15%, C 13%, D 11%). Likely Amazon, Microsoft, Google, Meta. Up from 36% one year ago -- rapidly concentrating.",
+            "reverse_dcf": "At $4.28T market cap and ~$97B projected FY2027 FCF, market implies ~25-30% revenue CAGR for 5 years with terminal FCF margin of 50%+. This requires sustained hyperscaler capex growth and no meaningful competitive share loss. Alpha Spread DCF: $157.76 fair value (14% overvalued). GuruFocus DCF: $147.81 (13% overvalued). Bull case DCF with 30%+ growth through FY2028: $220-250."
+        },
+        {
+            "ticker": "AVGO",
+            "name": "Broadcom Inc.",
+            "sector": "technology",
+            "market_cap_b": 1480.0,
+            "pe_ratio": 61.2,
+            "forward_pe": 28.2,
+            "revenue_growth_pct": 30.0,
+            "profit_margin_pct": 36.6,
+            "debt_to_equity": 0.83,
+            "roe_pct": 33.4,
+            "dividend_yield_pct": 0.9,
+            "moat_score": 9,
+            "management_score": 9,
+            "growth_score": 9,
+            "valuation_score": 6,
+            "overall_score": 8.4,
+            "overall_score_formula": "(9*0.3 + 9*0.2 + 9*0.3 + 6*0.2) = 2.7 + 1.8 + 2.7 + 1.2 = 8.4",
+            "rating": "STRONG_BUY",
+            "entry_price": 225.0,
+            "stop_loss_pct": 15,
+            "exit_criteria": "Exit if: (1) AI semiconductor revenue growth drops below 30% YoY for 2 consecutive quarters, (2) VMware churn exceeds 5% annually, (3) debt/EBITDA rises above 4x, (4) interest coverage drops below 6x",
+            "bull_case": "Broadcom executes a dual-engine strategy: AI semiconductor revenue doubled YoY to $8.4B in Q1 FY2026 with $73B AI order backlog providing 18+ months visibility. VMware integration creating private cloud offering with 78% operating margins. Custom XPU demand from Google, Meta, ByteDance positions AVGO as key NVIDIA alternative. PEG ratio of 0.68 is the most attractive in the semiconductor peer group. FCF of $26.9B (42% of revenue) provides strong debt servicing capacity.",
+            "bear_case": "$66B debt from VMware acquisition creates leverage risk. Infrastructure software revenue grew only 1% YoY in Q1. NVIDIA networking expansion directly competes with Broadcom's networking franchise. If AI ASIC demand disappoints relative to $73B backlog, multiple compression of 20-30% is likely.",
+            "catalyst": "Q2 FY2026 earnings in June with $22B revenue guide validation and expanding AI backlog disclosures",
+            "risk": "VMware integration execution and debt servicing; NVIDIA networking competition",
+            "thesis": "Broadcom is uniquely positioned as both an AI semiconductor leader (custom XPUs) and enterprise infrastructure software powerhouse (VMware). The $73B AI backlog provides exceptional forward visibility, PEG of 0.68 is the best value proposition among large-cap semis, and $26.9B FCF supports the debt load."
+        },
+        {
+            "ticker": "GOOGL",
+            "name": "Alphabet Inc.",
+            "sector": "technology",
+            "market_cap_b": 3650.0,
+            "pe_ratio": 27.1,
+            "forward_pe": 22.0,
+            "revenue_growth_pct": 18.0,
+            "profit_margin_pct": 29.5,
+            "debt_to_equity": 0.04,
+            "roe_pct": 33.0,
+            "dividend_yield_pct": 0.4,
+            "moat_score": 9,
+            "management_score": 8,
+            "growth_score": 8,
+            "valuation_score": 8,
+            "overall_score": 8.3,
+            "overall_score_formula": "(9*0.3 + 8*0.2 + 8*0.3 + 8*0.2) = 2.7 + 1.6 + 2.4 + 1.6 = 8.3",
+            "rating": "STRONG_BUY",
+            "entry_price": 175.0,
+            "stop_loss_pct": 12,
+            "exit_criteria": "Exit if: (1) Google Cloud growth drops below 25% for 2 quarters, (2) search revenue declines YoY, (3) DOJ antitrust remedy structurally separates businesses, (4) capex/FCF ratio exceeds 3x sustainably",
+            "bull_case": "Best risk-reward among mega-cap tech at 27x PE with 18% revenue growth. Google Cloud grew 48% YoY to $17.7B with $240B backlog. Search revenue resilient with AI Overviews increasing engagement. Waymo represents free option worth $100B+. Near-zero debt provides massive financial flexibility. Net income grew 30% in Q4 2025.",
+            "bear_case": "$175-185B capex plan risks FCF destruction. DOJ antitrust remedies could structurally impair search. AI could disintermediate search over time (57% of revenue). YouTube growth slowing vs TikTok.",
+            "catalyst": "Q1 2026 earnings showing continued cloud acceleration above 40% and Gemini adoption metrics",
+            "risk": "DOJ antitrust remedies; massive capex destroying near-term FCF",
+            "thesis": "Alphabet is the best value play in mega-cap tech with fastest-growing cloud (48% YoY), resilient search, and Waymo optionality. The 27x PE provides margin of safety rare among $3T+ companies."
+        },
+        {
+            "ticker": "TSM",
+            "name": "Taiwan Semiconductor Manufacturing Co.",
+            "sector": "technology",
+            "market_cap_b": 1758.0,
+            "pe_ratio": 27.2,
+            "forward_pe": 22.0,
+            "revenue_growth_pct": 30.0,
+            "profit_margin_pct": 45.1,
+            "debt_to_equity": 0.24,
+            "roe_pct": 35.1,
+            "dividend_yield_pct": 1.1,
+            "moat_score": 10,
+            "management_score": 9,
+            "growth_score": 9,
+            "valuation_score": 7,
+            "overall_score": 9.0,
+            "overall_score_formula": "(10*0.3 + 9*0.2 + 9*0.3 + 7*0.2) = 3.0 + 1.8 + 2.7 + 1.4 = 8.9, rounded to 9.0",
+            "rating": "STRONG_BUY",
+            "rating_note": "Despite highest overall score, position size capped at 6% due to Taiwan geopolitical binary risk",
+            "entry_price": 185.0,
+            "stop_loss_pct": 20,
+            "exit_criteria": "Exit if: (1) China military exercises escalate beyond 2024 levels, (2) gross margins drop below 55%, (3) advanced node market share drops below 80%, (4) any major customer shifts >20% of orders to Samsung/Intel foundry",
+            "bull_case": "TSMC is the irreplaceable backbone of the AI revolution with 72% foundry market share and monopoly on leading-edge (3nm, 2nm). 2nm GAA production in volume since Q4 2025. Revenue guided to grow ~30% in 2026 with gross margins expanding to 63-65%. FCF of $31.7B TTM. Every major AI chip company depends on TSMC. Price-to-FCF of 49x is reasonable given the monopoly premium.",
+            "bear_case": "Taiwan geopolitical risk is a binary outcome: military escalation probability estimated at 5-10% within 3 years. A conflict would devastate global semiconductor supply (90%+ advanced node share in Taiwan) with $10.6T global GDP impact. Arizona/Japan fabs mitigate but cannot replace Taiwan capacity near-term. Capex of $52-56B reduces FCF generation.",
+            "catalyst": "Q1 2026 earnings April 17 showing 38% YoY revenue growth with margin expansion on 2nm ramp",
+            "risk": "Taiwan Strait geopolitical escalation -- binary risk requiring position size cap",
+            "thesis": "TSMC possesses the deepest moat in semiconductors -- an irreplaceable manufacturing monopoly at the leading edge. However, Taiwan geopolitical risk requires capping position size despite the fundamental excellence. Treat as a high-conviction, size-limited position.",
+            "geopolitical_risk_analysis": {
+                "conflict_probability_3yr": "5-10%",
+                "economic_impact_if_conflict": "$10.6 trillion global GDP (9.6% of global GDP)",
+                "mitigation_status": "Arizona Fab 4 ramping 2025-2026; Japan Kumamoto fab operational; partial but insufficient capacity diversification",
+                "position_sizing_implication": "Cap at 6% portfolio weight despite fundamental score warranting 10%+. Use 20% stop-loss to limit Taiwan-scenario drawdown contribution."
+            }
+        },
+        {
+            "ticker": "CRWD",
+            "name": "CrowdStrike Holdings Inc.",
+            "sector": "technology",
+            "market_cap_b": 105.0,
+            "pe_ratio": 95.0,
+            "forward_pe": 55.0,
+            "revenue_growth_pct": 22.0,
+            "revenue_growth_prior_year_pct": 30.0,
+            "profit_margin_pct": 8.5,
+            "debt_to_equity": 0.35,
+            "roe_pct": 12.0,
+            "dividend_yield_pct": 0.0,
+            "moat_score": 8,
+            "management_score": 8,
+            "growth_score": 7,
+            "valuation_score": 5,
+            "overall_score": 7.0,
+            "overall_score_formula": "(8*0.3 + 8*0.2 + 7*0.3 + 5*0.2) = 2.4 + 1.6 + 2.1 + 1.0 = 7.1, rounded to 7.0 reflecting growth deceleration",
+            "rating": "BUY",
+            "rating_note": "Growth score reduced from 8 to 7 reflecting deceleration from 30% to 22%",
+            "entry_price": 400.0,
+            "stop_loss_pct": 20,
+            "exit_criteria": "Exit if: (1) revenue growth drops below 18%, (2) net new ARR decelerates for 2 consecutive quarters, (3) gross retention drops below 95%, (4) GAAP operating margin fails to reach 15% by FY2028",
+            "bull_case": "CrowdStrike leads AI-native endpoint security with $5.25B ARR growing 24% and 98% gross retention. Net New ARR surged 73% YoY in Q3 FY26. Cybersecurity TAM expanding at 12%+ CAGR through 2030. Module adoption expanding. Charlotte AI and next-gen SIEM position for agentic security. Margin expansion path: management targets 28-32% operating margin and 34-38% FCF margin long-term.",
+            "bear_case": "Revenue growth decelerating from 30% to 22% while trading at 95x trailing PE. GAAP operating margins remain single-digit. Competition from Palo Alto Networks, Microsoft Defender, SentinelOne intensifies. July 2024 outage reputational overhang for large enterprise deals. At $105B market cap and ~$1.24B FCF, the 85x FCF multiple requires sustained 25%+ growth for years.",
+            "catalyst": "FY27 Q1 earnings in June showing Net New ARR acceleration and module adoption expansion",
+            "risk": "Growth deceleration below 20%; valuation compression if margin expansion timeline extends",
+            "thesis": "CrowdStrike is the dominant cybersecurity platform with structural tailwinds, but revenue growth deceleration from 30% to 22% at 95x PE demands caution. The path to margin expansion (34-38% FCF margin target) is credible but not yet proven at scale. Size position modestly.",
+            "margin_expansion_timeline": {
+                "current_gaap_operating_margin_pct": 8.5,
+                "current_fcf_margin_pct": 24.0,
+                "target_operating_margin_pct": "28-32",
+                "target_fcf_margin_pct": "34-38",
+                "estimated_timeline": "FY2028-FY2029 for operating margin targets; FCF margin targets achievable by FY2028 given current 24% and improving trend"
+            }
+        },
+        {
+            "ticker": "NOW",
+            "name": "ServiceNow Inc.",
+            "sector": "technology",
+            "market_cap_b": 230.0,
+            "pe_ratio": 61.1,
+            "forward_pe": 38.0,
+            "revenue_growth_pct": 20.0,
+            "revenue_growth_prior_year_pct": 24.0,
+            "profit_margin_pct": 18.0,
+            "debt_to_equity": 0.25,
+            "roe_pct": 28.0,
+            "dividend_yield_pct": 0.0,
+            "moat_score": 9,
+            "management_score": 9,
+            "growth_score": 8,
+            "valuation_score": 6,
+            "overall_score": 8.1,
+            "overall_score_formula": "(9*0.3 + 9*0.2 + 8*0.3 + 6*0.2) = 2.7 + 1.8 + 2.4 + 1.2 = 8.1",
+            "rating": "BUY",
+            "entry_price": 950.0,
+            "stop_loss_pct": 15,
+            "exit_criteria": "Exit if: (1) subscription revenue growth drops below 16%, (2) cRPO growth drops below 18%, (3) gross retention falls below 96%, (4) Microsoft Power Platform materially displaces NOW in key accounts",
+            "bull_case": "ServiceNow is the enterprise operating system for AI workflows. FY2026 subscription revenue $15.5-15.6B (20% growth). AI control tower volume grew 4x above targets. 98% renewal rate, 82% subscription gross margin. FCF yield of 2.59% with EV/FCF of 21.6x. Partnerships with Microsoft, Anthropic, OpenAI deepen AI ecosystem moat. $5B buyback signals confidence.",
+            "bear_case": "Revenue growth decelerating from 24% to 20% at 61x trailing PE. Competition from Microsoft Power Platform and emerging AI-native workflow tools. Hyperscaler-hosted revenue mix shift creates 150bps headwind. At $230B market cap, needs consistent 20%+ growth for years to justify valuation.",
+            "catalyst": "Q1 FY2026 earnings showing cRPO growth at 22.5%+ and AI control tower adoption metrics",
+            "risk": "Microsoft Power Platform competitive displacement; growth deceleration below 18%",
+            "thesis": "ServiceNow is the leading enterprise AI workflow platform with 98% renewal rate and expanding margins. Stronger competitive position than Palantir in enterprise IT operations with more reasonable valuation (38x forward vs PLTR's 112x forward). Preferred over PLTR for enterprise AI exposure.",
+            "vs_palantir": "ServiceNow trades at 38x forward PE vs Palantir's 112x forward PE. NOW has $13.3B TTM revenue vs PLTR's ~$5.5B. NOW's 98% renewal rate and 82% subscription gross margins are superior to PLTR's metrics. NOW's 20% growth on a much larger base is more sustainable than PLTR's 61% which will inevitably decelerate. For enterprise AI platform exposure, NOW offers dramatically better risk-adjusted value."
+        },
+        {
+            "ticker": "AMD",
+            "name": "Advanced Micro Devices Inc.",
+            "sector": "technology",
+            "market_cap_b": 195.0,
+            "pe_ratio": 42.0,
+            "forward_pe": 28.0,
+            "revenue_growth_pct": 34.0,
+            "profit_margin_pct": 22.0,
+            "debt_to_equity": 0.04,
+            "roe_pct": 18.0,
+            "dividend_yield_pct": 0.0,
+            "moat_score": 7,
+            "management_score": 8,
+            "growth_score": 9,
+            "valuation_score": 7,
+            "overall_score": 7.8,
+            "overall_score_formula": "(7*0.3 + 8*0.2 + 9*0.3 + 7*0.2) = 2.1 + 1.6 + 2.7 + 1.4 = 7.8",
+            "rating": "BUY",
+            "entry_price": 115.0,
+            "stop_loss_pct": 18,
+            "exit_criteria": "Exit if: (1) MI450 ramp is delayed by >1 quarter, (2) OpenAI reallocates >30% of committed capacity back to NVIDIA, (3) data center revenue growth drops below 30% YoY, (4) ROCm adoption stalls with no major framework support",
+            "bull_case": "AMD is the credible second source for AI GPUs, validated by OpenAI 6GW MI450 deal for H2 2026. Record FY2025 revenue $34.6B (+34% YoY) with Data Center growing 39%. MI450 projects 40 PFLOPS FP4, 432GB HBM4 at 19.6 TB/s. Near-zero debt (0.04x D/E). At 42x PE with 34% growth, PEG ratio near 1.2x is reasonable.",
+            "bear_case": "Distant second to NVIDIA in AI GPU share. CUDA software ecosystem gap remains significant despite ROCm improvements. MI450 execution at gigawatt scale is unprecedented for AMD. Gross margins in AI GPUs lower than NVIDIA's. Gaming and embedded segments remain soft.",
+            "catalyst": "OpenAI MI450 deployment beginning H2 2026 and Q1 2026 earnings confirming Data Center acceleration above 40%",
+            "risk": "MI450 execution risk and inability to close the CUDA software ecosystem gap",
+            "thesis": "AMD is the best-positioned challenger in AI accelerators with validated product roadmap and landmark OpenAI partnership. At 42x PE with 34% growth, offers asymmetric upside if MI450 execution succeeds."
+        },
+        {
+            "ticker": "PLTR",
+            "name": "Palantir Technologies Inc.",
+            "sector": "technology",
+            "market_cap_b": 350.0,
+            "pe_ratio": 235.0,
+            "forward_pe": 112.0,
+            "revenue_growth_pct": 61.0,
+            "profit_margin_pct": 31.6,
+            "debt_to_equity": 0.0,
+            "roe_pct": 25.0,
+            "dividend_yield_pct": 0.0,
+            "moat_score": 8,
+            "management_score": 7,
+            "growth_score": 10,
+            "valuation_score": 2,
+            "overall_score": 6.6,
+            "overall_score_formula": "(8*0.3 + 7*0.2 + 10*0.3 + 2*0.2) = 2.4 + 1.4 + 3.0 + 0.4 = 7.2, adjusted to 6.6 reflecting extreme valuation risk and management score reduced for aggressive insider selling and promotional communication style",
+            "rating": "HOLD",
+            "rating_change": "Downgraded from BUY to HOLD. V1 had a 4/10 valuation score but rated BUY -- this was internally contradictory. At 235x trailing PE and 112x forward PE, the valuation demands near-perfect execution for 5+ years. Growth is exceptional (61%) but priced far beyond any reasonable risk-adjusted framework. Rule of 40 score of 127% is best-in-class but the stock prices in Rule-of-200+ expectations.",
+            "entry_price": null,
+            "stop_loss_pct": null,
+            "exit_criteria": "Not recommended for new positions at current valuation. For existing holders: consider trimming if (1) revenue growth drops below 45%, (2) US commercial growth decelerates below 80%, (3) forward PE expands above 130x",
+            "bull_case": "Palantir is executing remarkable growth: FY2026 revenue guidance $7.18-7.20B (61% growth). US commercial revenue expected to exceed $3.14B (+115% YoY). Adjusted operating margin 50% with FCF guidance of $3.9-4.1B. AIP becoming de facto enterprise AI operating system. Zero debt. $10B Army contract provides government revenue floor.",
+            "bear_case": "At 235x trailing PE and 112x forward PE, Palantir is the most expensive large-cap software company by a massive margin. Market cap of $350B on ~$7.2B revenue implies 48x revenue -- even Salesforce at peak traded at ~12x. TTM FCF of ~$2.1B at $350B market cap = 0.6% FCF yield -- essentially zero real return from cash flows. Management scoring reduced for aggressive insider selling and promotional style. Growth will inevitably decelerate from 61% as base grows. Competition from hyperscaler AI platforms (AWS, Azure, Google Cloud) and ServiceNow increasingly overlapping. Government contract concentration creates political risk.",
+            "catalyst": "Q1 2026 earnings in May showing US commercial acceleration above 100% YoY",
+            "risk": "Extreme valuation: 48x revenue, 235x PE, 0.6% FCF yield. Any growth deceleration triggers 40%+ drawdown. No margin of safety.",
+            "thesis": "Palantir is a fundamentally strong business growing at exceptional rates, but the valuation is disconnected from any reasonable DCF framework. At $350B market cap with $2.1B TTM FCF, you are paying for a decade of perfect execution with no discount for risk. ServiceNow offers better risk-adjusted enterprise AI exposure at one-third the forward PE multiple. HOLD for existing positions; do not initiate new positions at current levels."
+        }
+    ],
+    "v2_improvements": {
+        "sell_recommendations": [
+            {
+                "ticker": "INTC",
+                "name": "Intel Corporation",
+                "rating": "SELL",
+                "market_cap_b": 206.0,
+                "pe_ratio": "50x forward (negative TTM earnings in several quarters)",
+                "revenue_growth_pct": -1.0,
+                "thesis": "Intel is a value trap masquerading as a turnaround story. At $206B market cap with negative FCF (-$4.5B in Q4 2025), the stock prices in a foundry turnaround that remains highly uncertain. Revenue declined 1% in FY2025 with guidance for only 3% growth in 2026. The foundry business lost $2.51B operationally with revenue down 4% YoY. 18A yields are improving (~7% per month gain) but volume production is unproven. Morningstar rates Intel as 33% overvalued vs $32 fair value estimate. Meanwhile, AMD and TSMC continue to take share in every segment Intel competes in. The stock is priced at ~50x forward earnings while generating negative FCF -- the fundamental definition of a value trap.",
+                "key_risks_to_thesis": "18A node yields could accelerate faster than expected; NVIDIA, SoftBank government backing could provide lifeline; new CEO could execute better than expected",
+                "price_target_downside_pct": 30,
+                "fcf_analysis": "Negative FCF of -$4.5B in Q4 2025. Management guides cash flow positivity in full-year 2026 but this has not been achieved. At $206B market cap with negative FCF, no FCF yield exists."
+            },
+            {
+                "ticker": "PLTR",
+                "name": "Palantir Technologies Inc.",
+                "rating": "AVOID_NEW_POSITIONS",
+                "market_cap_b": 350.0,
+                "pe_ratio": "235x trailing, 112x forward",
+                "revenue_growth_pct": 61.0,
+                "thesis": "While Palantir's business execution is exceptional (61% growth, 50% adj operating margin, Rule of 40 score of 127%), the valuation is in rarified air that historically precedes severe drawdowns. At 48x revenue and 235x trailing PE, the stock needs to grow into its valuation for 5-7 years of near-perfect execution. The 0.6% FCF yield offers essentially zero real return from cash flows. Compare to ServiceNow: similar enterprise AI positioning, 38x forward PE (vs PLTR 112x), larger revenue base, 98% renewal rate. For new capital, ServiceNow is the superior risk-adjusted choice for enterprise AI software exposure. We rate PLTR HOLD for existing positions but AVOID for new capital deployment.",
+                "key_risks_to_thesis": "Growth could sustain above 50% for 3+ years driven by government AI mandates; AIP could become a true standard with no viable alternative; PLTR could be acquired at a premium",
+                "price_target_downside_pct": 35,
+                "fcf_analysis": "TTM FCF ~$2.1B. Guided FY2026 adjusted FCF of $3.9-4.1B. At $350B market cap, FCF yield is 0.6% TTM and ~1.1% on FY2026 guidance. Even at $4.1B FCF, the 85x FCF multiple demands sustained 40%+ FCF growth for a decade."
+            },
+            {
+                "ticker": "DELL",
+                "name": "Dell Technologies Inc.",
+                "rating": "SELL",
+                "market_cap_b": 95.0,
+                "pe_ratio": "18x forward",
+                "revenue_growth_pct": 8.0,
+                "thesis": "Dell is a low-margin AI server assembler benefiting from the current capex cycle, but with minimal moat or pricing power. Server margins are being compressed by competition from Super Micro, Lenovo, and direct hyperscaler procurement. AI server revenue is growing but the business is essentially commodity hardware assembly with 3-5% operating margins on the AI infrastructure segment. As hyperscalers increasingly design custom solutions (Google TPU, Amazon Trainium, Broadcom XPUs), Dell's role as a middleman shrinks. The 8% revenue growth at 18x forward PE is not attractive when peers like AVGO offer 30% growth with strong moats. Dell's debt load from the VMware spinoff era and limited FCF growth potential make it a sell into AI server hype.",
+                "key_risks_to_thesis": "Enterprise on-prem AI could be larger than expected; Dell's services business could expand margins; partnership with NVIDIA could provide sustained order flow",
+                "price_target_downside_pct": 15,
+                "fcf_analysis": "FCF of ~$5.5B on $95B market cap = 5.8% FCF yield. Attractive on surface but FCF growth is minimal (low single digits) and capex requirements for AI server capacity are rising."
+            }
+        ],
+        "scenario_analysis": {
+            "NVDA": {
+                "base_case": {
+                    "probability_pct": 50,
+                    "price_target": 195,
+                    "upside_pct": 11,
+                    "rationale": "FY2027 revenue of $310-320B (45% growth), forward PE compresses to 20x as growth decelerates. Market recognizes competitive erosion from AMD/Google/Broadcom but NVIDIA maintains 70%+ AI GPU share."
+                },
+                "bull_case": {
+                    "probability_pct": 25,
+                    "price_target": 250,
+                    "upside_pct": 43,
+                    "rationale": "FY2027 revenue exceeds $350B, Blackwell Ultra drives new upgrade cycle, sovereign AI demand accelerates, competitive threats fail to materialize at scale. PE sustains at 25x."
+                },
+                "bear_case": {
+                    "probability_pct": 25,
+                    "price_target": 120,
+                    "downside_pct": -31,
+                    "rationale": "Hyperscaler capex rationalization in H2 2026, AMD MI450 takes meaningful share, Google TPU adoption accelerates, semiconductor cycle peaks. PE compresses to 15x on $280B revenue."
+                },
+                "expected_value": 193
+            },
+            "AVGO": {
+                "base_case": {
+                    "probability_pct": 50,
+                    "price_target": 260,
+                    "upside_pct": 16,
+                    "rationale": "AI semiconductor revenue continues doubling, VMware integration on track, debt reduction accelerates. Forward PE of 25x on strong FCF generation."
+                },
+                "bull_case": {
+                    "probability_pct": 30,
+                    "price_target": 320,
+                    "upside_pct": 42,
+                    "rationale": "AI backlog converts faster than expected, VMware margins expand above 80%, third major hyperscaler adopts XPU design. Forward PE 28x."
+                },
+                "bear_case": {
+                    "probability_pct": 20,
+                    "price_target": 170,
+                    "downside_pct": -24,
+                    "rationale": "AI ASIC demand disappoints vs $73B backlog, VMware churn emerges, debt servicing pressure rises with rates. PE compresses to 18x."
+                },
+                "expected_value": 262
+            },
+            "GOOGL": {
+                "base_case": {
+                    "probability_pct": 55,
+                    "price_target": 210,
+                    "upside_pct": 17,
+                    "rationale": "Cloud sustains 35%+ growth, search resilient, capex generates adequate returns. PE expands slightly to 28x on AI monetization proof."
+                },
+                "bull_case": {
+                    "probability_pct": 25,
+                    "price_target": 260,
+                    "upside_pct": 44,
+                    "rationale": "Cloud hits 50%+ growth, Waymo monetization begins, DOJ remedy is mild. PE expands to 32x."
+                },
+                "bear_case": {
+                    "probability_pct": 20,
+                    "price_target": 140,
+                    "downside_pct": -22,
+                    "rationale": "DOJ forces structural separation, search revenue declines, capex destroys FCF. PE compresses to 18x."
+                },
+                "expected_value": 209
+            },
+            "TSM": {
+                "base_case": {
+                    "probability_pct": 55,
+                    "price_target": 220,
+                    "upside_pct": 19,
+                    "rationale": "30% revenue growth with margin expansion, 2nm ramp successful, geopolitical status quo maintained. PE of 25x."
+                },
+                "bull_case": {
+                    "probability_pct": 20,
+                    "price_target": 280,
+                    "upside_pct": 51,
+                    "rationale": "Growth exceeds 35%, gross margins hit 67%+, Intel foundry struggles boost TSM orders. PE of 30x on monopoly premium."
+                },
+                "bear_case": {
+                    "probability_pct": 25,
+                    "price_target": 120,
+                    "downside_pct": -35,
+                    "rationale": "Geopolitical escalation (China military exercises, sanctions), demand normalization post-AI buildout. PE compresses to 15x. Includes 5-10% probability of severe disruption."
+                },
+                "expected_value": 207
+            },
+            "CRWD": {
+                "base_case": {
+                    "probability_pct": 50,
+                    "price_target": 460,
+                    "upside_pct": 10,
+                    "rationale": "Revenue growth stabilizes at 20-22%, margins expand toward 25% GAAP operating. FCF margin reaches 28%. PE of 55x on growing profitability."
+                },
+                "bull_case": {
+                    "probability_pct": 20,
+                    "price_target": 600,
+                    "upside_pct": 43,
+                    "rationale": "Net new ARR re-accelerates above 25% growth, module adoption drives revenue surprise. GAAP operating margin hits 20%+. PE 65x."
+                },
+                "bear_case": {
+                    "probability_pct": 30,
+                    "price_target": 300,
+                    "downside_pct": -29,
+                    "rationale": "Growth decelerates below 18%, Microsoft Defender gains enterprise share, margins stall. PE compresses to 40x."
+                },
+                "expected_value": 430
+            },
+            "NOW": {
+                "base_case": {
+                    "probability_pct": 55,
+                    "price_target": 1050,
+                    "upside_pct": 11,
+                    "rationale": "20% subscription growth sustains, AI control tower gains traction, operating margins expand 100-200bps. Forward PE 35x."
+                },
+                "bull_case": {
+                    "probability_pct": 25,
+                    "price_target": 1300,
+                    "upside_pct": 37,
+                    "rationale": "AI agent orchestration drives subscription growth re-acceleration to 24%+, becomes the standard enterprise AI workflow layer. Forward PE 42x."
+                },
+                "bear_case": {
+                    "probability_pct": 20,
+                    "price_target": 720,
+                    "downside_pct": -24,
+                    "rationale": "Growth decelerates below 16%, Microsoft Power Platform captures greenfield deployments. Forward PE compresses to 25x."
+                },
+                "expected_value": 1045
+            },
+            "AMD": {
+                "base_case": {
+                    "probability_pct": 45,
+                    "price_target": 140,
+                    "upside_pct": 18,
+                    "rationale": "MI450 ramp proceeds on schedule, data center revenue grows 50%+. PE 30x on improving margins."
+                },
+                "bull_case": {
+                    "probability_pct": 25,
+                    "price_target": 185,
+                    "upside_pct": 56,
+                    "rationale": "MI450 exceeds expectations, OpenAI expands commitment, second major hyperscaler adopts AMD. PE 35x on growth acceleration."
+                },
+                "bear_case": {
+                    "probability_pct": 30,
+                    "price_target": 85,
+                    "downside_pct": -28,
+                    "rationale": "MI450 ramp disappoints, OpenAI shifts allocation back to NVIDIA, CUDA gap persists. PE compresses to 20x."
+                },
+                "expected_value": 135
+            },
+            "PLTR": {
+                "base_case": {
+                    "probability_pct": 40,
+                    "price_target": 130,
+                    "upside_pct": -12,
+                    "rationale": "Growth decelerates from 61% to 45% as base effect kicks in. Market re-rates to 80x forward PE. Revenue $8.5B FY2027."
+                },
+                "bull_case": {
+                    "probability_pct": 25,
+                    "price_target": 200,
+                    "upside_pct": 35,
+                    "rationale": "Sustained 55%+ growth, AIP becomes industry standard, government AI mandates expand. Forward PE 100x maintained on exceptional growth."
+                },
+                "bear_case": {
+                    "probability_pct": 35,
+                    "price_target": 75,
+                    "downside_pct": -49,
+                    "rationale": "Growth decelerates to 35%, hyperscaler platforms commoditize AIP capabilities, valuation mean-reverts. Forward PE 50x."
+                },
+                "expected_value": 128
+            }
+        },
+        "position_sizing": {
+            "NVDA": {
+                "allocation_pct": 8,
+                "rationale": "Largest position but capped due to semiconductor cycle risk and competitive erosion. Reduced from potential 12% due to 61% customer concentration.",
+                "stop_loss_pct": 18,
+                "entry_price": 170,
+                "exit_criteria": "Revenue miss >5%, data center growth <40%, forward PE >30x, customer concentration >70%"
+            },
+            "AVGO": {
+                "allocation_pct": 8,
+                "rationale": "Co-largest position. Best PEG ratio (0.68) in semiconductor peer group. Dual AI semiconductor + VMware engine. $26.9B FCF supports debt.",
+                "stop_loss_pct": 15,
+                "entry_price": 225,
+                "exit_criteria": "AI semi growth <30% for 2 quarters, VMware churn >5%, debt/EBITDA >4x"
+            },
+            "GOOGL": {
+                "allocation_pct": 8,
+                "rationale": "Best risk-reward in mega-cap tech. Lowest PE at 27x with 18% growth. Near-zero debt. Multiple catalysts.",
+                "stop_loss_pct": 12,
+                "entry_price": 175,
+                "exit_criteria": "Cloud growth <25% for 2 quarters, search revenue YoY decline, DOJ structural separation"
+            },
+            "TSM": {
+                "allocation_pct": 6,
+                "rationale": "Highest fundamental score but CAPPED at 6% due to Taiwan geopolitical binary risk. 5-10% conflict probability within 3 years requires limiting downside contribution.",
+                "stop_loss_pct": 20,
+                "entry_price": 185,
+                "exit_criteria": "China military escalation beyond 2024 levels, gross margins <55%, advanced node share <80%"
+            },
+            "CRWD": {
+                "allocation_pct": 4,
+                "rationale": "Cybersecurity structural tailwind but decelerating growth at premium valuation requires modest sizing. Wait for margin expansion proof.",
+                "stop_loss_pct": 20,
+                "entry_price": 400,
+                "exit_criteria": "Revenue growth <18%, net new ARR deceleration 2 consecutive quarters"
+            },
+            "NOW": {
+                "allocation_pct": 5,
+                "rationale": "Preferred enterprise AI software pick over PLTR. Superior risk-adjusted value at 38x forward PE. 98% renewal rate. FCF yield of 2.59%.",
+                "stop_loss_pct": 15,
+                "entry_price": 950,
+                "exit_criteria": "Subscription growth <16%, cRPO growth <18%, Microsoft Power Platform displacement in key accounts"
+            },
+            "AMD": {
+                "allocation_pct": 5,
+                "rationale": "Asymmetric upside on MI450 execution. Near-zero debt provides safety. Size limited by execution risk and NVIDIA dominance.",
+                "stop_loss_pct": 18,
+                "entry_price": 115,
+                "exit_criteria": "MI450 delay >1 quarter, OpenAI reallocates >30% capacity to NVIDIA"
+            },
+            "PLTR": {
+                "allocation_pct": 0,
+                "rationale": "AVOID new positions. At 235x trailing PE, 112x forward PE, and 0.6% FCF yield, there is no margin of safety. Existing holders should consider trimming on strength. ServiceNow offers equivalent enterprise AI exposure at one-third the forward PE.",
+                "stop_loss_pct": null,
+                "entry_price": null,
+                "exit_criteria": "Not applicable -- no new position recommended"
+            },
+            "total_sector_allocation_pct": 44,
+            "cash_reserve_pct": 56,
+            "cash_reserve_rationale": "56% cash/other-sectors reflects (1) semiconductor cycle at or near peak, (2) historical analog to dot-com capex cycle suggests mean-reversion risk, (3) Taiwan geopolitical tail risk, (4) valuation dispersion suggesting selective rather than broad tech exposure"
+        },
+        "correlation_analysis": {
+            "description": "The 7 buy-rated picks have high pairwise correlation driven by common AI/semiconductor cycle exposure. NVDA-AVGO-AMD-TSM form a tightly correlated semiconductor cluster (estimated pairwise correlation 0.70-0.85) -- effectively, a single AI semiconductor bet expressed through 4 names. This means 27% of the portfolio (NVDA 8% + AVGO 8% + TSM 6% + AMD 5%) is concentrated semiconductor exposure. In a capex downcycle, all four would decline simultaneously. CRWD and NOW have lower correlation to semis (~0.45-0.55) but both are growth/momentum names sensitive to the same risk-off rotation. GOOGL provides the most diversification (search, advertising, cloud, autonomous driving) with ~0.50 correlation to the semiconductor cluster.",
+            "semiconductor_cluster_exposure_pct": 27,
+            "effective_positions": "Despite 7 tickers, effective independent bets are approximately 3-4: (1) AI semiconductor cycle (NVDA+AVGO+AMD+TSM), (2) Enterprise AI software (NOW), (3) Mega-cap diversified tech (GOOGL), (4) Cybersecurity (CRWD). Investors should treat the semiconductor cluster as a single overweight position and size accordingly.",
+            "risk_mitigation": "To reduce correlation risk: (1) cap total semiconductor exposure at 27%, (2) ensure the broader portfolio has uncorrelated assets (healthcare, utilities, fixed income), (3) use 18-20% stop-losses on semiconductor positions to limit cluster drawdown to ~5% of total portfolio"
+        },
+        "historical_analog": {
+            "analog": "Dot-com fiber optic buildout (1997-2001) and 2018 cloud infrastructure overinvestment",
+            "comparison": {
+                "dot_com_fiber": {
+                    "capex_peak_gdp_pct": 4.5,
+                    "current_ai_capex_gdp_pct": 4.4,
+                    "peak_to_trough_beneficiary_drawdown_pct": "70-95% for equipment vendors (Cisco, JDS Uniphase, Nortel)",
+                    "demand_growth_post_peak": "Internet traffic continued growing 100%+ annually even through the bust -- the infrastructure was eventually used but took 5-7 years",
+                    "lesson": "Even when the underlying technology is transformational and demand is real, infrastructure buildout cycles overshoot and beneficiary stock prices can decline 50-90% as capex normalizes. The technology winners (Google, Amazon) emerged AFTER the bust, not during it.",
+                    "current_parallel": "AI capex/GDP at 4.4% is nearly at the dot-com peak of 4.5%. NVIDIA's revenue trajectory mirrors Cisco's 1999-2000 growth. However, key difference: today's AI beneficiaries (NVDA, AVGO) have 50%+ profit margins vs Cisco's 20%, providing more fundamental support."
+                },
+                "cloud_2018": {
+                    "capex_growth_peak": "Hyperscaler capex grew 50%+ in 2018, slowed to 5% in 2019",
+                    "beneficiary_drawdown_pct": "Semiconductor stocks (NVDA, AMD) fell 40-55% from 2018 peaks",
+                    "recovery_time_months": 18,
+                    "lesson": "Cloud demand was real and grew through the slowdown, but capex deceleration caused severe multiple compression in semiconductor names. The stocks recovered fully within 18 months as the next growth cycle began.",
+                    "current_parallel": "If hyperscaler capex decelerates from 36% growth (2026) to 10-15% growth (2027), semiconductor stocks could reprice 25-40% lower even if absolute demand remains elevated."
+                }
+            },
+            "implications_for_portfolio": "The historical analogs support (1) maintaining 56% cash/other-sector allocation rather than going all-in on tech, (2) using trailing stop-losses to protect semiconductor gains, (3) preferring companies with strong FCF and low debt that can weather a capex deceleration (AVGO, TSM, GOOGL) over pure-play cycle beneficiaries"
+        },
+        "fcf_analysis": {
+            "NVDA": {
+                "ttm_fcf_b": 60.0,
+                "projected_fy2027_fcf_b": 97.0,
+                "projected_fy2029_fcf_b": 170.6,
+                "fcf_yield_current_pct": 1.4,
+                "fcf_yield_fy2027_pct": 2.3,
+                "fcf_margin_pct": 27.8,
+                "interest_coverage": "100x+ (near zero debt)",
+                "note": "FCF yield of 1.4% is low for a $4.3T company but FCF growth trajectory is exceptional. Key risk is FCF growth stalling if capex cycle peaks."
+            },
+            "AVGO": {
+                "ttm_fcf_b": 26.9,
+                "fcf_yield_current_pct": 1.8,
+                "fcf_margin_pct": 42.0,
+                "interest_coverage": "9x",
+                "debt_b": 66.0,
+                "note": "FCF of $26.9B (42% of revenue) is exceptionally strong. Interest coverage of 9x is adequate given the $66B debt load from VMware. FCF comfortably covers debt servicing and dividends."
+            },
+            "GOOGL": {
+                "ttm_fcf_b": 72.0,
+                "fcf_yield_current_pct": 2.0,
+                "fcf_margin_pct": 22.0,
+                "interest_coverage": "200x+ (near zero debt)",
+                "note": "Massive FCF generation but $175-185B capex plan in 2026 will compress FCF significantly. Watch capex/FCF ratio -- if it exceeds 3x, the investment thesis weakens."
+            },
+            "TSM": {
+                "ttm_fcf_b": 31.7,
+                "fcf_yield_current_pct": 1.8,
+                "fcf_margin_pct": 30.0,
+                "price_to_fcf": 48.8,
+                "interest_coverage": "25x+",
+                "note": "Strong FCF despite heavy capex ($52-56B). Price-to-FCF of 49x is justified by monopoly position and 30% growth. Interest coverage very healthy."
+            },
+            "CRWD": {
+                "ttm_fcf_b": 1.24,
+                "fcf_yield_current_pct": 1.2,
+                "fcf_margin_pct": 24.0,
+                "target_fcf_margin_pct": "34-38",
+                "price_to_fcf": 85.0,
+                "interest_coverage": "8x",
+                "note": "FCF yield of 1.2% on $105B market cap is thin. Path to 34-38% FCF margin by FY2028 is credible given current 24% and improving trajectory, but execution must be proven."
+            },
+            "NOW": {
+                "ttm_fcf_b": 5.5,
+                "fcf_yield_current_pct": 2.59,
+                "ev_to_fcf": 21.6,
+                "fcf_margin_pct": 41.0,
+                "interest_coverage": "30x+",
+                "note": "Best FCF profile among software picks. EV/FCF of 21.6x is reasonable for 20% growth with expanding margins. FCF yield of 2.59% is the highest among our software picks."
+            },
+            "AMD": {
+                "ttm_fcf_b": 3.5,
+                "fcf_yield_current_pct": 1.8,
+                "fcf_margin_pct": 10.0,
+                "interest_coverage": "50x+ (near zero debt)",
+                "note": "FCF margin of 10% is low relative to NVDA (28%) reflecting AMD's lower pricing power and margins. FCF should expand materially if MI450 ramp succeeds with higher ASPs."
+            },
+            "PLTR": {
+                "ttm_fcf_b": 2.1,
+                "guided_fy2026_fcf_b": 4.0,
+                "fcf_yield_current_pct": 0.6,
+                "fcf_yield_fy2026_guided_pct": 1.1,
+                "fcf_margin_pct": 51.0,
+                "interest_coverage": "N/A (zero debt)",
+                "note": "FCF margin of 51% is best-in-class but 0.6% FCF yield at $350B market cap means you are paying 170x TTM FCF. Even at $4.1B FY2026 guidance, the 85x FCF multiple demands 40%+ FCF growth for a decade to justify."
+            }
+        },
+        "peer_comparison": {
+            "semiconductor_peers": {
+                "headers": ["Metric", "NVDA", "AMD", "AVGO", "INTC", "TSM"],
+                "rows": [
+                    ["Market Cap ($B)", "4,280", "195", "1,480", "206", "1,758"],
+                    ["Revenue Growth YoY", "65%", "34%", "30%", "-1%", "30%"],
+                    ["Trailing PE", "35.9x", "42x", "61.2x", "N/M (losses)", "27.2x"],
+                    ["Forward PE", "21.1x", "28x", "28.2x", "~50x", "22x"],
+                    ["PEG Ratio (5yr)", "~0.5x", "~1.2x", "0.68x", "N/M", "~0.7x"],
+                    ["Gross Margin", "71%", "50%", "78%", "38%", "63%"],
+                    ["FCF Margin", "28%", "10%", "42%", "Negative", "30%"],
+                    ["FCF Yield", "1.4%", "1.8%", "1.8%", "Negative", "1.8%"],
+                    ["Debt/Equity", "0.06x", "0.04x", "0.83x", "0.52x", "0.24x"],
+                    ["Interest Coverage", "100x+", "50x+", "9x", "2x", "25x+"],
+                    ["Moat Score", "8/10", "7/10", "9/10", "4/10", "10/10"],
+                    ["Our Rating", "BUY", "BUY", "STRONG_BUY", "SELL", "STRONG_BUY"]
+                ],
+                "analysis": "AVGO offers the best PEG ratio (0.68) and highest FCF margin (42%) among semiconductor peers, making it the top risk-adjusted pick. NVDA has the best PEG (0.5) but cycle and concentration risks cap its score. TSM has the deepest moat (10/10) but geopolitical risk requires position size limits. AMD offers execution upside on MI450. INTC is a clear SELL with negative FCF, declining revenue, and a turnaround thesis priced in at 50x forward earnings."
+            },
+            "enterprise_software_peers": {
+                "headers": ["Metric", "NOW", "PLTR", "CRWD"],
+                "rows": [
+                    ["Market Cap ($B)", "230", "350", "105"],
+                    ["Revenue Growth YoY", "20%", "61%", "22%"],
+                    ["Trailing PE", "61x", "235x", "95x"],
+                    ["Forward PE", "38x", "112x", "55x"],
+                    ["FCF Margin", "41%", "51%", "24%"],
+                    ["FCF Yield", "2.59%", "0.6%", "1.2%"],
+                    ["Renewal/Retention", "98%", "~95%", "98%"],
+                    ["Revenue ($B TTM)", "13.3", "~5.5", "4.8"],
+                    ["Rule of 40 Score", "52", "127", "46"],
+                    ["Our Rating", "BUY", "HOLD", "BUY"]
+                ],
+                "analysis": "PLTR has the best growth and Rule of 40 score but its 112x forward PE vs NOW's 38x forward PE creates a 3x valuation gap that is not justified by the growth differential. NOW has the largest revenue base, highest renewal rate, best FCF yield, and most proven enterprise installed base. For risk-adjusted enterprise AI software exposure, NOW is clearly preferred over PLTR."
+            }
+        },
+        "semiconductor_cycle_analysis": {
+            "current_position": "At or near peak of the 16-quarter semiconductor cycle. Global semiconductor revenue projected at $975B in 2026 (historic peak). Memory pricing expected to pull back 14% by Q3 2026 as supply improves.",
+            "memory_dynamics": "HBM demand from AI training/inference is creating a sub-cycle that extends the traditional memory cycle. SK Hynix has booked entire 2026 capacity. However, DRAM prices expected to decline by Q3 2026 and HBM prices to moderate in H2 2026.",
+            "cycle_risk_assessment": "The AI-driven semiconductor demand is structural (not purely cyclical), but capex growth rates will inevitably moderate. Historical pattern: after a peak quarter, semiconductor stocks decline 20-40% over the next 2-4 quarters before recovering. The current cycle may be extended by AI demand but is not immune to mean-reversion.",
+            "implication": "Favor semiconductor names with diversified revenue (AVGO), irreplaceable monopoly positions (TSM), or challenger upside (AMD) over pure AI infrastructure plays that face the full brunt of capex deceleration."
+        },
+        "scoring_verification": {
+            "formula": "Overall Score = (Moat * 0.3) + (Management * 0.2) + (Growth * 0.3) + (Valuation * 0.2)",
+            "verification": {
+                "NVDA": "(8*0.3)+(9*0.2)+(9*0.3)+(6*0.2) = 2.4+1.8+2.7+1.2 = 8.1 -> adjusted to 7.9 for customer concentration qualitative risk",
+                "AVGO": "(9*0.3)+(9*0.2)+(9*0.3)+(6*0.2) = 2.7+1.8+2.7+1.2 = 8.4 -> 8.4 confirmed",
+                "GOOGL": "(9*0.3)+(8*0.2)+(8*0.3)+(8*0.2) = 2.7+1.6+2.4+1.6 = 8.3 -> 8.3 confirmed",
+                "TSM": "(10*0.3)+(9*0.2)+(9*0.3)+(7*0.2) = 3.0+1.8+2.7+1.4 = 8.9 -> rounded to 9.0",
+                "CRWD": "(8*0.3)+(8*0.2)+(7*0.3)+(5*0.2) = 2.4+1.6+2.1+1.0 = 7.1 -> adjusted to 7.0 reflecting deceleration",
+                "NOW": "(9*0.3)+(9*0.2)+(8*0.3)+(6*0.2) = 2.7+1.8+2.4+1.2 = 8.1 -> 8.1 confirmed",
+                "AMD": "(7*0.3)+(8*0.2)+(9*0.3)+(7*0.2) = 2.1+1.6+2.7+1.4 = 7.8 -> 7.8 confirmed",
+                "PLTR": "(8*0.3)+(7*0.2)+(10*0.3)+(2*0.2) = 2.4+1.4+3.0+0.4 = 7.2 -> adjusted to 6.6 for extreme valuation risk"
+            }
+        }
+    }
+}

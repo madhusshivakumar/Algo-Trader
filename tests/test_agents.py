@@ -130,7 +130,7 @@ class TestMarketScanner:
             "open": [5.0] * 5, "high": [5.5] * 5, "low": [4.5] * 5,
             "close": [5.0] * 5, "volume": [10_000_000] * 5,
         })
-        result = score_candidate("PENNY", df, 0.5, [], [])
+        result = score_candidate("PENNY", df, 0.5, [], [], set(), set())
         assert result is None  # Filtered out (price < $10)
 
     def test_score_candidate_filters_low_volume(self):
@@ -140,7 +140,7 @@ class TestMarketScanner:
             "open": [100.0] * 5, "high": [101.0] * 5, "low": [99.0] * 5,
             "close": [100.0] * 5, "volume": [100_000] * 5,  # Too low
         })
-        result = score_candidate("LOW_VOL", df, 0.5, [], [])
+        result = score_candidate("LOW_VOL", df, 0.5, [], [], set(), set())
         assert result is None
 
 

@@ -8,6 +8,7 @@ from datetime import datetime
 from core.broker import Broker
 from core.risk_manager import RiskManager
 from strategies.router import compute_signals as route_signals, get_strategy, get_strategy_key
+from core.trade_explainer import explain as explain_trade
 from config import Config
 from utils.logger import log
 
@@ -30,6 +31,14 @@ class TradingEngine:
         # Daily trade counter (reset on daily reset)
         self._daily_trade_count: dict[str, int] = {}  # "crypto" / "equity" → count
         self._daily_trade_date: str = ""
+
+        # Sprint 5: consecutive broker failures (alert after 3 in a row)
+        self._consecutive_broker_failures: dict[str, int] = {}  # method → count
+        # Sprint 5: track one-shot alert signals so we don't spam
+        self._alerted_degraded: set[str] = set()           # symbols degraded-alerted
+        self._alerted_external_positions: set[str] = set() # symbols external-alerted
+        self._alerted_drawdown_halt: bool = False          # daily DD halt alert sent?
+        self._alerted_intraday_halt: bool = False          # intraday halt alert sent?
 
         # v3: State persistence (optional)
         self.state_store = None
@@ -103,6 +112,16 @@ class TradingEngine:
             from core.alerting import AlertManager
             self.alert_manager = AlertManager()
 
+        # Sprint 6C: regime detector — classifies current market vol regime from
+        # SPY's realized vol. Updated once per hour during _run_cycle; gates
+        # strategy selection in `route_signals` via the `regime` kwarg.
+        from core.regime_detector import RegimeDetector
+        self.regime_detector = RegimeDetector(
+            window=Config.REGIME_VOL_WINDOW,
+            max_history=Config.REGIME_HISTORY_MAX,
+        )
+        self._last_regime_update_ts: float = 0.0
+
     def _check_db_rotation(self):
         """Check if the trades DB needs rotation and rotate if so."""
         if not self.db_rotator:
@@ -115,6 +134,40 @@ class TradingEngine:
                 self.db_rotator.rotate(keep_recent_days=Config.DB_ROTATION_KEEP_DAYS)
         except Exception as e:
             log.error(f"DB rotation error: {e}")
+
+    def _maybe_update_regime(self):
+        """Sprint 6C: refresh the market regime classification.
+
+        Fetches SPY daily bars at most once per hour (wall-clock). SPY-based
+        realized vol doesn't swing intraday, so tighter polling is wasted
+        broker calls. Broker failures are swallowed — regime stays stale but
+        trading continues.
+        """
+        detector = getattr(self, "regime_detector", None)
+        if detector is None:
+            return
+        now = time.time()
+        last = getattr(self, "_last_regime_update_ts", 0.0)
+        if now - last < Config.REGIME_UPDATE_INTERVAL_SEC:
+            return
+        try:
+            # SPY is the canonical vol benchmark. We ask for ~40 days of daily
+            # bars so a 20-day rolling std has headroom.
+            spy_df = self.broker.get_historical_bars(
+                "SPY", days=Config.REGIME_VOL_WINDOW * 2, timeframe="1Day"
+            )
+            if spy_df is None or len(spy_df) < 2:
+                return
+            snapshot = detector.update(spy_df)
+            self._last_regime_update_ts = now
+            if snapshot is not None and self.cycle_count % 60 == 0:
+                log.info(
+                    f"Regime: {snapshot.regime} "
+                    f"(SPY 20d vol {snapshot.annualized_vol:.1%})"
+                )
+        except Exception as e:
+            # Never let a regime-detection hiccup break a cycle.
+            log.warning(f"Regime update failed: {e}")
 
     def _load_persisted_state(self):
         """Restore runtime state from SQLite (if state persistence enabled)."""
@@ -196,6 +249,16 @@ class TradingEngine:
         log.info(f"Account equity: ${account['equity']:.2f} | Cash: ${account['cash']:.2f}")
         self.risk.initialize(account["equity"])
 
+        # Resolve capital-tier profile from account equity (see core/user_profile.py)
+        profile = Config.set_profile_from_equity(float(account["equity"]))
+        log.info(
+            f"User profile: {profile.name.upper()} — "
+            f"equity sizing {profile.base_position_pct_equity:.1%}, "
+            f"crypto sizing {profile.base_position_pct_crypto:.1%}, "
+            f"Kelly {profile.kelly_fraction:.2f}, "
+            f"daily loss halt ${profile.max_daily_loss_usd(float(account['equity'])):,.0f}"
+        )
+
         # Restore persisted state (must come after risk.initialize)
         self._load_persisted_state()
 
@@ -209,6 +272,10 @@ class TradingEngine:
             log.warning("Running in PAPER trading mode")
         else:
             log.warning("Running in LIVE trading mode — real money!")
+            # Sprint 5G: alert when paper→live override is used
+            if (getattr(Config, "_LIVE_GATE_OVERRIDE_USED", False)
+                    and self.alert_manager):
+                self.alert_manager.live_mode_override()
 
         log.info(f"Crypto symbols: {', '.join(Config.CRYPTO_SYMBOLS)}")
         log.info(f"Equity symbols: {', '.join(Config.EQUITY_SYMBOLS)}")
@@ -227,7 +294,13 @@ class TradingEngine:
         """Run one trading cycle for all symbols."""
         self.cycle_count += 1
         self._cached_position_dfs = None  # Clear correlation cache each cycle
-        account = self.broker.get_account()
+        try:
+            account = self.broker.get_account()
+            self._record_broker_success("get_account")
+        except Exception as e:
+            self._record_broker_failure("get_account", e)
+            # Can't run a cycle without equity — skip this tick
+            return
         equity = account["equity"]
 
         # v3: Poll pending orders for status updates
@@ -275,6 +348,11 @@ class TradingEngine:
             except Exception as e:
                 log.error(f"Portfolio optimization error: {e}")
 
+        # Sprint 6C: regime detection — refresh at most once per hour. SPY daily
+        # vol doesn't change intraday enough to warrant tighter polling, and
+        # every update costs one broker call.
+        self._maybe_update_regime()
+
         # v3: Drift detection every 100 cycles
         if self.drift_detector and self.cycle_count % 100 == 0:
             try:
@@ -300,15 +378,42 @@ class TradingEngine:
         if self.db_rotator and self.cycle_count % 1000 == 0:
             self._check_db_rotation()
 
+        # Sprint 5D: Intraday $ P&L circuit breaker (profile-aware).
+        # Runs BEFORE the percentage-based check so tight $ floors for small
+        # accounts catch losses earlier than the 10% equity drawdown.
+        profile = getattr(Config, "_PROFILE", None)
+        if profile is not None:
+            unrealized = float(account.get("unrealized_pl", 0.0) or 0.0)
+            threshold = profile.max_daily_loss_usd(self.risk.daily_start_equity
+                                                   or equity)
+            if self.risk.check_intraday_halt(equity, threshold, unrealized):
+                # Alert once per halt transition
+                if (self.alert_manager
+                        and not getattr(self, "_alerted_intraday_halt", False)):
+                    realized = (equity - unrealized) - self.risk.daily_start_equity
+                    self.alert_manager.intraday_halt(realized, unrealized, threshold)
+                    self._alerted_intraday_halt = True
+                if self.cycle_count % 60 == 0:
+                    log.warning(f"Trading halted: {self.risk.halt_reason}")
+                return
+
         # Check risk limits
         if not self.risk.can_trade(equity):
             if self.cycle_count % 60 == 0:
                 log.warning(f"Trading halted: {self.risk.halt_reason}")
-            # Alert on first detection and every 60 cycles after
-            if self.alert_manager and self.risk.halted and (self.cycle_count % 60 == 1):
+            # Alert exactly once per halt transition (not every 60 cycles)
+            if (self.alert_manager and self.risk.halted
+                    and not getattr(self, "_alerted_drawdown_halt", False)):
                 self.alert_manager.drawdown_halt(
                     self.risk.daily_drawdown, Config.DAILY_DRAWDOWN_LIMIT)
+                self._alerted_drawdown_halt = True
             return
+        else:
+            # Reset the alert flags when we're no longer halted (e.g. after daily reset)
+            if getattr(self, "_alerted_drawdown_halt", False) and not self.risk.halted:
+                self._alerted_drawdown_halt = False
+            if getattr(self, "_alerted_intraday_halt", False) and not self.risk.halted:
+                self._alerted_intraday_halt = False
 
         # Determine which symbols to process this cycle
         active_symbols = list(Config.CRYPTO_SYMBOLS)
@@ -340,8 +445,17 @@ class TradingEngine:
             log.info(f"Market closed ({now.strftime('%I:%M %p ET')}) — skipping equities")
 
     def _get_total_exposure(self) -> float:
-        """Get total dollar value of all open positions."""
-        positions = self.broker.get_positions()
+        """Get total dollar value of all open positions.
+
+        On broker API failure, logs and tracks consecutive failures (alert at 3),
+        returns 0.0 so that the caller can proceed without exposure data.
+        """
+        try:
+            positions = self.broker.get_positions()
+            self._record_broker_success("get_positions")
+        except Exception as e:
+            self._record_broker_failure("get_positions", e)
+            return 0.0
         return sum(abs(float(p["market_value"])) for p in positions)
 
     def _is_on_cooldown(self, symbol: str) -> bool:
@@ -371,8 +485,35 @@ class TradingEngine:
         counts[asset_class] = counts.get(asset_class, 0) + 1
         self._daily_trade_count = counts
 
+    def _record_broker_failure(self, method: str, error: Exception) -> None:
+        """Track consecutive broker API failures — alert after 3 in a row.
+
+        Uses getattr fallback so tests that skip __init__ (via TradingEngine.__new__)
+        still work without the counter attribute.
+        """
+        counters = getattr(self, "_consecutive_broker_failures", None)
+        if counters is None:
+            counters = {}
+            self._consecutive_broker_failures = counters
+        counters[method] = counters.get(method, 0) + 1
+        count = counters[method]
+        log.warning(f"Broker API failure #{count} on {method}: {error}")
+        if count >= 3 and getattr(self, "alert_manager", None):
+            self.alert_manager.broker_api_failure(method, count, str(error))
+
+    def _record_broker_success(self, method: str) -> None:
+        """Reset the consecutive-failure counter for a broker method."""
+        counters = getattr(self, "_consecutive_broker_failures", None)
+        if counters and method in counters:
+            counters[method] = 0
+
     def _is_daily_trade_limit_reached(self, symbol: str) -> bool:
-        """Check if we've hit the daily trade limit for this asset class."""
+        """Check if we've hit the daily trade limit for this asset class.
+
+        When a UserProfile is active (set by engine.initialize()), uses the
+        profile's per-tier limits. Otherwise falls back to the legacy
+        Config.MAX_TRADES_PER_DAY_* values (preserves test compatibility).
+        """
         today = datetime.now(Config.MARKET_TZ).strftime("%Y-%m-%d")
         if getattr(self, "_daily_trade_date", "") != today:
             self._daily_trade_count = {}
@@ -380,7 +521,13 @@ class TradingEngine:
             return False
         is_crypto = Config.is_crypto(symbol)
         asset_class = "crypto" if is_crypto else "equity"
-        limit = Config.MAX_TRADES_PER_DAY_CRYPTO if is_crypto else Config.MAX_TRADES_PER_DAY_EQUITY
+        profile = getattr(Config, "_PROFILE", None)
+        if profile is not None:
+            limit = (profile.max_trades_per_day_crypto if is_crypto
+                     else profile.max_trades_per_day_equity)
+        else:
+            limit = (Config.MAX_TRADES_PER_DAY_CRYPTO if is_crypto
+                     else Config.MAX_TRADES_PER_DAY_EQUITY)
         count = getattr(self, "_daily_trade_count", {}).get(asset_class, 0)
         return count >= limit
 
@@ -482,9 +629,15 @@ class TradingEngine:
                 return
 
         # Compute strategy signals (routed per symbol)
-        signal = route_signals(symbol, df)
+        # Sprint 6C: pass current regime so the router can skip strategies that
+        # are known to misfire in this vol environment. Fall back to 'normal'
+        # for test engines constructed via __new__ that skip __init__.
+        detector = getattr(self, "regime_detector", None)
+        regime = detector.get_current_regime() if detector is not None else "normal"
+        signal = route_signals(symbol, df, regime=regime)
 
-        if signal["action"] == "buy" and not position:
+        if signal["action"] == "buy" and not position and not (
+                self.execution_manager and self.execution_manager.get_active_plans(symbol)):
             # ── Min signal strength gate ──
             if signal.get("strength", 0) < Config.MIN_SIGNAL_STRENGTH:
                 return
@@ -521,21 +674,81 @@ class TradingEngine:
                 except Exception:
                     pass
 
-            # Per-symbol position sizing: 15% equity for equities, 35% for crypto
-            if is_equity:
-                base_pct = 0.15
+            # Sprint 5C: Pre-trade liquidity gate — skip if spread too wide.
+            # A beginner with $800 can lose ~$10 of a $50 position to spread if they
+            # market-buy a thinly-traded name — the gate prevents that.
+            if Config.LIQUIDITY_GATE_ENABLED:
+                try:
+                    quote = self.broker.get_latest_quote(symbol)
+                    if quote is not None:
+                        limit_bps = (Config.MAX_SPREAD_BPS_CRYPTO if Config.is_crypto(symbol)
+                                     else Config.MAX_SPREAD_BPS_EQUITY)
+                        if quote["spread_bps"] > limit_bps:
+                            if self.cycle_count % 10 == 0:
+                                log.info(
+                                    f"  {symbol}: Skipping buy — spread "
+                                    f"{quote['spread_bps']:.1f} bps > {limit_bps:.0f} bps limit"
+                                )
+                            if self.alert_manager:
+                                self.alert_manager.liquidity_skip(
+                                    symbol, quote["spread_bps"], limit_bps
+                                )
+                            return
+                except Exception as e:
+                    # Never let quote-fetch failure block a trade — log and continue
+                    log.warning(f"  {symbol}: Liquidity gate check failed: {e}")
+
+            # Capital-tier-aware position sizing (see core/user_profile.py)
+            # Fall back to legacy hardcoded sizing if profile not initialized (tests).
+            profile = getattr(Config, "_PROFILE", None)
+            if profile is not None:
+                base_pct = (profile.base_position_pct_equity if is_equity
+                            else profile.base_position_pct_crypto)
+                kelly_fraction = profile.kelly_fraction
+                max_pos_pct = profile.max_single_position_pct
             else:
-                base_pct = 0.20
+                base_pct = 0.15 if is_equity else 0.20
+                kelly_fraction = None  # use Config.KELLY_FRACTION default
+                max_pos_pct = Config.MAX_SINGLE_POSITION_PCT
+
+            # Sprint 5E: degraded symbols get a 70% size cut.
+            # The full RL + signal pipeline still runs; we only reduce the bet size
+            # because past performance flagged the strategy as drifting.
+            if self.drift_detector and self.drift_detector.is_degraded(symbol):
+                base_pct *= 0.3
+                # Alert once per (symbol, degradation event)
+                alerted = getattr(self, "_alerted_degraded", None)
+                if alerted is None:
+                    alerted = set()
+                    self._alerted_degraded = alerted
+                if symbol not in alerted:
+                    metrics = self.drift_detector.get_recent_metrics(symbol)
+                    if self.alert_manager and metrics:
+                        # Use win rate * avg_pnl as a Sharpe-ish proxy (we don't
+                        # store true Sharpe per-symbol)
+                        proxy = metrics.win_rate * metrics.avg_pnl
+                        self.alert_manager.symbol_degraded(
+                            symbol, recent_sharpe=proxy,
+                            lookback_days=self.drift_detector.lookback_days,
+                        )
+                    alerted.add(symbol)
+                if self.cycle_count % 10 == 0:
+                    log.info(f"  {symbol}: degraded — size cut to 30%")
 
             # v3: Portfolio optimization — Kelly or mean-variance override
             if self.portfolio_optimizer:
                 if Config.KELLY_SIZING_ENABLED:
                     kelly_size = self.portfolio_optimizer.get_kelly_size(
-                        symbol, equity, base_pct)
+                        symbol, equity, base_pct,
+                        kelly_fraction=kelly_fraction,
+                        max_pct=max_pos_pct)
                     base_pct = kelly_size / equity if equity > 0 else base_pct
                 elif Config.MEAN_VARIANCE_ENABLED:
                     base_pct = self.portfolio_optimizer.get_position_pct(
                         symbol, base_pct)
+
+            # Cap at profile's (or legacy) max_single_position_pct
+            base_pct = min(base_pct, max_pos_pct)
 
             # v3: Volatility-adjusted sizing
             if Config.VOLATILITY_SIZING_ENABLED:
@@ -548,6 +761,25 @@ class TradingEngine:
 
             size = max_size * signal["strength"]
             size = max(size, 1.0)
+
+            # Sprint 5F: VaR-aware position cap (profile-driven).
+            # Estimates the symbol's 95% one-bar VaR from recent returns, then caps
+            # `size` so that worst-case loss <= profile.max_var_contribution_pct × equity.
+            # Beginner: 1% of equity per trade; Hobbyist 2%; Learner 3%.
+            if profile is not None:
+                var_pct = self.risk.estimate_var_pct(df, confidence=0.95)
+                if var_pct > 0:
+                    max_position_at_var = (
+                        profile.max_var_contribution_pct * equity / var_pct
+                    )
+                    if size > max_position_at_var:
+                        if self.cycle_count % 10 == 0:
+                            log.info(
+                                f"  {symbol}: Capping size from ${size:.0f} to "
+                                f"${max_position_at_var:.0f} (VaR cap: position × "
+                                f"{var_pct:.2%} <= {profile.max_var_contribution_pct:.1%} equity)"
+                            )
+                        size = max(max_position_at_var, 1.0)
 
             # v3: Transaction cost adjustment — reduce size to account for costs
             if self.cost_model:
@@ -605,8 +837,11 @@ class TradingEngine:
                         slippage = OM.compute_slippage(order)
                         log.log_slippage(symbol, order.expected_price,
                                          order.filled_avg_price, slippage)
+                    # Sprint 6G: plain-language explanation for the dashboard.
+                    explanation = explain_trade(signal, df, symbol, size)
                     log.trade(symbol, "buy", size, current_price, signal["reason"],
-                              strategy=signal.get("strategy", ""))
+                              strategy=signal.get("strategy", ""),
+                              regime=regime, explanation=explanation)
                     self.risk.register_entry(symbol, current_price, df)
                     self._record_trade(symbol)
                     if is_equity:
@@ -619,8 +854,10 @@ class TradingEngine:
             else:
                 result = self.broker.buy(symbol, size)
                 if result:
+                    explanation = explain_trade(signal, df, symbol, size)
                     log.trade(symbol, "buy", size, current_price, signal["reason"],
-                              strategy=signal.get("strategy", ""))
+                              strategy=signal.get("strategy", ""),
+                              regime=regime, explanation=explanation)
                     self.risk.register_entry(symbol, current_price, df)
                     self._record_trade(symbol)
                     if is_equity:
@@ -638,8 +875,12 @@ class TradingEngine:
             result = self.broker.close_position(symbol)
             if result:
                 pnl = position["unrealized_pl"]
+                explanation = explain_trade(
+                    signal, df, symbol, float(position.get("market_value", 0) or 0)
+                )
                 log.trade(symbol, "sell", position["market_value"], current_price,
-                          signal["reason"], pnl, strategy=signal.get("strategy", ""))
+                          signal["reason"], pnl, strategy=signal.get("strategy", ""),
+                          regime=regime, explanation=explanation)
                 self.risk.unregister(symbol)
                 self._record_trade(symbol)
                 self._clear_buy_record(symbol)
@@ -650,6 +891,19 @@ class TradingEngine:
         """Process orders that just transitioned to a terminal state."""
         from core.order_manager import OrderState
         for order in newly_terminal:
+            # Sprint 5: surface rejections via AlertManager
+            if order.state == OrderState.REJECTED:
+                log.warning(
+                    f"Order rejected: {order.side.upper()} {order.symbol} "
+                    f"${(order.requested_notional or 0):.2f} — {order.error or 'unknown reason'}"
+                )
+                if self.alert_manager:
+                    self.alert_manager.order_rejected(
+                        order.symbol, order.side,
+                        order.requested_notional or 0,
+                        order.error or "unknown",
+                    )
+                continue
             if order.state != OrderState.FILLED:
                 continue
             symbol = order.symbol
@@ -762,6 +1016,23 @@ class TradingEngine:
                         [{"symbol": m.symbol, "issue": f"{m.issue}: {m.detail}"}
                          for m in result.mismatches])
 
+                    # Sprint 5: dedicated alerts for external positions (one per symbol)
+                    alerted = getattr(self, "_alerted_external_positions", None)
+                    if alerted is None:
+                        alerted = set()
+                        self._alerted_external_positions = alerted
+                    for m in result.mismatches:
+                        if m.issue == "external_position" and m.symbol not in alerted:
+                            pos = next((p for p in positions
+                                        if p.get("symbol") == m.symbol), None)
+                            if pos:
+                                self.alert_manager.external_position(
+                                    m.symbol,
+                                    float(pos.get("qty", 0)),
+                                    abs(float(pos.get("market_value", 0))),
+                                )
+                                alerted.add(m.symbol)
+
                 # Auto-fix orphaned stops if enabled
                 if Config.RECONCILIATION_AUTO_FIX:
                     cleaned = self.position_reconciler.auto_fix_orphaned_stops(
@@ -836,7 +1107,8 @@ class TradingEngine:
     def _register_signal_handlers(self):
         """Register SIGTERM and SIGHUP handlers (must be called from main thread)."""
         signal.signal(signal.SIGTERM, self._handle_sigterm)
-        signal.signal(signal.SIGHUP, self._handle_sighup)
+        if hasattr(signal, "SIGHUP"):
+            signal.signal(signal.SIGHUP, self._handle_sighup)
 
     def _handle_sigterm(self, signum, frame):
         # Only set flag — log.info() is not async-signal-safe

@@ -6,7 +6,10 @@ from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest, StopL
 from alpaca.trading.enums import OrderSide, TimeInForce, QueryOrderStatus
 from alpaca.data.historical.crypto import CryptoHistoricalDataClient
 from alpaca.data.historical.stock import StockHistoricalDataClient
-from alpaca.data.requests import CryptoBarsRequest, StockBarsRequest
+from alpaca.data.requests import (
+    CryptoBarsRequest, StockBarsRequest,
+    StockLatestQuoteRequest, CryptoLatestQuoteRequest,
+)
 from alpaca.data.timeframe import TimeFrame
 import pandas as pd
 
@@ -33,12 +36,17 @@ class Broker:
 
     def get_account(self) -> dict:
         account = self.trading_client.get_account()
+        # Alpaca v2 accounts include `long_market_value` and `last_equity`;
+        # derive a conservative `unrealized_pl` estimate = equity - (cash + long_market_value_cost_basis_proxy).
+        # For Sprint 5D we use a direct sum-of-positions when the caller can supply it;
+        # fallback here is 0.0 so existing callers keep working.
         return {
             "equity": float(account.equity),
             "cash": float(account.cash),
             "buying_power": float(account.buying_power),
             "daytrade_count": int(account.daytrade_count),
             "pattern_day_trader": bool(account.pattern_day_trader),
+            "unrealized_pl": 0.0,  # engine may fill this from get_positions if needed
         }
 
     def get_positions(self) -> list[dict]:
@@ -185,12 +193,27 @@ class Broker:
 
     # ── Market Data ──────────────────────────────────────────────────
 
-    def get_historical_bars(self, symbol: str, days: int = 30) -> pd.DataFrame:
-        """Get historical 1-min bars — auto-detects crypto vs stock."""
+    def get_historical_bars(self, symbol: str, days: int = 30,
+                             timeframe: str | None = None) -> pd.DataFrame:
+        """Get historical bars — auto-detects crypto vs stock.
+
+        Args:
+            symbol: Trading symbol.
+            days: Lookback in days.
+            timeframe: Optional Alpaca timeframe string — "1Min" (default),
+                "1Hour", or "1Day". Regime detector needs "1Day" so a 20-day
+                rolling vol doesn't drown in 15K minute bars.
+        """
+        tf_map = {
+            "1Min": TimeFrame.Minute, "1Minute": TimeFrame.Minute,
+            "1Hour": TimeFrame.Hour,  "1H": TimeFrame.Hour,
+            "1Day": TimeFrame.Day,    "1D": TimeFrame.Day,
+        }
+        tf = tf_map.get(timeframe, TimeFrame.Minute)
         if Config.is_crypto(symbol):
-            return self._get_crypto_bars(symbol, days=days)
+            return self._get_crypto_bars(symbol, days=days, timeframe=tf)
         else:
-            return self._get_stock_bars(symbol, days=days)
+            return self._get_stock_bars(symbol, days=days, timeframe=tf)
 
     def get_recent_bars(self, symbol: str, limit: int = 100) -> pd.DataFrame:
         """Get the most recent N bars."""
@@ -199,12 +222,62 @@ class Broker:
         else:
             return self._get_recent_stock_bars(symbol, limit)
 
+    # ── Quotes ───────────────────────────────────────────────────────
+
+    def get_latest_quote(self, symbol: str) -> dict | None:
+        """Fetch the latest bid/ask quote for a symbol.
+
+        Used by Sprint 5 pre-trade liquidity gate to compute the spread and skip
+        trades where the current spread is too wide (beginner's worst nightmare
+        is a market order on a thinly-traded name during a quiet window).
+
+        Returns:
+            dict with keys: bid, ask, mid, spread_bps, symbol.
+            None if the broker returns nothing usable (graceful fallback — callers
+            treat "no quote data" as "don't skip" to avoid blocking all trades).
+        """
+        try:
+            if Config.is_crypto(symbol):
+                req = CryptoLatestQuoteRequest(symbol_or_symbols=[symbol])
+                quotes = self.crypto_data.get_crypto_latest_quote(req)
+            else:
+                alpaca_symbol = symbol.replace("/", "")
+                req = StockLatestQuoteRequest(symbol_or_symbols=[alpaca_symbol])
+                quotes = self.stock_data.get_stock_latest_quote(req)
+        except Exception:
+            return None
+
+        # Alpaca returns a dict keyed by symbol (possibly normalized form)
+        if not quotes:
+            return None
+        # Try the exact symbol first, then any normalized variant
+        quote = quotes.get(symbol) or quotes.get(symbol.replace("/", "")) or next(
+            iter(quotes.values()), None
+        )
+        if quote is None:
+            return None
+
+        bid = float(getattr(quote, "bid_price", 0) or 0)
+        ask = float(getattr(quote, "ask_price", 0) or 0)
+        if bid <= 0 or ask <= 0 or ask < bid:
+            return None
+        mid = (bid + ask) / 2.0
+        spread_bps = (ask - bid) / mid * 10_000 if mid > 0 else 0.0
+        return {
+            "symbol": symbol,
+            "bid": bid,
+            "ask": ask,
+            "mid": mid,
+            "spread_bps": spread_bps,
+        }
+
     # ── Crypto Data ──────────────────────────────────────────────────
 
-    def _get_crypto_bars(self, symbol: str, days: int = 30) -> pd.DataFrame:
+    def _get_crypto_bars(self, symbol: str, days: int = 30,
+                          timeframe=TimeFrame.Minute) -> pd.DataFrame:
         req = CryptoBarsRequest(
             symbol_or_symbols=[symbol],
-            timeframe=TimeFrame.Minute,
+            timeframe=timeframe,
             start=datetime.now() - timedelta(days=days),
         )
         bars = self.crypto_data.get_crypto_bars(req)
@@ -229,10 +302,11 @@ class Broker:
 
     # ── Stock Data ───────────────────────────────────────────────────
 
-    def _get_stock_bars(self, symbol: str, days: int = 30) -> pd.DataFrame:
+    def _get_stock_bars(self, symbol: str, days: int = 30,
+                         timeframe=TimeFrame.Minute) -> pd.DataFrame:
         req = StockBarsRequest(
             symbol_or_symbols=[symbol],
-            timeframe=TimeFrame.Minute,
+            timeframe=timeframe,
             start=datetime.now() - timedelta(days=days),
         )
         bars = self.stock_data.get_stock_bars(req)

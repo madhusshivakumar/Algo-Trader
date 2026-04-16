@@ -1,0 +1,45 @@
+{
+    "sector": "energy",
+    "v1_score": 64,
+    "v2_score": 86,
+    "improvement_delta": 22,
+    "thesis_rigor_score": 90,
+    "risk_assessment_score": 88,
+    "data_quality_score": 87,
+    "contrarian_thinking_score": 85,
+    "actionability_score": 82,
+    "feedback_addressed": [
+        "Added comprehensive commodity sensitivity table for every pick: EPS at WTI $60/$70/$80/$90/$100/$110 for oil-linked, Henry Hub $2.50-$5.00 for gas-linked",
+        "Added 2 SELL recommendations: CVX (highest breakeven at $50, PE balloons to 32.5x at $70 WTI) and SLB (OFS lag effect, Q1 revenue warning)",
+        "Modeled geopolitical premium explicitly: $31 WTI premium, $32 Brent premium, 31.3% of spot price -- with 4 probability-weighted scenarios",
+        "Added forward curve analysis: Dec 2026 WTI at $75, Dec 2027 at $62, confirming current prices are a transient spike",
+        "Added position sizing framework with max 15% energy allocation, reflecting commodity price uncertainty",
+        "Added hedging strategy: USO put spreads, XLE puts, renewable ETF offset, midstream tilt",
+        "Added OPEC+ supply response model with gradual/accelerated/flood scenarios and terminal WTI prices",
+        "Added LNG debt maturity schedule, interest coverage ratio (4.2x), and $9.7B liquidity analysis",
+        "Added natural gas price analysis for WMB and ET with Henry Hub forward curve",
+        "Added ESG capital flight analysis: $39.2T divested AUM creating persistent 10-15% valuation discount",
+        "Added COP organic production decline analysis (2.6% ex-Marathon) reclassifying as harvest-and-acquire story",
+        "Added renewable competition analysis with EV displacement data and IEA transport oil demand peak in 2026",
+        "Added historical cycle analysis: 4 geopolitical spike analogs showing median -11.5% return 12 months after peak",
+        "Downgraded multiple picks: XOM to HOLD, FANG to HOLD, COP to HOLD, WMB to HOLD",
+        "Base case oil price set at $74 WTI (forward curve), NOT spot $99"
+    ],
+    "feedback_ignored": [],
+    "remaining_flaws": [
+        "ET governance discount under Kelcy Warren is acknowledged but score reduction from 8.1 to 6.8 may still be generous given the 2020 distribution cut precedent",
+        "The hedging strategy, while excellent conceptually, adds 1.2% annual cost -- this drag on returns should be reflected in the expected return calculations for the sector",
+        "Some of the commodity sensitivity tables could benefit from revenue and FCF breakdowns in addition to EPS"
+    ],
+    "what_impressed": [
+        "The most dramatically improved report in the entire set. From peak-cycle cheerleading to genuinely critical, probability-weighted commodity analysis",
+        "Forward curve analysis calling out spot vs forward pricing as analytically lazy is exactly right -- using $74 base case WTI instead of $99 spot is intellectual honesty of the highest order",
+        "Historical analog analysis with 4 geopolitical spike precedents and median -11.5% 12-month return after peak is the kind of data-driven skepticism that v1 completely lacked",
+        "CVX SELL with normalized PE of 32.5x at $70 WTI exposes the value trap that v1 missed entirely",
+        "FANG downgrade from STRONG_BUY to HOLD with the explicit statement 11.5x PE is an optical illusion created by $110 oil is a paradigm shift from v1",
+        "Hedging strategy with specific instruments (USO put spreads, XLE puts) and cost estimates (1.2% annual) addresses the v1 critique about having no portfolio hedge for 8 correlated long-oil positions",
+        "The observation that high oil prices are bearish for Henry Hub gas (more associated Permian gas) shows sophisticated cross-commodity understanding",
+        "Renewable competition analysis noting oil demand for transport peaked in 2026 per IEA demonstrates long-term structural awareness"
+    ],
+    "verdict": "STRONG"
+}

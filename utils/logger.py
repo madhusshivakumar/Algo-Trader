@@ -69,6 +69,10 @@ class Logger:
             ("sentiment_score", "REAL"),
             ("llm_conviction", "REAL"),
             ("rl_selected", "TEXT DEFAULT ''"),
+            # Sprint 6C: regime at time of trade (low_vol / normal / high_vol / crisis).
+            ("regime", "TEXT DEFAULT ''"),
+            # Sprint 6G: plain-language one-sentence explanation for the user.
+            ("explanation", "TEXT DEFAULT ''"),
         ]:
             try:
                 conn.execute(f"SELECT {col} FROM trades LIMIT 1")
@@ -92,20 +96,23 @@ class Logger:
     def trade(self, symbol: str, side: str, amount: float, price: float,
               reason: str, pnl: float = 0, strategy: str = "",
               sentiment_score: float = None, llm_conviction: float = None,
-              rl_selected: str = ""):
+              rl_selected: str = "", regime: str = "", explanation: str = ""):
         self.success(
             f"{'BUY' if side == 'buy' else 'SELL'} {symbol} "
             f"${amount:.2f} @ ${price:.2f} | {reason}"
             + (f" | PnL: ${pnl:.2f}" if pnl is not None else "")
         )
+        if explanation:
+            # Echo the plain-English explanation so it's visible in stdout too.
+            console.print(f"[dim]          → {explanation}[/dim]")
         conn = sqlite3.connect(DB_PATH)
         try:
             conn.execute(
                 "INSERT INTO trades (timestamp, symbol, side, amount, price, reason, pnl, "
-                "strategy, sentiment_score, llm_conviction, rl_selected) "
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                "strategy, sentiment_score, llm_conviction, rl_selected, regime, explanation) "
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (_ts(), symbol, side, amount, price, reason, pnl, strategy,
-                 sentiment_score, llm_conviction, rl_selected),
+                 sentiment_score, llm_conviction, rl_selected, regime, explanation),
             )
             conn.commit()
         finally:

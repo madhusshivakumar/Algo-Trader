@@ -1,0 +1,42 @@
+{
+    "sector": "healthcare",
+    "v1_score": 72,
+    "v2_score": 83,
+    "improvement_delta": 11,
+    "thesis_rigor_score": 86,
+    "risk_assessment_score": 84,
+    "data_quality_score": 85,
+    "contrarian_thinking_score": 80,
+    "actionability_score": 82,
+    "feedback_addressed": [
+        "Added 2 explicit SELL recommendations (MRK at $95 target, PFE at $23 target) with trough earnings analysis",
+        "Graduated conviction levels from all-HIGH to mixed: 4 HIGH, 3 MODERATE -- ISRG and TMO properly downgraded",
+        "Added DCF scenario analysis for LLY with probability-weighted fair value of $1,110",
+        "Added GLP-1 competitive landscape including Amgen MariTide, Roche CT-996, Viking VK2735",
+        "Added quantified IRA impact per pick with dollars-at-risk and probability assessment",
+        "Added AbbVie patent expiration timelines (Skyrizi 2033, Rinvoq blocked until 2037)",
+        "Added ISRG hospital capex stress test (15% capex cut = 25-30% placement decline)",
+        "Stop-losses calibrated to individual stock volatility (14% ABBV to 20% ISRG) instead of blanket 15%",
+        "Score math verified for every pick with explicit formula calculations",
+        "TMO growth score reduced from 7 to 6 reflecting 3-4% organic growth vs 6-7% historical average",
+        "Added specific entry prices for ISRG ($400/$375/$340) instead of vague accumulate on pullback"
+    ],
+    "feedback_ignored": [
+        "BSX Penumbra acquisition ROIC analysis mentioned but not quantified with specific expected return timeline"
+    ],
+    "remaining_flaws": [
+        "VRTX entry prices lack current price reference making it harder to assess attractiveness",
+        "The peer valuation comparison table mentioned in v1 demands is present in scoring but lacks a dedicated formatted comparison table like the technology report provided",
+        "Manufacturing capacity analysis for GLP-1 is mentioned in v2 changes list but not deeply explored in the body of individual picks",
+        "AZN moved to MODERATE but conviction rationale could include more quantified China fraud investigation financial exposure"
+    ],
+    "what_impressed": [
+        "MRK SELL with $32.7B Keytruda cliff analysis and trough EPS of $8 is exactly the kind of hard call this sector needed",
+        "PFE SELL with triple patent cliff quantification ($21B revenue gap) and when-to-reconsider triggers shows analytical maturity",
+        "LLY DCF with bear case fair value ($880) explicitly below current price acknowledges downside risk for the top pick",
+        "Volatility-calibrated stop-losses (ABBV 14% based on beta 0.7 vs ISRG 20% based on beta 1.3) is a meaningful upgrade from v1 blanket approach",
+        "ISRG conviction downgrade from HIGH to MODERATE with explicit price levels shows the analyst can say no to popular names",
+        "IRA stress test for ABBV quantifying $2-4B revenue risk at 40% probability demonstrates scenario thinking"
+    ],
+    "verdict": "STRONG"
+}

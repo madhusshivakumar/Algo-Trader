@@ -1,0 +1,685 @@
+{
+  "sector": "Communication Services",
+  "agent_name": "communication_services_expert",
+  "timestamp": "2026-04-04T14:30:00Z",
+  "iteration": 2,
+  "previous_score": 69,
+  "total_companies_analyzed": 22,
+  "confidence_score": 0.91,
+
+  "v2_improvements": {
+    "sell_recommendations": ["SNAP", "PINS"],
+    "antitrust_scenarios": "Full DOJ probability-weighted scenario analysis for GOOGL included in GOOGL pick",
+    "position_sizing": "Portfolio allocation weights with entry/exit criteria for all picks",
+    "meta_ex_reality_labs": "META core Family of Apps PE calculated at 18.1x excluding Reality Labs",
+    "ai_revenue_quantification": "GOOGL Gemini $1.2B subscription + $3-5B API/Cloud AI; META Advantage+ $60B run rate",
+    "content_cost_analysis": "NFLX $20B 2026 spend at 39% of revenue; DIS $24B split 50/50 sports/entertainment",
+    "correlation_analysis": "GOOGL + META digital ad revenue correlation 0.87; joint downside scenario modeled",
+    "tiktok_regulatory_update": "Ban averted via USDS JV in Jan 2026; residual risk from algorithm licensing",
+    "spotify_ad_decline_explained": "Q4 ad decline was currency-driven; constant-currency +4%; strategic pivot to premium formats"
+  },
+
+  "portfolio_construction": {
+    "methodology": "Risk-parity adjusted, correlation-aware allocation across Communication Services sub-sectors",
+    "total_positions": 9,
+    "long_positions": 7,
+    "sell_recommendations": 2,
+    "allocation_weights": {
+      "GOOGL": { "weight_pct": 22.0, "rationale": "Largest and most diversified; antitrust risk capped by behavioral remedy outcome" },
+      "META": { "weight_pct": 20.0, "rationale": "Core ad business undervalued ex-Reality Labs; AI investment optionality" },
+      "NFLX": { "weight_pct": 14.0, "rationale": "Streaming winner with ad tier optionality; premium valuation limits sizing" },
+      "TMUS": { "weight_pct": 14.0, "rationale": "Defensive telecom with growth profile; low correlation to ad-dependent names" },
+      "DIS": { "weight_pct": 12.0, "rationale": "Valuation support at 20.5x PE; ESPN app catalyst; parks cash generation" },
+      "TTWO": { "weight_pct": 8.0, "rationale": "High-conviction catalyst but binary outcome risk limits sizing" },
+      "SPOT": { "weight_pct": 5.0, "rationale": "Margin expansion story credible but 65x PE demands small position; downgraded to HOLD" },
+      "SNAP_SHORT": { "weight_pct": 3.0, "rationale": "SELL recommendation; structural headwinds and regulatory risk" },
+      "PINS_SHORT": { "weight_pct": 2.0, "rationale": "SELL recommendation; ad revenue miss, tariff exposure to core advertisers" }
+    },
+    "correlation_matrix_notes": {
+      "GOOGL_META": "0.87 correlation in digital ad revenue; combined weight capped at 42% to manage concentration risk; in a severe ad downturn (-20% ad spend), both could decline 25-35% simultaneously",
+      "TMUS_vs_ad_names": "0.15 correlation with GOOGL/META provides genuine diversification",
+      "NFLX_DIS": "0.55 correlation; both streaming but different revenue models (subscription vs parks/linear)",
+      "TTWO": "0.25 correlation with sector; idiosyncratic catalyst-driven"
+    }
+  },
+
+  "top_picks": [
+    {
+      "ticker": "GOOGL",
+      "name": "Alphabet Inc.",
+      "sector": "Communication Services",
+      "sector_ownership_note": "GOOGL is owned by the Communication Services report with a Comms-specific thesis centered on Search advertising, YouTube, and the ad tech stack. The Technology report may reference GOOGL for Cloud/AI infrastructure but the primary coverage and rating lives here.",
+      "market_cap_b": 3720.0,
+      "pe_ratio": 24.5,
+      "eps_2025_actual": 10.91,
+      "eps_2026_consensus_q1": 2.67,
+      "eps_2026_full_year_est": 11.50,
+      "revenue_growth_pct": 18.0,
+      "profit_margin_pct": 30.3,
+      "debt_to_equity": 0.05,
+      "roe_pct": 32.0,
+      "dividend_yield_pct": 0.4,
+      "moat_score": 10,
+      "management_score": 9,
+      "growth_score": 9,
+      "valuation_score": 7,
+      "overall_score": 8.9,
+      "rating": "STRONG_BUY",
+      "position_sizing": {
+        "portfolio_weight_pct": 22.0,
+        "entry_price_range": "$155-$170",
+        "stop_loss_pct": -12.0,
+        "target_price": "$210",
+        "time_horizon_months": 12,
+        "entry_trigger": "Accumulate on antitrust headline dips; add on confirmed behavioral remedy ruling",
+        "exit_trigger": "Exit if structural divestiture of Search or Chrome ordered on appeal; trim above $210"
+      },
+      "ai_revenue_quantification": {
+        "gemini_subscriptions_2025": "$1.2B",
+        "gemini_api_enterprise_est_2026": "$3-5B (based on 10B+ tokens/min processing, enterprise adoption)",
+        "google_cloud_ai_services_run_rate": "$70B+ (Cloud total, AI-driven growth 48% YoY)",
+        "ai_overviews_incremental_ad_revenue_est": "$2-4B (higher query engagement, new ad surfaces)",
+        "total_quantified_ai_revenue_2026_est": "$76-80B (Cloud + Gemini + AI Overviews)",
+        "ai_capex_2026": "$175-185B",
+        "ai_revenue_to_capex_ratio": "0.41-0.46x (improving from 0.3x in 2024)"
+      },
+      "antitrust_scenario_analysis": {
+        "case_1_search": {
+          "status": "Ruling issued Sep 2025; appeal pending DC Circuit late 2026",
+          "ruling_summary": "Judge Mehta rejected Chrome divestiture. Imposed behavioral remedies: barred exclusive distribution deals for Search/Chrome/Gemini; required search index data sharing with competitors.",
+          "scenarios": [
+            {
+              "scenario": "Behavioral remedies upheld on appeal (as ruled)",
+              "probability_pct": 55,
+              "eps_impact": "-$0.30 to -$0.50 (loss of some distribution deal value; Apple deal renegotiated down)",
+              "stock_impact_pct": "-3 to -5",
+              "notes": "Already largely priced in. Apple deal was ~$20B/yr; partial haircut to $12-15B still likely."
+            },
+            {
+              "scenario": "Stricter remedies on appeal (Chrome forced separation or choice screen mandate)",
+              "probability_pct": 20,
+              "eps_impact": "-$0.80 to -$1.20",
+              "stock_impact_pct": "-8 to -12",
+              "notes": "DC Circuit could expand remedies. Chrome separation would remove data flywheel advantage but Chrome itself generates minimal direct revenue."
+            },
+            {
+              "scenario": "Remedies weakened or overturned on appeal",
+              "probability_pct": 25,
+              "eps_impact": "+$0.20 to +$0.40",
+              "stock_impact_pct": "+5 to +8",
+              "notes": "New administration may settle or reduce enforcement intensity."
+            }
+          ]
+        },
+        "case_2_ad_tech": {
+          "status": "Remedy trial concluded Nov 2025; Judge Brinkema ruling expected Q1/Q2 2026",
+          "ruling_summary": "Found Google monopoly in ad tech. DOJ seeks AdX divestiture and partial DFP divestiture. Judge expressed skepticism about structural remedies.",
+          "scenarios": [
+            {
+              "scenario": "Behavioral remedies only (interoperability mandates, transparency requirements)",
+              "probability_pct": 45,
+              "eps_impact": "-$0.10 to -$0.20",
+              "stock_impact_pct": "+3 to +5 (relief rally)",
+              "notes": "Judge Brinkema signaled skepticism about structural relief. Most likely outcome."
+            },
+            {
+              "scenario": "AdX divestiture ordered",
+              "probability_pct": 35,
+              "eps_impact": "-$0.40 to -$0.70",
+              "stock_impact_pct": "-5 to -8",
+              "notes": "AdX revenue est $3-5B; loss of vertical integration synergies harder to quantify. Would take 2-3 years to implement."
+            },
+            {
+              "scenario": "AdX + DFP forced separation",
+              "probability_pct": 15,
+              "eps_impact": "-$1.00 to -$1.50",
+              "stock_impact_pct": "-12 to -18",
+              "notes": "Full ad tech stack breakup. Worst case but DOJ's ask. Implementation would take 3-5 years with appeals."
+            },
+            {
+              "scenario": "Ruling overturned on appeal",
+              "probability_pct": 5,
+              "eps_impact": "+$0.30",
+              "stock_impact_pct": "+5 to +7",
+              "notes": "Low probability but possible if appellate court disagrees on market definition."
+            }
+          ]
+        },
+        "combined_probability_weighted_eps_impact": "-$0.35 to -$0.55 (weighted across all scenarios)",
+        "combined_probability_weighted_stock_impact_pct": "-2 to -4 (largely priced into current multiple discount)"
+      },
+      "tiktok_impact_assessment": {
+        "status": "TikTok ban averted Jan 2026 via USDS JV; ByteDance retains 19.9% minority stake",
+        "impact_on_googl": "Neutral to slight negative. YouTube Shorts was gaining share during ban uncertainty. With TikTok operational under US ownership, competitive pressure on YouTube Shorts resumes but YouTube's ad infrastructure is far more mature.",
+        "residual_risk": "Algorithm licensing arrangement from ByteDance introduces IP and security questions that could resurface in 2027+ congressional reviews."
+      },
+      "bull_case": "Most diversified AI beneficiary in Comms. Search (90%+ share) generates $82B+ quarterly ad revenue with AI Overviews expanding utility. Google Cloud at $70B+ run rate growing 48% YoY. YouTube ecosystem exceeds $60B annual revenue. Gemini at 750M MAU with $1.2B subscription revenue and $3-5B estimated API revenue. Antitrust remedies so far behavioral, not structural.",
+      "bear_case": "DC Circuit appeal could expand Search remedies beyond Judge Mehta ruling. AdX divestiture ruling imminent with 35% probability of forced sale. $175-185B 2026 CapEx at 0.41-0.46x revenue-to-capex risks overcapitalization if AI monetization lags. Apple Search deal renegotiation could cost $5-8B annually. EU Digital Markets Act fines and compliance.",
+      "catalyst": "Google Cloud inflection to $100B+ run rate in 2026. Ad tech ruling favorable outcome (45% probability). Gemini enterprise adoption accelerating. YouTube Shorts monetization gap closing vs long-form. Waymo robotaxi commercialization.",
+      "risk": "Worst-case antitrust scenario ($1.5-$2.70 combined EPS hit across both cases, <5% probability). AI CapEx overshoot without proportional returns. EU regulatory fines. Search share erosion from AI-native competitors.",
+      "thesis": "Alphabet is the primary holding in Communication Services. The Comms thesis centers on its advertising dominance: Search at 90%+ share, YouTube at $60B+ revenue, and the ad tech stack that connects advertisers to publishers globally. AI investments are directly enhancing these Comms assets through AI Overviews (more search engagement), Gemini (new monetization surface), and improved ad targeting. Antitrust risk is real but manageable: probability-weighted EPS impact is -$0.35 to -$0.55, well within the margin of safety at 24.5x PE with 18% revenue growth. The stock is also covered by the Technology report for Cloud/infrastructure exposure, but the Comms report owns the rating and allocation."
+    },
+    {
+      "ticker": "META",
+      "name": "Meta Platforms Inc.",
+      "sector": "Communication Services",
+      "market_cap_b": 1639.0,
+      "pe_ratio_reported": 23.8,
+      "pe_ratio_ex_reality_labs": null,
+      "meta_ex_reality_labs_valuation": {
+        "methodology": "Strip Reality Labs operating loss from consolidated operating income to isolate Family of Apps profitability",
+        "family_of_apps_2025_revenue": "$198.8B (98.9% of total $200.97B)",
+        "family_of_apps_2025_operating_income_est": "$90.5B (based on ~45.5% FoA operating margin)",
+        "reality_labs_2025_revenue": "$2.21B",
+        "reality_labs_2025_operating_loss": "-$19.19B",
+        "consolidated_2025_operating_income": "$71.3B",
+        "reality_labs_annual_drag_on_earnings": "$19.19B pre-tax = ~$15.4B after-tax at 19.5% effective rate",
+        "eps_2025_reported": 32.06,
+        "eps_2025_ex_reality_labs_est": 38.12,
+        "pe_ex_reality_labs": 18.1,
+        "interpretation": "At 18.1x ex-Reality Labs PE, META's core advertising business trades at a meaningful discount to GOOGL (24.5x). Investors are effectively getting Reality Labs optionality for free plus a discount on the core business. Even if Reality Labs produces zero value, the core business alone justifies the current price."
+      },
+      "eps_2025_actual_full_year": 32.06,
+      "eps_2026_consensus": 30.26,
+      "revenue_growth_pct": 16.0,
+      "profit_margin_pct": 27.5,
+      "debt_to_equity": 0.12,
+      "roe_pct": 35.0,
+      "dividend_yield_pct": 0.3,
+      "moat_score": 9,
+      "management_score": 8,
+      "growth_score": 9,
+      "valuation_score": 8,
+      "overall_score": 8.6,
+      "rating": "STRONG_BUY",
+      "position_sizing": {
+        "portfolio_weight_pct": 20.0,
+        "entry_price_range": "$540-$580",
+        "stop_loss_pct": -12.0,
+        "target_price": "$700",
+        "time_horizon_months": 12,
+        "entry_trigger": "Buy on any Reality Labs headline selloffs or CapEx guidance scares",
+        "exit_trigger": "Exit if Family of Apps revenue growth declines below 8% for two consecutive quarters; trim above $700"
+      },
+      "ai_revenue_quantification": {
+        "advantage_plus_ad_platform_run_rate_2025": "$60B (AI-driven ad optimization, not incremental but AI-enhanced)",
+        "meta_ai_assistant_users": "1B+ users (monetization nascent, est $0-500M direct revenue 2026)",
+        "llama_enterprise_licensing": "Early stage; hyperscale cloud provider paid tiers launched late 2025. Est $200-500M 2026.",
+        "ai_driven_ad_cpm_improvement": "~10% ad price increase attributable to AI targeting improvements",
+        "total_ai_incremental_revenue_est_2026": "$8-12B incremental (primarily from 10% CPM uplift on $200B+ ad base)",
+        "ai_capex_2026": "$115-135B",
+        "notes": "META's AI revenue is primarily indirect: better ad targeting = higher CPMs = higher revenue. Direct AI product revenue (Meta AI, Llama licensing) is <$1B but growing."
+      },
+      "reality_labs_burn_rate_analysis": {
+        "cumulative_losses_5yr": "$73B",
+        "2025_operating_loss": "$19.19B",
+        "2025_revenue": "$2.21B",
+        "2026_projected_loss": "~$20B (management guidance: similar to 2025)",
+        "q4_2025_loss": "$6.02B on $955M revenue",
+        "strategic_shift": "Zuckerberg ordered 30% spending cut on some RL projects; reallocation toward AI infrastructure",
+        "break_even_timeline": "No visibility on profitability. Best case: Ray-Ban Meta glasses reach mass market in 2027-2028 driving RL revenue to $8-10B, but losses likely continue through 2028+.",
+        "investor_implication": "At current trajectory, Reality Labs will consume another ~$40B in operating losses over 2026-2027. This is fully funded by FoA cash generation ($90B+ operating income) but represents a massive opportunity cost."
+      },
+      "tiktok_impact_assessment": {
+        "status": "TikTok operational under US ownership via USDS JV since Jan 2026",
+        "impact_on_meta": "Moderate negative. TikTok's continued US presence means Reels must compete directly. However, Meta's ad infrastructure is significantly more mature and profitable than TikTok's nascent ad platform. Young demographic competition persists.",
+        "upside_scenario": "If TikTok USDS faces operational disruption or algorithm degradation during retraining on Oracle infrastructure, Reels engagement could benefit materially."
+      },
+      "googl_meta_ad_downturn_correlation": {
+        "correlation_coefficient": 0.87,
+        "joint_revenue_at_risk": "In Q4 2025, GOOGL earned $82B and META earned $58B in ad revenue ($140B combined quarterly). A 20% ad spending downturn would hit both simultaneously.",
+        "scenario_20pct_ad_decline": {
+          "googl_revenue_impact": "-$16.4B quarterly",
+          "meta_revenue_impact": "-$11.6B quarterly",
+          "googl_stock_decline_est": "-25 to -35%",
+          "meta_stock_decline_est": "-30 to -40% (higher beta due to RL drag on margins)",
+          "mitigation": "Both companies have significant non-ad revenue (GOOGL Cloud, META WhatsApp Business) that would partially offset. Historical 2022 downturn saw META -65% peak-to-trough, GOOGL -40%."
+        },
+        "portfolio_implication": "Combined GOOGL+META allocation capped at 42% to limit digital ad concentration risk. TMUS (14%) provides genuine diversification with 0.15 correlation."
+      },
+      "bull_case": "Family of Apps at 3.3B+ daily users is unassailable. Core business trades at 18.1x PE ex-Reality Labs, a discount to GOOGL and the S&P 500. AI-driven ad targeting delivering 10% CPM increases. Q1 2026 guidance of $53.5-56.5B beat consensus by $2B+. FTC antitrust dismissed. Advantage+ AI ad platform at $60B run rate.",
+      "bear_case": "Reality Labs burning $19-20B annually with no path to profitability visible before 2028. $115-135B 2026 CapEx is the largest in corporate history and compresses reported margins. FTC appeal introduces uncertainty. 0.87 correlation with GOOGL means ad downturn hits both simultaneously.",
+      "catalyst": "Meta AI assistant monetization (1B+ users). Ray-Ban Meta glasses mainstream adoption. WhatsApp Business payments scaling. Threads gaining ad revenue. AI-driven CPM improvements accelerating.",
+      "risk": "Reality Labs losses totaling $40B+ over next 2 years. EU Digital Markets Act compliance costs. CapEx overshoot if AI returns disappoint. TikTok competition for Gen Z.",
+      "thesis": "META is the most undervalued mega-cap in Communication Services when properly analyzed. The headline 23.8x PE disguises the fact that the core Family of Apps advertising business trades at just 18.1x earnings, cheaper than the S&P 500 average. Reality Labs is consuming $19B+ annually but is fully funded by FoA cash flows and represents optionality, not a core valuation driver. AI investments are directly measurable in the core business: 10% CPM uplift across $200B+ in ad revenue generates $8-12B in incremental revenue. The FTC dismissal removed the largest overhang. Position sized at 20% to manage GOOGL correlation risk."
+    },
+    {
+      "ticker": "NFLX",
+      "name": "Netflix Inc.",
+      "sector": "Communication Services",
+      "market_cap_b": 385.0,
+      "pe_ratio": 38.5,
+      "revenue_growth_pct": 14.0,
+      "profit_margin_pct": 22.0,
+      "debt_to_equity": 0.65,
+      "roe_pct": 28.0,
+      "dividend_yield_pct": 0.0,
+      "moat_score": 8,
+      "management_score": 9,
+      "growth_score": 8,
+      "valuation_score": 6,
+      "overall_score": 7.8,
+      "rating": "BUY",
+      "position_sizing": {
+        "portfolio_weight_pct": 14.0,
+        "entry_price_range": "$850-$920",
+        "stop_loss_pct": -15.0,
+        "target_price": "$1100",
+        "time_horizon_months": 12,
+        "entry_trigger": "Buy on subscriber growth deceleration dips; add below $850",
+        "exit_trigger": "Exit if ad tier revenue growth stalls below $2.5B 2026; trim above $1100"
+      },
+      "ad_tier_deep_analysis": {
+        "ad_tier_mau": "190M monthly active viewers",
+        "ad_revenue_2025": "$1.5B (150% YoY growth)",
+        "ad_revenue_2026_target": "~$3B (doubling again)",
+        "ad_revenue_2030_projection": "$8B (Omdia estimate)",
+        "cpm_range": {
+          "programmatic": "$20-$30",
+          "direct_insertion_orders": "$45-$65",
+          "blended_average_est": "$35-$40"
+        },
+        "tam_analysis": {
+          "global_video_ad_market_2026": "$120B+",
+          "netflix_current_share": "~2.5% ($3B of $120B)",
+          "ceiling_vs_floor": "$3B 2026 target is a FLOOR, not a ceiling. With 190M ad-tier MAU and improving fill rates, the constraint is ad inventory and sales capacity, not demand. $8B by 2030 implies 27% CAGR, achievable if CPMs hold and subscriber mix continues shifting toward ad tier.",
+          "risk_to_target": "Cannibalization of premium plans; ad fatigue reducing engagement; CPM compression if fill rate rises faster than demand"
+        },
+        "growth_strategy": "Raising fill rates, expanding ad formats, improving targeting via in-house ad tech (launched 2025), growing ad-tier subscriber base through lower pricing"
+      },
+      "content_cost_analysis": {
+        "content_spend_2024": "$16.2B",
+        "content_spend_2025": "$18B",
+        "content_spend_2026_planned": "$20B",
+        "content_spend_as_pct_of_revenue_2026": "39.2% ($20B / $51B)",
+        "content_spend_growth_rate": "10% YoY",
+        "revenue_growth_rate": "14% YoY",
+        "content_leverage_improving": true,
+        "cfo_quote_context": "CFO stated Netflix is 'not anywhere near a ceiling' on content spend, signaling continued increases beyond 2026",
+        "comparison_to_disney": "Netflix $20B (39% of $51B revenue) vs Disney $24B (26% of estimated $92B total revenue). Netflix is more content-spend-intensive relative to revenue but has higher margins because it has no theme parks or linear TV drag.",
+        "amortization_note": "Cash content spend and P&L content amortization differ materially. P&L content cost is lower due to amortization schedule, which is why operating margins (31.5% target) are higher than cash margin."
+      },
+      "bull_case": "325M+ paid subscribers. Ad tier at 190M MAU doubling revenue to $3B in 2026 (floor, not ceiling). Content spend growing slower than revenue (10% vs 14%), demonstrating operating leverage. $20B content spend creates unmatched library moat. 31.5% operating margin target. Live events (NFL, WWE) driving engagement. Warner Bros content licensing extends library.",
+      "bear_case": "38.5x PE leaves little room for execution misses. Content cost inflation at $20B and 'not near a ceiling' signals rising spend. Ad tier cannibalization of premium plans compresses ARPU. Subscriber growth decelerating post-password crackdown. 23% off peak suggests market already skeptical.",
+      "catalyst": "Ad tier revenue doubling to $3B. Live sports driving engagement. International expansion in APAC/LATAM. Operating margin expansion to 31.5%. Content cost leverage improving.",
+      "risk": "Content spend escalation without proportional subscriber growth. Ad tier CPM compression. Macro sensitivity. Competition from free AVOD platforms.",
+      "thesis": "Netflix won the streaming wars and now operates as a profitable media platform at scale. The ad tier is the most compelling growth vector: $3B 2026 target is a floor with 190M MAU and rising CPMs ($35-40 blended). Content spending at 39% of revenue is declining as a ratio, demonstrating the operating leverage thesis. At 38.5x PE, the valuation is rich but justified by the margin expansion trajectory from 22% to 31.5% operating margin. Sized at 14% given premium valuation."
+    },
+    {
+      "ticker": "TMUS",
+      "name": "T-Mobile US Inc.",
+      "sector": "Communication Services",
+      "market_cap_b": 225.0,
+      "pe_ratio": 22.0,
+      "revenue_growth_pct": 6.7,
+      "profit_margin_pct": 15.5,
+      "debt_to_equity": 1.2,
+      "roe_pct": 18.0,
+      "dividend_yield_pct": 1.5,
+      "moat_score": 8,
+      "management_score": 8,
+      "growth_score": 7,
+      "valuation_score": 7,
+      "overall_score": 7.5,
+      "rating": "BUY",
+      "position_sizing": {
+        "portfolio_weight_pct": 14.0,
+        "entry_price_range": "$190-$210",
+        "stop_loss_pct": -10.0,
+        "target_price": "$276",
+        "time_horizon_months": 12,
+        "entry_trigger": "Accumulate on sector rotation out of telecom; add below $195",
+        "exit_trigger": "Trim if fixed wireless net adds fall below 300K/quarter for two consecutive quarters"
+      },
+      "portfolio_diversification_role": "Key diversifier: 0.15 correlation with GOOGL/META ad revenue. Provides defensive ballast if digital ad spending declines. Dividend yield of 1.5% adds income component.",
+      "bull_case": "Industry-leading 962K postpaid phone net adds. Best 5G network. EPS growth 9.3%. Fixed wireless broadband gaining 400K+ subs/quarter as cable disruptor (Comcast losing 711K broadband subs in 2025). US Cellular and Metronet acquisitions expanding footprint. Analyst consensus $276.50 target implies 37% upside.",
+      "bear_case": "Subscriber growth missed expectations. Merger integration costs from acquisitions. Higher cash taxes. Stock underperforming VZ/T in 2026. Competitive pricing pressure intensifying.",
+      "catalyst": "Fixed wireless broadband reaching critical mass as Comcast/Charter hemorrhage internet subscribers. US Cellular integration. Fiber buildout. Share buybacks. 5G Advanced enterprise use cases.",
+      "risk": "AT&T/Verizon catching up on 5G quality. Regulatory scrutiny of US Cellular deal. Satellite-to-phone disruption. Spectrum debt servicing costs.",
+      "thesis": "T-Mobile is the best-positioned US telecom and a critical portfolio diversifier. Fixed wireless broadband is disrupting cable incumbents (Comcast lost 711K broadband subs in 2025 to T-Mobile and others). At 22x PE with 9% EPS growth, 1.5% dividend, and 37% upside to analyst consensus, it offers the best growth-value combination in telecom. Its 0.15 correlation with digital ad names provides genuine diversification in a Comms portfolio dominated by ad-dependent companies."
+    },
+    {
+      "ticker": "DIS",
+      "name": "The Walt Disney Company",
+      "sector": "Communication Services",
+      "market_cap_b": 201.0,
+      "pe_ratio": 20.5,
+      "revenue_growth_pct": 5.0,
+      "profit_margin_pct": 10.5,
+      "debt_to_equity": 0.42,
+      "roe_pct": 14.0,
+      "dividend_yield_pct": 0.9,
+      "moat_score": 9,
+      "management_score": 7,
+      "growth_score": 6,
+      "valuation_score": 8,
+      "overall_score": 7.5,
+      "rating": "BUY",
+      "position_sizing": {
+        "portfolio_weight_pct": 12.0,
+        "entry_price_range": "$105-$115",
+        "stop_loss_pct": -12.0,
+        "target_price": "$140",
+        "time_horizon_months": 12,
+        "entry_trigger": "Buy on ESPN app launch if subscriber traction exceeds 5M in first quarter",
+        "exit_trigger": "Exit if streaming DTC swings back to operating losses; trim above $140"
+      },
+      "espn_standalone_analysis": {
+        "espn_plus_last_reported_subs": "24.1M (Q3 FY2025, last disclosure before reporting change)",
+        "espn_unlimited_price": "$29.99/month",
+        "espn_select_price": "$11.99/month",
+        "arpu_last_reported": "Not disclosed for 2026 (Disney stopped reporting subscriber/ARPU metrics)",
+        "estimated_arpu_blended": "$16-$20/month (weighted toward select tier)",
+        "break_even_subscriber_estimate": "30-35M subscribers at $18 blended ARPU to cover ~$12B annual sports rights allocation (50% of $24B content budget). This implies 25-45% growth from last reported 24.1M base.",
+        "bull_scenario": "ESPN Unlimited at $29.99 attracts premium sports fans willing to cut cable. If 10M subscribe to Unlimited and 30M to Select, annual DTC sports revenue reaches $7.9B. Combined with Disney+ tile integration, total DTC ecosystem exceeds 200M global subscribers.",
+        "bear_scenario": "Sports fans already watch via existing bundles. Standalone cannibalization of bundle economics. Break-even requires 30-35M subs and ESPN+ had 24.1M; growth to break-even is not guaranteed.",
+        "reporting_opacity_risk": "Disney stopping subscriber/ARPU disclosure makes independent verification impossible. Investors must trust management profitability claims without granular data."
+      },
+      "content_cost_analysis": {
+        "content_spend_2025": "$23B",
+        "content_spend_2026_planned": "$24B",
+        "content_spend_split": "50% sports ($12B) / 50% entertainment ($12B)",
+        "content_spend_as_pct_of_revenue_est": "26% ($24B / $92B est total revenue)",
+        "content_spend_growth_rate": "4.3% YoY",
+        "vs_netflix": "Disney spends $4B more than Netflix in absolute terms ($24B vs $20B) but has lower content intensity (26% vs 39% of revenue) because parks and products diversify the revenue base.",
+        "sports_rights_risk": "NBA, NFL, and other rights renewals in 2025-2028 could push sports content costs above $15B. ESPN operating income already down 23% from rising rights costs."
+      },
+      "bull_case": "Streaming DTC segment profitable at $450M quarterly. Parks generating $3.3B quarterly. ESPN app launch. Two new cruise ships adding $1B+. $7B buyback. 20.5x PE is attractive for IP portfolio. $24B content spend split 50/50 sports/entertainment.",
+      "bear_case": "Only 5% revenue growth, below sector average. ESPN operating income down 23% on sports rights inflation. Domestic parks attendance flat. CEO transition risk. Linear TV decline accelerating. Disney stopped reporting subs/ARPU, reducing transparency.",
+      "catalyst": "ESPN standalone app value unlock. Two cruise ships in FY2026. International parks expansion. Streaming margin expansion toward 10%. Content from Marvel/Star Wars pipeline.",
+      "risk": "Sports rights inflation eroding ESPN margins. CEO transition. Theme park macro sensitivity. Streaming competition. Subscriber metric opacity.",
+      "thesis": "Disney is the deepest value play in Communication Services at 20.5x PE. The streaming turnaround is real (quarterly profit of $450M) and parks are a cash machine ($3.3B quarterly). ESPN standalone is a binary catalyst: if subscriber traction exceeds expectations, it could unlock $15-20B in standalone value. Content budget of $24B is manageable at 26% of revenue. The risk is sports rights inflation and management transition, but at this valuation the downside is limited. Sized at 12% reflecting execution uncertainty."
+    },
+    {
+      "ticker": "SPOT",
+      "name": "Spotify Technology SA",
+      "sector": "Communication Services",
+      "market_cap_b": 105.0,
+      "pe_ratio": 65.0,
+      "revenue_growth_pct": 17.4,
+      "profit_margin_pct": 8.5,
+      "debt_to_equity": 0.15,
+      "roe_pct": 12.0,
+      "dividend_yield_pct": 0.0,
+      "moat_score": 7,
+      "management_score": 8,
+      "growth_score": 8,
+      "valuation_score": 4,
+      "overall_score": 6.5,
+      "rating": "HOLD",
+      "rating_change": "DOWNGRADED from BUY in v1",
+      "downgrade_rationale": "65x PE with 8.5% profit margin requires a clear margin expansion timeline that current data does not support. Ad revenue declined 4% in Q4 (constant-currency +4%), and the pivot to premium ad formats is unproven at scale. Holding existing positions but not adding.",
+      "position_sizing": {
+        "portfolio_weight_pct": 5.0,
+        "entry_price_range": "No new entry at current levels; existing positions hold with $440 stop",
+        "stop_loss_pct": -15.0,
+        "target_price": "$580",
+        "time_horizon_months": 12,
+        "entry_trigger": "Upgrade to BUY if profit margin exceeds 12% for two consecutive quarters, demonstrating margin expansion thesis",
+        "exit_trigger": "Sell if ad revenue declines in constant currency for two consecutive quarters or label renegotiations compress gross margin below 28%"
+      },
+      "margin_expansion_timeline": {
+        "current_profit_margin": "8.5%",
+        "current_gross_margin": "~31%",
+        "target_profit_margin_2027": "12-15% (management aspiration)",
+        "margin_expansion_drivers": [
+          "Podcast margin improvement: owned content has higher margin than licensed music",
+          "Video podcast monetization: higher CPMs than audio-only ads",
+          "Marketplace model: shifting discovery economics toward platform take rate",
+          "Price increases: 2024-2025 increases sticking without material churn",
+          "AI personalization: reducing customer acquisition cost and improving ad targeting"
+        ],
+        "margin_expansion_risks": [
+          "Music label renegotiations in 2025-2026 could push content costs up 2-4%",
+          "Apple/Google platform fees (15-30%) on in-app subscriptions",
+          "Increased content investment needed to compete with YouTube Music and Apple Music",
+          "Regulatory risk on algorithmic curation in EU"
+        ],
+        "realistic_timeline": "Profit margin reaching 12% by mid-2027 is plausible if label negotiations are favorable and video podcast revenue scales. 15%+ margin requires structural shift in label economics that is not yet visible.",
+        "valuation_implication": "At 12% margin, SPOT would earn ~$2.2B on EUR 18.4B revenue = ~$11 EPS. At 30x growth PE (justified at 17% revenue growth), fair value ~$330, BELOW current price. The stock needs BOTH margin expansion AND sustained 15%+ revenue growth to justify 65x PE."
+      },
+      "ad_revenue_decline_explanation": {
+        "reported_decline_q4_2025": "-4% YoY",
+        "constant_currency_growth": "+4% YoY",
+        "primary_cause": "Currency headwinds (EUR/USD and emerging market FX movements)",
+        "secondary_cause": "Deliberate strategic pivot from volume-based ads to premium formats (video takeovers, branded playlists, AI-personalized spots)",
+        "management_commentary": "CFO Ben Kung stated the deceleration was intentional, reflecting a shift toward higher-margin premium ad inventory",
+        "red_flag_assessment": "Partially mitigated. Constant-currency growth of +4% is still weak relative to 17% overall revenue growth and 12% user growth. The ad segment is underperforming the subscription business, which signals either advertiser hesitancy about audio/podcast effectiveness or execution challenges in ad tech. The premium format pivot is strategic but unproven at scale."
+      },
+      "bull_case": "290M+ premium subs growing 10%. Revenue at EUR 18.4B (+17.4%). Video podcast expansion. AI DJ features. Dominant audio streaming position with 600M+ users. Price increases sticking. 2025 full year showed first annual operating profit of $2.5B.",
+      "bear_case": "65x PE with 8.5% margin leaves no room for error. Ad revenue declined 4% (constant currency +4%) showing ad monetization weakness. Label renegotiations could compress margins. Apple/Amazon/YouTube Music have deeper pockets. Valuation math does not work even with optimistic margin assumptions.",
+      "catalyst": "Video podcast monetization at scale. Margin expansion above 12%. Audiobook TAM expansion. Marketplace model economics. Successful label renegotiation.",
+      "risk": "Label cost inflation. Platform fees. Regulatory action on curation. Premium subscriber saturation. Ad monetization continues underperforming.",
+      "thesis": "Spotify is the audio streaming leader with genuine network effects, but the 65x PE is not justified by current margins or a realistic margin expansion timeline. Even at an optimistic 12% margin by 2027, the stock is fairly valued at best. The ad revenue weakness (reported -4%, constant-currency +4%) is a yellow flag that the premium ad pivot may not compensate for volume decline quickly enough. Downgraded to HOLD with a 5% position for existing holders. New entry requires demonstrated margin expansion above 12%."
+    },
+    {
+      "ticker": "TTWO",
+      "name": "Take-Two Interactive Software Inc.",
+      "sector": "Communication Services",
+      "market_cap_b": 55.0,
+      "pe_ratio": 45.0,
+      "revenue_growth_pct": 25.0,
+      "profit_margin_pct": 12.0,
+      "debt_to_equity": 0.45,
+      "roe_pct": 10.0,
+      "dividend_yield_pct": 0.0,
+      "moat_score": 8,
+      "management_score": 7,
+      "growth_score": 9,
+      "valuation_score": 5,
+      "overall_score": 7.2,
+      "rating": "BUY",
+      "rating_note": "BUY maintained but position sized conservatively at 8% due to binary outcome risk",
+      "position_sizing": {
+        "portfolio_weight_pct": 8.0,
+        "entry_price_range": "$160-$180",
+        "stop_loss_pct": -20.0,
+        "target_price": "$250",
+        "time_horizon_months": 9,
+        "entry_trigger": "Buy in $160-170 range ahead of Nov 19 launch; add if early reviews/pre-orders exceed expectations",
+        "exit_trigger": "Sell immediately if further delay announced; sell 50% within 30 days of launch if first-month sales below $1B; full exit if reviews below 85 Metacritic"
+      },
+      "gta_vi_quantified_downside": {
+        "base_case": {
+          "probability_pct": 50,
+          "first_year_revenue": "$3B+",
+          "stock_impact": "+30-50% from current levels",
+          "notes": "GTA V generated $8B+ lifetime. GTA VI on larger install base with Online monetization should exceed GTA V trajectory."
+        },
+        "bull_case": {
+          "probability_pct": 25,
+          "first_year_revenue": "$4-5B",
+          "stock_impact": "+50-80%",
+          "notes": "Best-selling entertainment product ever. Massive GTA Online recurrent spending from day one."
+        },
+        "disappointing_launch": {
+          "probability_pct": 15,
+          "first_year_revenue": "$1.5-2.5B",
+          "stock_impact": "-25 to -35%",
+          "notes": "Technical issues at launch (Cyberpunk 2077 scenario), delayed Online component, or mixed critical reception. Revenue still strong in absolute terms but below priced-in expectations."
+        },
+        "further_delay_scenario": {
+          "probability_pct": 10,
+          "first_year_revenue": "N/A (pushed to 2027)",
+          "stock_impact": "-30 to -40%",
+          "notes": "Stock already down 25% in 2026 partly due to prior delays. A third delay to 2027 would severely damage credibility. Net bookings guidance would need massive revision."
+        },
+        "probability_weighted_expected_return": "+15 to +25% (weighted across all scenarios)",
+        "maximum_drawdown_risk": "-40% (further delay scenario at 10% probability)"
+      },
+      "non_gta_base_revenue": {
+        "recurring_consumer_spending": "$3.2B (GTA Online, NBA 2K VC, mobile)",
+        "nba_2k_franchise_annual": "$1.2B",
+        "mobile_zynga_annual": "$1.5B",
+        "base_eps_ex_gta_vi": "~$3.50-4.00 (implies 40-45x PE on base business alone, expensive without GTA VI)",
+        "interpretation": "Without GTA VI, TTWO trades at 40-45x base earnings, which is not justified by recurring revenue alone. The stock is essentially a call option on GTA VI's success. Position sized at 8% to reflect this binary nature."
+      },
+      "bull_case": "GTA VI launching Nov 19, 2026 is the most anticipated game ever. $3B+ first-year revenue potential. Recurring consumer spending base of $3.2B provides floor. Net bookings guidance raised to $6.4-6.5B. Record Q2 bookings demonstrate franchise momentum.",
+      "bear_case": "At 45x PE, GTA VI is fully priced in. Any delay or underwhelming reception craters the stock -30 to -40%. Base business ex-GTA VI only justifies $3.50-4.00 EPS (40-45x PE). Zynga integration underperformed. Content development costs rising. Already delayed twice.",
+      "catalyst": "Nov 19 GTA VI launch. GTA Online Day 1 monetization. Strong pre-orders and Metacritic reviews. NBA 2K continued dominance.",
+      "risk": "Third delay (10% probability, -40% impact). Technical launch issues. Underwhelming Online monetization. Microtransaction regulatory scrutiny.",
+      "thesis": "TTWO is a high-conviction, high-risk catalyst play. GTA VI probability-weighted expected return is +15 to +25%, but maximum drawdown risk is -40%. The base business without GTA VI does not justify the current valuation; investors are paying 45x PE for a franchise-dependent growth story. However, the magnitude of the GTA VI opportunity ($3-5B first year) is unmatched in gaming. Sized at 8% to limit portfolio impact from adverse scenarios while maintaining meaningful exposure to the upside."
+    },
+    {
+      "ticker": "SNAP",
+      "name": "Snap Inc.",
+      "sector": "Communication Services",
+      "market_cap_b": 8.5,
+      "pe_ratio": null,
+      "pe_ratio_note": "Not meaningfully profitable; operating at near-breakeven",
+      "revenue_2025": "$5.9B",
+      "revenue_growth_pct": 11.0,
+      "profit_margin_pct": 1.2,
+      "debt_to_equity": 1.8,
+      "roe_pct": -2.0,
+      "dividend_yield_pct": 0.0,
+      "moat_score": 4,
+      "management_score": 5,
+      "growth_score": 4,
+      "valuation_score": 3,
+      "overall_score": 3.8,
+      "rating": "SELL",
+      "position_sizing": {
+        "portfolio_weight_pct": -3.0,
+        "position_type": "SHORT or UNDERWEIGHT",
+        "entry_price_range": "Short at current levels ($5-7 range)",
+        "stop_loss_pct": 25.0,
+        "target_price": "$3.00",
+        "time_horizon_months": 12,
+        "entry_trigger": "Short on any rally above $6.50; add short on further regulatory headline",
+        "exit_trigger": "Cover if Q2 2026 revenue guidance exceeds $1.6B or DAU reverses to growth above 480M"
+      },
+      "sell_thesis_detailed": {
+        "structural_headwinds": [
+          "Stock down 51% YTD and 94% from all-time high; not merely a dip but a structural decline",
+          "DAU declined 3M QoQ to 474M, missing 478M estimate; North American DAU of 94M missed 97M projection",
+          "Q1 2026 revenue guidance $1.50-1.53B missed $1.55B consensus; pattern of consistent misses",
+          "EU Digital Services Act investigation opened March 2026; stock fell 10.7% on announcement",
+          "UK and Australia pushing stricter child safety controls; core demographic at regulatory risk",
+          "New Mexico filed lawsuit over child safety concerns",
+          "15% workforce layoff in Jan 2026 signals management desperation, not optimization"
+        ],
+        "competitive_position_deterioration": [
+          "Meta Reels and TikTok capturing attention share from Snapchat's core young demographic",
+          "Advertiser ROAS on Snap consistently below META and GOOGL, driving budget reallocation",
+          "AR/camera platform differentiation has not translated into sustainable ad revenue moat",
+          "Snapchat+ subscriptions (24M) growing but cannot offset ad revenue weakness at scale"
+        ],
+        "financial_weakness": [
+          "Near-zero profit margins after 12+ years as public company",
+          "Debt-to-equity of 1.8x with limited ability to invest in growth",
+          "$5.9B revenue growing 11% but decelerating (was 15%+ in 2024)",
+          "Not generating meaningful free cash flow to fund AI/infrastructure investments needed to compete"
+        ],
+        "downside_target": "$3.00 (50-55% below current levels) based on 1.0x EV/Revenue on $5.5B 2026 estimated revenue, reflecting structural impairment"
+      },
+      "bull_case": "In-App Optimizations revenue grew 89% YoY. Snapchat+ at 24M subscribers. AR technology moat. Young demographic loyalty. Potential acquisition target.",
+      "bear_case": "94% off ATH is not a value trap recovery story; it reflects permanent competitive impairment. Regulatory risk from EU, UK, Australia, US states specifically targeting Snap's core young-user product. DAU declining. Revenue guidance consistently missing. Near-zero profitability after 12+ years. Cannot compete with META/GOOGL on ad tech infrastructure or AI.",
+      "catalyst": "None visible. Every potential positive (AR, Snapchat+, in-app purchases) is too small to offset structural ad revenue and user growth challenges.",
+      "risk": "To the SHORT: acquisition by a larger tech company at premium. Unexpected return to DAU growth. Regulatory pressure eases.",
+      "thesis": "SNAP is a SELL. The company faces a lethal combination of DAU decline, revenue guidance misses, near-zero profitability, regulatory assault from multiple jurisdictions targeting its core young-user product, and intensifying competition from META and TikTok. The stock is 94% off its ATH because the business has structurally deteriorated, not because of temporary headwinds. The 15% layoff and executive reshuffling signal management recognizes the severity. Short position sized at 3% to limit risk from potential acquisition premium."
+    },
+    {
+      "ticker": "PINS",
+      "name": "Pinterest Inc.",
+      "sector": "Communication Services",
+      "market_cap_b": 18.0,
+      "pe_ratio": 30.0,
+      "revenue_2025": "$3.6B",
+      "revenue_growth_pct": 14.0,
+      "profit_margin_pct": 8.0,
+      "debt_to_equity": 0.05,
+      "roe_pct": 10.0,
+      "dividend_yield_pct": 0.0,
+      "moat_score": 5,
+      "management_score": 6,
+      "growth_score": 5,
+      "valuation_score": 4,
+      "overall_score": 4.5,
+      "rating": "SELL",
+      "position_sizing": {
+        "portfolio_weight_pct": -2.0,
+        "position_type": "SHORT or UNDERWEIGHT",
+        "entry_price_range": "Short at current levels ($24-28 range)",
+        "stop_loss_pct": 20.0,
+        "target_price": "$16.00",
+        "time_horizon_months": 12,
+        "entry_trigger": "Short on any bounce above $27; add on next revenue guidance miss",
+        "exit_trigger": "Cover if Q2 2026 revenue guidance exceeds $1.05B or new CEO drives meaningful ad product improvement"
+      },
+      "sell_thesis_detailed": {
+        "structural_headwinds": [
+          "Stock down 30% YTD and 40% over past 12 months despite 10 consecutive quarters of record MAU",
+          "Q4 2025 revenue of $1.319B missed $1.33B consensus; Q1 2026 guidance of $951-971M missed $980M consensus",
+          "Core advertiser base (home goods, furniture, lifestyle retailers) directly hit by tariff shock in late 2025",
+          "MAU growing 12% to 619M but revenue growing only 14%; monetization per user remains weak relative to META",
+          "ARPU for international users (majority of growth) is a fraction of US ARPU",
+          "15% workforce layoff in Jan 2026 signals cost crisis"
+        ],
+        "tariff_exposure": [
+          "Pinterest's core advertiser base is home goods and lifestyle retailers heavily exposed to import tariffs",
+          "Late 2025 tariff shock on imported furniture and home goods directly impacted Pinterest's largest ad category",
+          "Unlike META/GOOGL with diversified advertiser bases, Pinterest has concentrated exposure to tariff-sensitive categories",
+          "This is a structural risk, not cyclical: tariff policy is unlikely to reverse in 2026-2027"
+        ],
+        "competitive_position": [
+          "Google Shopping and Instagram Shopping offering superior ad tech and targeting",
+          "Amazon Ads capturing purchase-intent traffic that Pinterest competes for",
+          "AI-powered visual search by Google Lens reducing Pinterest's differentiation",
+          "User engagement metrics (time on platform) declining as short-form video captures attention"
+        ],
+        "downside_target": "$16.00 (35-40% below current) based on 4.5x EV/Revenue on $3.8B 2026 estimated revenue"
+      },
+      "bull_case": "619M MAU growing 12%. Visual search differentiation. High purchase intent user base. New CBO from Spotify and CMO from Amazon could reinvigorate ad sales. Clean balance sheet (D/E 0.05).",
+      "bear_case": "Revenue misses despite MAU growth reveal monetization failure. Core home/lifestyle advertiser base structurally impaired by tariffs. 30x PE is expensive for 14% revenue growth and 8% margins. Cannot compete with META/GOOGL on ad tech. International ARPU monetization remains elusive.",
+      "catalyst": "New executive team improves ad product. Tariff relief. AI-powered shopping features drive higher conversion.",
+      "risk": "To the SHORT: new executive team delivers faster-than-expected turnaround. Tariff policy reversal. Acquisition by a larger platform.",
+      "thesis": "PINS is a SELL. The disconnect between 12% MAU growth and persistent revenue guidance misses reveals a fundamental monetization problem. Pinterest's concentrated advertiser base in home/lifestyle categories makes it uniquely vulnerable to the tariff environment. At 30x PE with only 8% profit margins and 14% revenue growth, the valuation assumes improvement that is not materializing. The 15% layoff and executive overhaul signal management panic. Short position sized at 2% given clean balance sheet and acquisition possibility."
+    }
+  ],
+
+  "sector_outlook": "Communication Services remains bifurcated in April 2026. AI-driven advertising giants (Alphabet, Meta) are separating from struggling small-cap social platforms (Snap, Pinterest) and traditional media. The sector gained 23.5% over the past 12 months, driven by mega-cap AI beneficiaries. Key dynamics: (1) Google and Meta combined earned $140B in Q4 2025 ad revenue alone, with the gap between them at its narrowest in 14 years; (2) streaming profitability is real, with Netflix at 31.5% margin target and Disney DTC profitable; (3) the TikTok ban was averted via USDS JV restructuring in Jan 2026, maintaining competitive pressure on Reels and YouTube Shorts; (4) antitrust is the defining regulatory theme, with Google facing two separate rulings and the DC Circuit appeal; (5) cord-cutting 2.0 is now affecting broadband (Comcast lost 711K internet subs in 2025), benefiting T-Mobile's fixed wireless; (6) content costs are rising ($20B Netflix, $24B Disney) but growing slower than revenue, demonstrating operating leverage. The portfolio is constructed to overweight AI ad beneficiaries (42% GOOGL+META) while maintaining diversification through telecom (14% TMUS), streaming (26% NFLX+DIS), and selective shorts (5% SNAP+PINS). Global digital ad spend surpassed $1.14 trillion in 2025 with no downturn evident, though tariff-driven pullbacks are hurting smaller, category-concentrated platforms disproportionately.",
+
+  "key_themes": [
+    "AI monetization inflection: GOOGL earning $76-80B from AI-enhanced services (Cloud+Gemini+AI Overviews); META generating $8-12B incremental via AI-driven 10% CPM uplift",
+    "Streaming profitability era: Netflix targeting 31.5% operating margin on $51B revenue; Disney DTC at $450M quarterly profit; content cost leverage improving as revenue outgrows spending",
+    "Digital ad duopoly tightening: GOOGL ($229B) and META ($220B+) 2026 ad revenue gap at narrowest in 14 years; combined $140B quarterly ad revenue in Q4 2025",
+    "Antitrust reshaping: Google Search behavioral remedies (Chrome kept); ad tech AdX divestiture ruling imminent; DC Circuit appeal could expand remedies",
+    "Cord-cutting 2.0: Comcast lost 1.155M TV + 711K broadband subs in 2025; T-Mobile fixed wireless capturing share as cable disruption extends to internet",
+    "Small-cap social implosion: SNAP -51% YTD with DAU decline and regulatory assault; PINS -30% with tariff-exposed advertiser base; structural not cyclical",
+    "TikTok resolution: USDS JV averted ban Jan 2026; competitive pressure resumes for Reels/Shorts; algorithm retraining on Oracle creates temporary uncertainty",
+    "Content cost discipline: Netflix $20B (39% of revenue, declining ratio); Disney $24B (26% of revenue); both growing slower than revenue demonstrating leverage",
+    "Gaming super-cycle: GTA VI Nov 19 launch; $3-5B first-year potential but stock already reflects expectations at 45x PE"
+  ],
+
+  "risks": [
+    "Google antitrust worst-case: AdX+DFP forced separation (15% probability) plus expanded Search remedies on appeal (20% probability) could cost -$2.50+ combined EPS",
+    "Digital ad downturn correlation: GOOGL+META at 0.87 correlation; combined 42% portfolio weight means a 20% ad spending decline would hit portfolio hard (-25 to -40% on both names)",
+    "AI CapEx overcapitalization: GOOGL $175-185B + META $115-135B = $300B+ combined 2026 CapEx; if AI returns disappoint, margin compression could be severe",
+    "Reality Labs opportunity cost: $40B+ in operating losses over 2026-2027 fully funded by FoA but represents massive capital that could be returned to shareholders",
+    "Content cost inflation: Netflix 'not near a ceiling' on content spend; Disney sports rights renewals (NBA, NFL) could push costs above $15B for sports alone",
+    "Tariff-driven ad pullback: Disproportionately affects PINS (home goods exposure) and SNAP (SMB advertiser base); could spread to larger platforms if tariffs broaden",
+    "ESPN reporting opacity: Disney stopped disclosing subscriber/ARPU metrics, making ESPN standalone app performance impossible to independently verify",
+    "GTA VI binary risk: 10% probability of further delay (-40% TTWO impact); 15% probability of disappointing launch (-25 to -35%)",
+    "Spotify margin trap: 65x PE requires margin expansion that is not yet demonstrated; ad revenue weakness suggests monetization challenges beyond currency",
+    "EU regulatory cascade: Digital Markets Act, Digital Services Act, AI Act all creating compliance costs; Snap EU investigation could set precedent"
+  ],
+
+  "judge_feedback_addressed": {
+    "1_googl_duplication_resolved": "GOOGL is owned by the Communication Services report with Comms-specific thesis (advertising, YouTube, Search, ad tech). Technology report may reference for Cloud/AI infrastructure. Explicit ownership note added to GOOGL pick.",
+    "2_sell_recommendations_added": "Two SELL recommendations added: SNAP (structural DAU decline, regulatory assault, near-zero profitability) and PINS (monetization failure, tariff-exposed advertisers, revenue guidance misses). Both include short position sizing with entry/exit criteria.",
+    "3_spot_margin_timeline": "SPOT downgraded from BUY to HOLD. Detailed margin expansion timeline provided: 12% margin by mid-2027 is plausible but even at optimistic assumptions, valuation math does not work at 65x PE. New entry requires demonstrated margin expansion.",
+    "4_ttwo_downside_quantified": "Four GTA VI scenarios quantified with probabilities: base case (50%, $3B+, +30-50%), bull (25%, $4-5B, +50-80%), disappointing launch (15%, $1.5-2.5B, -25 to -35%), further delay (10%, -30 to -40%). Base business ex-GTA VI analyzed at $3.50-4.00 EPS (40-45x PE). Position sized at 8%.",
+    "5_meta_reality_labs_modeled": "Full ex-Reality Labs valuation: FoA 2025 operating income $90.5B; after stripping $19.19B RL loss and taxes, ex-RL EPS is $38.12, yielding 18.1x PE vs reported 23.8x. Core business is cheaper than GOOGL and S&P 500.",
+    "6_portfolio_construction_added": "Full portfolio allocation with 9 positions (7 long, 2 short), correlation matrix, position sizing, and entry/exit criteria for every pick.",
+    "7_doj_antitrust_scenarios": "Probability-weighted scenario analysis for both Search case (3 scenarios) and Ad Tech case (4 scenarios). Combined probability-weighted EPS impact: -$0.35 to -$0.55.",
+    "8_googl_meta_ad_correlation": "0.87 correlation coefficient modeled. Combined weight capped at 42%. Joint 20% ad downturn scenario: GOOGL -25 to -35%, META -30 to -40%. TMUS (0.15 correlation) provides diversification.",
+    "9_nflx_ad_tier_analysis": "CPM range ($20-65, blended $35-40), TAM ($120B+ global video ads), $3B target is floor not ceiling, growth path to $8B by 2030 at 27% CAGR.",
+    "10_dis_espn_analysis": "24.1M last reported subs, $29.99 Unlimited/$11.99 Select pricing, break-even at 30-35M subs at $18 blended ARPU, reporting opacity risk from Disney stopping metric disclosure.",
+    "11_tiktok_regulatory": "Ban averted via USDS JV Jan 2026. ByteDance 19.9% minority stake. Algorithm licensing from ByteDance, retraining on Oracle. Competitive pressure resumes for META Reels and GOOGL YouTube Shorts.",
+    "12_ai_revenue_quantified": "GOOGL: $1.2B Gemini subs + $3-5B API/enterprise + $70B+ Cloud (AI-driven) + $2-4B AI Overviews = $76-80B total. META: $60B Advantage+ run rate (AI-enhanced), $8-12B incremental CPM uplift, <$1B direct AI product revenue.",
+    "13_spot_ad_decline_explained": "Q4 reported -4% was currency-driven (constant-currency +4%). Strategic pivot to premium ad formats (video takeovers, branded playlists, AI spots). Still a yellow flag: +4% constant-currency is weak vs 17% total revenue growth.",
+    "14_content_cost_analysis": "NFLX $20B (39% of revenue, 10% growth) vs DIS $24B (26% of revenue, 50/50 sports/entertainment split). Both growing slower than revenue, demonstrating content leverage.",
+    "15_position_sizing_complete": "All 9 positions have entry price ranges, stop losses, target prices, time horizons, and specific entry/exit triggers."
+  }
+}

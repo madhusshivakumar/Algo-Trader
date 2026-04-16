@@ -236,3 +236,59 @@ class AlertManager:
         """Alert on bot shutdown."""
         msg = f"Trading bot shutting down (reason: {reason})"
         self.alert("shutdown", msg, AlertLevel.WARNING, {"Reason": reason})
+
+    def order_rejected(self, symbol: str, side: str, amount: float, reason: str):
+        """Alert when a broker rejects an order."""
+        msg = f"Order rejected: {side.upper()} {symbol} ${amount:.2f} — {reason}"
+        data = {"Symbol": symbol, "Side": side, "Amount": f"${amount:.2f}",
+                "Rejection reason": reason[:200]}
+        self.alert("order_rejected", msg, AlertLevel.WARNING, data)
+
+    def broker_api_failure(self, method: str, consecutive_count: int, error: str):
+        """Alert when the broker API fails repeatedly (3+ in a row)."""
+        msg = (f"Broker API failure — {method} failed {consecutive_count} times in a row "
+               f"({error[:100]})")
+        data = {"Method": method, "Consecutive failures": str(consecutive_count),
+                "Last error": error[:200]}
+        self.alert("broker_api_failure", msg, AlertLevel.CRITICAL, data)
+
+    def external_position(self, symbol: str, qty: float, value: float):
+        """Alert when an unauthorized external position is detected."""
+        msg = (f"External position detected — {symbol} qty={qty:.4f} "
+               f"value=${value:.2f} (not opened by this bot)")
+        data = {"Symbol": symbol, "Quantity": f"{qty:.4f}",
+                "Market value": f"${value:.2f}"}
+        self.alert("external_position", msg, AlertLevel.WARNING, data)
+
+    def symbol_degraded(self, symbol: str, recent_sharpe: float, lookback_days: int):
+        """Alert when drift detection marks a symbol's recent performance degraded."""
+        msg = (f"Symbol degraded — {symbol} recent Sharpe {recent_sharpe:.2f} "
+               f"over {lookback_days}d. Position size will be reduced 70%.")
+        data = {"Symbol": symbol, "Recent Sharpe": f"{recent_sharpe:.2f}",
+                "Lookback days": str(lookback_days)}
+        self.alert("symbol_degraded", msg, AlertLevel.WARNING, data)
+
+    def intraday_halt(self, realized_pnl: float, unrealized_pnl: float,
+                     threshold_usd: float):
+        """Alert when the intraday P&L circuit breaker halts trading."""
+        msg = (f"TRADING HALTED — intraday loss breached threshold. "
+               f"Realized=${realized_pnl:.2f}, unrealized=${unrealized_pnl:.2f}, "
+               f"threshold=${threshold_usd:.2f}")
+        data = {"Realized PnL": f"${realized_pnl:.2f}",
+                "Unrealized PnL": f"${unrealized_pnl:.2f}",
+                "Threshold": f"${threshold_usd:.2f}"}
+        self.alert("intraday_halt", msg, AlertLevel.CRITICAL, data)
+
+    def liquidity_skip(self, symbol: str, spread_bps: float, limit_bps: float):
+        """Alert (throttled) when a buy is skipped due to wide spread."""
+        msg = (f"Liquidity skip: {symbol} spread {spread_bps:.1f} bps > "
+               f"limit {limit_bps:.1f} bps")
+        data = {"Symbol": symbol, "Spread (bps)": f"{spread_bps:.1f}",
+                "Limit (bps)": f"{limit_bps:.1f}"}
+        self.alert("liquidity_skip", msg, AlertLevel.INFO, data)
+
+    def live_mode_override(self):
+        """Alert when the paper->live safety gate is overridden."""
+        msg = ("Paper->live safety gate OVERRIDDEN via I_UNDERSTAND_THE_RISK. "
+               "Bot is now trading with real money.")
+        self.alert("live_mode_override", msg, AlertLevel.CRITICAL)

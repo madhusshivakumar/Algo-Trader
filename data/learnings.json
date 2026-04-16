@@ -196,6 +196,361 @@
           "rl_better": null
         }
       }
+    },
+    {
+      "date": "2026-04-06",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [
+          "BTC/USD",
+          "ETH/USD",
+          "AMD",
+          "TSLA",
+          "NFLX",
+          "SOFI",
+          "INTC",
+          "RIVN",
+          "PLTR",
+          "MRVL",
+          "BAC",
+          "CRM",
+          "LYFT",
+          "ARKK",
+          "IWM",
+          "C"
+        ],
+        "worst_performing_symbols": [],
+        "strategy_notes": {
+          "Mean Rev Aggressive": "Strong: 94% win rate, $243.37 P&L"
+        },
+        "risk_observations": {
+          "avg_drawdown_pct": 0.1245,
+          "max_single_loss": -12.45,
+          "overall_win_rate": 90.0,
+          "total_pnl": 245.9
+        },
+        "patterns": [
+          "Strategy 'Mean Rev Aggressive' performing well: 94% win rate on 17 sells"
+        ],
+        "symbols_to_avoid": [],
+        "symbols_to_favor": [
+          "BTC/USD",
+          "ETH/USD",
+          "AMD",
+          "TSLA",
+          "NFLX",
+          "SOFI",
+          "INTC",
+          "RIVN",
+          "PLTR",
+          "MRVL",
+          "BAC",
+          "CRM",
+          "LYFT",
+          "ARKK",
+          "IWM",
+          "C"
+        ],
+        "rl_comparison": {
+          "rl_selected": {
+            "trades": 0,
+            "sells": 0,
+            "pnl": 0,
+            "win_rate": 0
+          },
+          "optimizer_selected": {
+            "trades": 20,
+            "sells": 20,
+            "pnl": 245.9,
+            "win_rate": 90.0
+          },
+          "rl_better": null
+        }
+      }
+    },
+    {
+      "date": "2026-04-07",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [
+          "ETH/USD"
+        ],
+        "worst_performing_symbols": [
+          "BTC/USD"
+        ],
+        "strategy_notes": {},
+        "risk_observations": {
+          "avg_drawdown_pct": 0.4005,
+          "max_single_loss": -40.05,
+          "overall_win_rate": 50.0,
+          "total_pnl": 77.42
+        },
+        "patterns": [],
+        "symbols_to_avoid": [
+          "BTC/USD"
+        ],
+        "symbols_to_favor": [
+          "ETH/USD"
+        ],
+        "rl_comparison": {
+          "rl_selected": {
+            "trades": 0,
+            "sells": 0,
+            "pnl": 0,
+            "win_rate": 0
+          },
+          "optimizer_selected": {
+            "trades": 2,
+            "sells": 2,
+            "pnl": 77.42,
+            "win_rate": 50.0
+          },
+          "rl_better": null
+        }
+      }
+    },
+    {
+      "date": "2026-04-09",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [
+          "INTC",
+          "NFLX",
+          "IWM",
+          "SOFI"
+        ],
+        "worst_performing_symbols": [],
+        "strategy_notes": {
+          "Mean Rev Aggressive": "Strong: 100% win rate, $801.93 P&L"
+        },
+        "risk_observations": {
+          "avg_drawdown_pct": 0.4818,
+          "max_single_loss": 48.18,
+          "overall_win_rate": 100.0,
+          "total_pnl": 2830.87
+        },
+        "patterns": [
+          "Strategy 'Mean Rev Aggressive' performing well: 100% win rate on 3 sells"
+        ],
+        "symbols_to_avoid": [],
+        "symbols_to_favor": [
+          "INTC",
+          "NFLX",
+          "IWM",
+          "SOFI"
+        ],
+        "rl_comparison": {
+          "rl_selected": {
+            "trades": 0,
+            "sells": 0,
+            "pnl": 0,
+            "win_rate": 0
+          },
+          "optimizer_selected": {
+            "trades": 4,
+            "sells": 4,
+            "pnl": 2830.87,
+            "win_rate": 100.0
+          },
+          "rl_better": null
+        }
+      }
+    },
+    {
+      "date": "2026-04-10",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [
+          "NFLX",
+          "BTC/USD"
+        ],
+        "worst_performing_symbols": [
+          "LYFT"
+        ],
+        "strategy_notes": {
+          "Mean Rev Aggressive": "Strong: 75% win rate, $260.83 P&L"
+        },
+        "risk_observations": {
+          "avg_drawdown_pct": 1.2294,
+          "max_single_loss": -122.94,
+          "overall_win_rate": 60.0,
+          "total_pnl": 137.9
+        },
+        "patterns": [
+          "Strategy 'Mean Rev Aggressive' performing well: 75% win rate on 4 sells",
+          "Large loss: LYFT lost $122.94 (trailing stop)"
+        ],
+        "symbols_to_avoid": [
+          "LYFT"
+        ],
+        "symbols_to_favor": [
+          "NFLX",
+          "BTC/USD"
+        ],
+        "rl_comparison": {
+          "rl_selected": {
+            "trades": 0,
+            "sells": 0,
+            "pnl": 0,
+            "win_rate": 0
+          },
+          "optimizer_selected": {
+            "trades": 5,
+            "sells": 5,
+            "pnl": 137.9,
+            "win_rate": 60.0
+          },
+          "rl_better": null
+        }
+      }
+    },
+    {
+      "date": "2026-04-13",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [
+          "INTC",
+          "CRM"
+        ],
+        "worst_performing_symbols": [
+          "LYFT"
+        ],
+        "strategy_notes": {
+          "mean_reversion_aggressive": "Strong: 67% win rate, $683.59 P&L"
+        },
+        "risk_observations": {
+          "avg_drawdown_pct": 0.4695,
+          "max_single_loss": -46.95,
+          "overall_win_rate": 66.7,
+          "total_pnl": 683.59
+        },
+        "patterns": [
+          "Strategy 'mean_reversion_aggressive' performing well: 67% win rate on 3 sells"
+        ],
+        "symbols_to_avoid": [
+          "LYFT"
+        ],
+        "symbols_to_favor": [
+          "INTC",
+          "CRM"
+        ],
+        "rl_comparison": {
+          "rl_selected": {
+            "trades": 0,
+            "sells": 0,
+            "pnl": 0,
+            "win_rate": 0
+          },
+          "optimizer_selected": {
+            "trades": 3,
+            "sells": 3,
+            "pnl": 683.59,
+            "win_rate": 66.7
+          },
+          "rl_better": null
+        }
+      }
+    },
+    {
+      "date": "2026-04-14",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [
+          "ETH/USD",
+          "BTC/USD",
+          "NFLX",
+          "LYFT",
+          "CRM",
+          "BAC"
+        ],
+        "worst_performing_symbols": [],
+        "strategy_notes": {
+          "Mean Rev Aggressive": "Strong: 86% win rate, $1040.21 P&L"
+        },
+        "risk_observations": {
+          "avg_drawdown_pct": 0.0077,
+          "max_single_loss": -0.77,
+          "overall_win_rate": 90.0,
+          "total_pnl": 2430.89
+        },
+        "patterns": [
+          "Strategy 'Mean Rev Aggressive' performing well: 86% win rate on 7 sells"
+        ],
+        "symbols_to_avoid": [],
+        "symbols_to_favor": [
+          "ETH/USD",
+          "BTC/USD",
+          "NFLX",
+          "LYFT",
+          "CRM",
+          "BAC"
+        ],
+        "rl_comparison": {
+          "rl_selected": {
+            "trades": 0,
+            "sells": 0,
+            "pnl": 0,
+            "win_rate": 0
+          },
+          "optimizer_selected": {
+            "trades": 10,
+            "sells": 10,
+            "pnl": 2430.89,
+            "win_rate": 90.0
+          },
+          "rl_better": null
+        }
+      }
+    },
+    {
+      "date": "2026-04-15",
+      "source": "trade_analyzer",
+      "findings": {
+        "best_performing_symbols": [
+          "ETH/USD",
+          "AMD",
+          "C"
+        ],
+        "worst_performing_symbols": [
+          "BTC/USD",
+          "RIVN"
+        ],
+        "strategy_notes": {},
+        "risk_observations": {
+          "avg_drawdown_pct": 2.6365,
+          "max_single_loss": -263.65,
+          "overall_win_rate": 50.0,
+          "total_pnl": 326.05
+        },
+        "patterns": [
+          "Large loss: BTC/USD lost $52.49 (Mean rev sell: RSI=73, %B=1.34 | sentiment=+0.03)",
+          "Large loss: RIVN lost $263.65 (trailing stop)"
+        ],
+        "symbols_to_avoid": [
+          "BTC/USD",
+          "RIVN"
+        ],
+        "symbols_to_favor": [
+          "ETH/USD",
+          "AMD",
+          "C"
+        ],
+        "rl_comparison": {
+          "rl_selected": {
+            "trades": 0,
+            "sells": 0,
+            "pnl": 0,
+            "win_rate": 0
+          },
+          "optimizer_selected": {
+            "trades": 8,
+            "sells": 8,
+            "pnl": 326.05,
+            "win_rate": 50.0
+          },
+          "rl_better": null
+        }
+      }
     }
   ]
 }

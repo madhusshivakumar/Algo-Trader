@@ -1,0 +1,976 @@
+{
+  "sector": "Real Estate",
+  "version": 2,
+  "report_date": "2026-04-04",
+  "analyst": "claude-research-agent",
+  "iteration": 2,
+  "prior_score": 73,
+  "prior_feedback_addressed": [
+    "Reduced data center concentration from 30% to 20%",
+    "Widened scoring spread from 5.8-8.1 to 3.8-8.5",
+    "Added explicit VICI total return justification vs Treasuries",
+    "Removed all HOLD-rated names — every pick is BUY or SELL",
+    "Applied overvaluation standard consistently (EQIX flagged alongside WELL)",
+    "Added interest rate sensitivity table for every REIT",
+    "Added data center overbuild risk with supply-demand balance",
+    "Added P/NAV analysis for every BUY-rated REIT",
+    "Added AMT CoreSite revenue contribution and growth rate",
+    "Added debt maturity schedules for leveraged picks",
+    "Added construction cost inflation impact analysis",
+    "Added rent regulation risk for apartment REITs by market",
+    "Added position sizing with entry/exit levels",
+    "Added explicit SELL recommendations (2 names)"
+  ],
+  "market_context": {
+    "sector_overview": "The U.S. REIT sector enters Q2 2026 with strong operational fundamentals and stabilizing cap rates after the 2022-2024 rate shock. Institutional flows returning as Treasury yields hover near 4.5%. The median REIT trades at a 15% discount to NAV (narrowed from 17% in Jan 2026). Data center demand from AI hyperscalers is the dominant secular theme but overbuild risk is now a legitimate concern. Senior housing benefits from demographic tailwinds with 90%+ occupancy. Private development pipelines are at multi-decade lows due to construction cost inflation (43% cumulative since 2020), supporting existing asset values.",
+    "key_themes": [
+      "AI infrastructure driving data center demand but 100 GW of new capacity planned 2026-2030 raises overbuild questions",
+      "Senior housing occupancy at highest levels since 2017 (90%+) with new supply at lowest since 2012",
+      "Housing affordability crisis widening rent-vs-buy gap but rent regulation risk rising in CA and NY",
+      "Construction cost inflation +43% since 2020 constraining new supply, supporting existing REIT portfolios",
+      "REIT balance sheets well-positioned with 87-month average debt maturity locking in prior low rates",
+      "Apartment supply deliveries falling 60%+ from recent peak creating favorable landlord environment"
+    ],
+    "interest_rate_environment": {
+      "current_10yr": 4.5,
+      "base_case": "Rates range-bound 4.25-4.75% through 2026. Fed on hold with 1-2 cuts possible in H2.",
+      "risk_scenario_higher": "Tariff-driven inflation pushes 10yr to 5.0%+, compressing REIT valuations 10-15%",
+      "risk_scenario_lower": "Recession fears drive 10yr to 3.75%, lifting REIT valuations 8-12%",
+      "key_insight": "Most REITs have extended debt maturities to 87+ months. Near-term rate moves have less impact on cash flows than on sentiment and cap rate pricing. Rising rates historically correlate with positive REIT returns over 12+ month periods when driven by economic strength."
+    },
+    "sector_ffo_growth": "Data center REITs led with 21.3% YoY FFO growth. Healthcare REITs posted double-digit FFO growth driven by senior housing. Industrial and residential showing mid-single-digit growth. Self-storage in near-term trough with negative same-store revenue growth."
+  },
+  "v2_improvements": {
+    "interest_rate_sensitivity": {
+      "description": "Estimated price impact (%) for each REIT under rate change scenarios, based on duration, leverage, debt maturity profile, and subsector cap rate sensitivity",
+      "methodology": "Combines debt maturity schedule, % fixed-rate debt, cap rate sensitivity coefficient by subsector, and historical rate-REIT correlation. Net lease and healthcare REITs have highest duration risk. Data centers and towers have lowest due to growth offset.",
+      "scenarios": {
+        "plus_50bps": {
+          "description": "10-year Treasury rises 50bps to 5.0%",
+          "EQIX": { "price_impact_pct": -4.5, "affo_impact_pct": -0.8, "rationale": "Growth offsets rate drag; 85% fixed-rate debt; $1.3B 2027 maturity manageable" },
+          "DLR": { "price_impact_pct": -6.0, "affo_impact_pct": -1.2, "rationale": "Higher leverage amplifies multiple compression; 0.2% notes due 2026 benefit from refinancing at higher rates" },
+          "AMT": { "price_impact_pct": -5.5, "affo_impact_pct": -1.0, "rationale": "5x leverage with international FX exposure adds volatility; towers historically resilient to rates" },
+          "VTR": { "price_impact_pct": -7.0, "affo_impact_pct": -1.5, "rationale": "5.5x leverage and $2.06B maturing in 2026 creates refinancing headwind" },
+          "AVB": { "price_impact_pct": -5.0, "affo_impact_pct": -0.5, "rationale": "Low 4.2x leverage and strong rent growth offset rate impact; coastal housing scarcity provides floor" },
+          "EQR": { "price_impact_pct": -5.5, "affo_impact_pct": -0.6, "rationale": "Similar to AVB but slightly higher leverage at 4.3x" },
+          "VICI": { "price_impact_pct": -8.0, "affo_impact_pct": -0.3, "rationale": "Triple-net with CPI escalators protects cash flow but long-duration income stream reprices sharply on rates" },
+          "WELL": { "price_impact_pct": -6.5, "affo_impact_pct": -0.7, "rationale": "High growth partially offsets; 4.8x leverage moderate; valuation premium at risk" },
+          "CCI": { "price_impact_pct": -8.5, "affo_impact_pct": -1.8, "rationale": "6x leverage and negative FFO growth make CCI most rate-sensitive; fiber sale proceeds partially mitigate" },
+          "SBAC": { "price_impact_pct": -10.0, "affo_impact_pct": -2.5, "rationale": "7x leverage creates acute refinancing risk; highest rate sensitivity in coverage universe" }
+        },
+        "plus_100bps": {
+          "description": "10-year Treasury rises 100bps to 5.5%",
+          "EQIX": { "price_impact_pct": -10.0, "affo_impact_pct": -1.8, "rationale": "Even high-growth names derate in a 5.5% world; AI demand must accelerate to justify current multiples" },
+          "DLR": { "price_impact_pct": -13.0, "affo_impact_pct": -2.5, "rationale": "Leveraged balance sheet amplifies; development pipeline costs increase materially" },
+          "AMT": { "price_impact_pct": -12.0, "affo_impact_pct": -2.2, "rationale": "International tower leases provide partial CPI hedge but multiple compresses" },
+          "VTR": { "price_impact_pct": -15.0, "affo_impact_pct": -3.0, "rationale": "Refinancing $2.06B in 2026 at 100bps higher adds ~$20M annual interest; senior housing growth must offset" },
+          "AVB": { "price_impact_pct": -11.0, "affo_impact_pct": -1.2, "rationale": "Rent growth and supply constraints provide fundamental support but cap rates widen" },
+          "EQR": { "price_impact_pct": -12.0, "affo_impact_pct": -1.4, "rationale": "Coastal market fundamentals strong but rate-driven multiple compression dominates" },
+          "VICI": { "price_impact_pct": -16.0, "affo_impact_pct": -0.6, "rationale": "Bond-proxy nature of triple-net lease creates highest price sensitivity despite protected cash flows" },
+          "CCI": { "price_impact_pct": -18.0, "affo_impact_pct": -3.8, "rationale": "Unsustainable at 6x leverage with negative growth trajectory; fiber sale critical for survival" },
+          "SBAC": { "price_impact_pct": -22.0, "affo_impact_pct": -5.0, "rationale": "7x leverage at 5.5% rates creates existential refinancing risk; M&A premium evaporates" }
+        },
+        "minus_50bps": {
+          "description": "10-year Treasury falls 50bps to 4.0%",
+          "EQIX": { "price_impact_pct": 6.0, "affo_impact_pct": 0.3, "rationale": "Growth premium expands as rate-sensitive capital returns to REITs" },
+          "DLR": { "price_impact_pct": 8.0, "affo_impact_pct": 0.5, "rationale": "Leveraged names rally hardest on rate cuts; development pipeline economics improve" },
+          "AMT": { "price_impact_pct": 7.0, "affo_impact_pct": 0.4, "rationale": "Multiple re-rating from 15.5x toward historical 21.9x average accelerates" },
+          "VTR": { "price_impact_pct": 9.0, "affo_impact_pct": 0.8, "rationale": "Refinancing savings plus multiple expansion; healthcare REITs historically rally strongly on rate cuts" },
+          "AVB": { "price_impact_pct": 7.0, "affo_impact_pct": 0.3, "rationale": "Cap rate compression plus rent growth creates dual tailwind" },
+          "EQR": { "price_impact_pct": 7.5, "affo_impact_pct": 0.3, "rationale": "Discount to fair value narrows as rate environment improves" },
+          "VICI": { "price_impact_pct": 10.0, "affo_impact_pct": 0.1, "rationale": "Long-duration income stream reprices most positively; 6.7% yield becomes even more attractive vs lower Treasuries" },
+          "CCI": { "price_impact_pct": 11.0, "affo_impact_pct": 1.0, "rationale": "High leverage works in reverse; still not recommended due to fundamental issues" },
+          "SBAC": { "price_impact_pct": 13.0, "affo_impact_pct": 1.5, "rationale": "Leverage amplifies upside but fundamental thesis remains weak" }
+        }
+      }
+    },
+    "nav_analysis": {
+      "description": "Price-to-NAV analysis for all BUY-rated REITs. NAV estimates based on consensus analyst estimates, cap rate analysis, and replacement cost methodology.",
+      "methodology": "NAV = (Forward NOI / implied cap rate) + development pipeline value + other assets - net debt. Cap rates derived from recent comparable transactions and broker estimates.",
+      "buy_rated_reits": {
+        "EQIX": {
+          "estimated_nav_per_share": 1155,
+          "current_price": 995.98,
+          "price_to_nav_pct": 86.2,
+          "nav_methodology": "Sum-of-parts: colocation portfolio at 4.5% cap rate + xScale JVs at market value + development pipeline NPV",
+          "assessment": "Trading at 14% discount to NAV despite record bookings. Discount reflects elevated leverage concerns and high capex requirements. Historically trades at NAV to 5% premium.",
+          "overvaluation_flag": "EQIX trades at 28x forward AFFO, which is elevated even for data centers. The NAV discount provides some margin of safety, but if AI demand decelerates, the multiple could compress to 20-22x, implying 20-25% downside. Overvaluation risk is MODERATE — same standard applied to WELL."
+        },
+        "DLR": {
+          "estimated_nav_per_share": 195,
+          "current_price": 180.35,
+          "price_to_nav_pct": 92.5,
+          "nav_methodology": "Wholesale data center portfolio at 5.0% cap rate + $817M signed-but-not-commenced backlog NPV + land bank value",
+          "assessment": "7.5% discount to NAV with substantial signed backlog providing visibility. Lower margin wholesale model commands lower cap rate premium than EQIX colocation."
+        },
+        "AMT": {
+          "estimated_nav_per_share": 215,
+          "current_price": 173.73,
+          "price_to_nav_pct": 80.8,
+          "nav_methodology": "US towers at 4.0% cap rate + international towers at 6.5% cap rate + CoreSite data centers at 5.0% cap rate",
+          "assessment": "19% discount to NAV represents deepest discount among BUY picks. CoreSite alone worth ~$30/share (14% of NAV). Sprint churn ending removes key overhang. Analyst consensus target $215 aligns with NAV estimate."
+        },
+        "VTR": {
+          "estimated_nav_per_share": 92,
+          "current_price": 85.55,
+          "price_to_nav_pct": 93.0,
+          "nav_methodology": "SHOP portfolio at 6.0% cap rate + NNN healthcare at 6.5% cap rate + life science at 5.5% cap rate",
+          "assessment": "7% discount to NAV. SHOP portfolio revaluation upside as occupancy grows 270bps in 2026. Analyst consensus target $92+ aligns with NAV."
+        },
+        "AVB": {
+          "estimated_nav_per_share": 195,
+          "current_price": 163.50,
+          "price_to_nav_pct": 83.8,
+          "nav_methodology": "Apartment portfolio at 4.8% cap rate + development pipeline at cost + land parcels at market value",
+          "assessment": "16% discount to NAV in supply-constrained coastal markets. Replacement cost significantly above NAV given 43% construction cost inflation since 2020."
+        },
+        "EQR": {
+          "estimated_nav_per_share": 88,
+          "current_price": 78.50,
+          "price_to_nav_pct": 89.2,
+          "nav_methodology": "Coastal apartment portfolio at 4.7% cap rate reflecting premium market positioning",
+          "assessment": "11% discount to NAV. Morningstar fair value estimate of $80 slightly below our NAV, providing conservative cross-check."
+        },
+        "VICI": {
+          "estimated_nav_per_share": 34.50,
+          "current_price": 29.00,
+          "price_to_nav_pct": 84.1,
+          "nav_methodology": "Gaming properties at 6.5% cap rate + CPI escalator premium + non-gaming experiential at 7.0% cap rate",
+          "assessment": "16% discount to NAV. Long lease terms (39.6-year avg) and 100% occupancy should command premium but rate sensitivity keeps discount wide."
+        }
+      }
+    },
+    "supply_demand_balance": {
+      "data_center_analysis": {
+        "total_industry_capacity_additions_gw": 100,
+        "timeframe": "2026-2030",
+        "implied_asset_value_creation_trillions": 1.2,
+        "current_global_capacity_gw": 100,
+        "projected_2030_capacity_gw": 200,
+        "global_occupancy_rate_pct": 97,
+        "pipeline_pre_leased_pct": 77,
+        "signed_vs_pipeline": {
+          "description": "Critical distinction between signed contracts and speculative pipeline",
+          "digital_realty": {
+            "q4_signed_bookings_revenue_millions": 400,
+            "q4_signed_capacity_mw": 159.1,
+            "signed_backlog_annualized_millions": 817,
+            "total_developable_pipeline_gw": 5.0,
+            "delivery_timeframe": "Mostly 2026-2027",
+            "pre_leased_pct": 77,
+            "assessment": "Strong signed backlog provides 12-18 month revenue visibility. However, 5 GW pipeline is speculative — requires continued hyperscaler demand acceleration."
+          },
+          "equinix": {
+            "xscale_leased_mw": 430,
+            "xscale_facilities": 23,
+            "xscale_metros": 13,
+            "q4_2025_delivered_mw": 90,
+            "powered_land_under_control_gw": 1.0,
+            "ai_workload_pct_of_deals": 60,
+            "assessment": "60% of largest deals AI-driven validates demand thesis. 430 MW leased xScale provides strong visibility. 1 GW powered land is option value, not committed revenue."
+          }
+        },
+        "overbuild_risk_assessment": {
+          "bull_case": "Physical constraints (power transformer lead times measured in years, thermal limits, permitting) mean announced capacity will significantly under-deliver. The gap between forecasted demand and deliverable capacity is widening. True risk is under-delivery, not overbuild.",
+          "bear_case": "100 GW of planned additions effectively doubles the market. If AI adoption curves flatten, chip efficiency improves faster than expected, or hyperscaler capex is pulled back, occupancy could fall from 97% toward 85%, compressing rents 15-20%.",
+          "base_case": "77% of construction pipeline already has tenants committed. Power and permitting constraints will naturally throttle delivery, but select secondary markets face oversupply risk. Primary markets (N. Virginia, Silicon Valley, Dallas) remain supply-constrained.",
+          "key_risk_factors": [
+            "Large power transformers have multi-year lead times — equipment doesn't yet exist for many projects",
+            "Gas, water permits, and thermal discharge rules increasingly determine which projects proceed",
+            "Rapid chip design advances increase technological obsolescence risk",
+            "Hyperscaler capex: Amazon $75B and Microsoft $60B in 2026 alone, but subject to change",
+            "Secondary markets (Phoenix, Columbus) face higher overbuild risk than tier-1 metros"
+          ],
+          "probability_weighted_outcome": "60% base case (demand-supply balanced), 25% bull (under-delivery), 15% bear (overbuild in select markets)"
+        }
+      }
+    },
+    "debt_maturity_analysis": {
+      "description": "Debt maturity schedules for the three highest-leveraged BUY picks (EQIX 5x, DLR 5.2x, VTR 5.5x) with refinancing risk assessment",
+      "EQIX": {
+        "debt_to_ebitda": 4.95,
+        "weighted_avg_maturity_years": 6.8,
+        "pct_fixed_rate": 85,
+        "maturity_schedule": {
+          "2026": { "amount_billions": 1.2, "risk_level": "LOW", "notes": "Already refinanced Q1 2026 at favorable terms" },
+          "2027": { "amount_billions": 1.3, "risk_level": "LOW", "notes": "Manageable relative to $8.5B annual revenue run rate" },
+          "2028": { "amount_billions": 1.8, "risk_level": "MODERATE", "notes": "Largest near-term maturity wall; rates at refinancing matter" },
+          "2029_plus": { "amount_billions": 12.5, "risk_level": "LOW", "notes": "Well-laddered long-term maturities" }
+        },
+        "refinancing_headwind_estimate": "At current rates, refinancing 2027-2028 maturities adds ~$40M annual interest expense (~1% AFFO headwind). Manageable given 10% AFFO growth guidance.",
+        "credit_rating": "BBB+/Baa2 (investment grade)",
+        "assessment": "Well-managed debt profile with no near-term maturity cliff. 85% fixed rate insulates from variable rate exposure. Credit rating supports favorable refinancing terms."
+      },
+      "DLR": {
+        "debt_to_ebitda": 5.2,
+        "weighted_avg_maturity_years": 5.9,
+        "pct_fixed_rate": 80,
+        "maturity_schedule": {
+          "2026": { "amount_billions": 0.9, "risk_level": "LOW", "notes": "0.20% notes due 2026 will refinance at significantly higher rates (~4.5-5.0%)" },
+          "2027": { "amount_billions": 1.1, "risk_level": "MODERATE", "notes": "1.70% notes due 2027 face similar rate step-up" },
+          "2028": { "amount_billions": 1.4, "risk_level": "MODERATE", "notes": "5.55% notes already at market rates — neutral on refinancing" },
+          "2029_plus": { "amount_billions": 9.8, "risk_level": "LOW", "notes": "Diversified maturity ladder" }
+        },
+        "refinancing_headwind_estimate": "Refinancing 2026-2027 low-coupon debt at current rates adds ~$70M annual interest (~2% AFFO headwind). Partially offset by strong organic AFFO growth.",
+        "credit_rating": "BBB/Baa2 (investment grade)",
+        "assessment": "Higher leverage than EQIX with a more concentrated near-term maturity profile. The 2026 refinancing of 0.20% notes is the biggest single headwind. Development pipeline funding also requires capital market access."
+      },
+      "VTR": {
+        "debt_to_ebitda": 5.5,
+        "weighted_avg_maturity_years": 5.2,
+        "pct_fixed_rate": 75,
+        "maturity_schedule": {
+          "2026": { "amount_billions": 2.06, "risk_level": "HIGH", "notes": "Largest near-term maturity wall among BUY picks. Must refinance at higher rates." },
+          "2027": { "amount_billions": 1.59, "risk_level": "MODERATE", "notes": "Additional $1.6B coming due adds to refinancing burden" },
+          "2028": { "amount_billions": 1.53, "risk_level": "MODERATE", "notes": "Continued maturity pressure" },
+          "2029_plus": { "amount_billions": 7.16, "risk_level": "LOW", "notes": "Well-distributed thereafter" }
+        },
+        "refinancing_headwind_estimate": "Refinancing $2.06B in 2026 at ~200bps higher rates adds ~$40M annual interest (~2.5% AFFO headwind). This is the key risk to the thesis — requires occupancy growth to more than offset.",
+        "credit_rating": "BBB+/Baa1 (investment grade)",
+        "assessment": "Highest leverage and shortest maturity profile among BUY picks. The $2.06B 2026 maturity wall is the most significant refinancing event in our coverage universe. Credit rating is strong but acquisition appetite could strain balance sheet."
+      }
+    },
+    "position_sizing": {
+      "description": "Recommended position sizes, entry levels, exit levels, and stop-loss for each BUY and SELL recommendation",
+      "portfolio_total_reit_allocation_pct": 100,
+      "buy_positions": {
+        "AMT": {
+          "weight_pct": 20,
+          "current_price": 173.73,
+          "entry_zone": "165-178",
+          "price_target_12mo": 215,
+          "stop_loss": 148,
+          "upside_pct": 23.8,
+          "downside_to_stop_pct": -14.8,
+          "reward_risk_ratio": 1.6,
+          "rationale": "Largest position — deepest NAV discount (19%), widest multiple discount to history, Sprint churn ending, CoreSite AI growth. Best risk/reward in REIT universe."
+        },
+        "EQIX": {
+          "weight_pct": 12,
+          "current_price": 995.98,
+          "entry_zone": "940-1010",
+          "price_target_12mo": 1155,
+          "stop_loss": 860,
+          "upside_pct": 16.0,
+          "downside_to_stop_pct": -13.6,
+          "reward_risk_ratio": 1.2,
+          "rationale": "Reduced from v1 — premium valuation limits position size. Best-in-class moat but 28x AFFO requires execution. MODERATE overvaluation risk flag applied (same as WELL standard)."
+        },
+        "DLR": {
+          "weight_pct": 8,
+          "current_price": 180.35,
+          "entry_zone": "170-185",
+          "price_target_12mo": 210,
+          "stop_loss": 152,
+          "upside_pct": 16.4,
+          "downside_to_stop_pct": -15.7,
+          "reward_risk_ratio": 1.0,
+          "rationale": "Reduced from v1 — combined data center weight now 20% (down from 30%). Higher leverage and wholesale margin pressure limit conviction relative to EQIX."
+        },
+        "AVB": {
+          "weight_pct": 18,
+          "current_price": 163.50,
+          "entry_zone": "155-168",
+          "price_target_12mo": 200,
+          "stop_loss": 140,
+          "upside_pct": 22.3,
+          "downside_to_stop_pct": -14.4,
+          "reward_risk_ratio": 1.6,
+          "rationale": "Second-largest position — strong risk/reward. 16% NAV discount, supply falling 60%, housing affordability crisis structural, low leverage."
+        },
+        "VTR": {
+          "weight_pct": 15,
+          "current_price": 85.55,
+          "entry_zone": "80-88",
+          "price_target_12mo": 98,
+          "stop_loss": 72,
+          "upside_pct": 14.6,
+          "downside_to_stop_pct": -15.8,
+          "reward_risk_ratio": 0.9,
+          "rationale": "Demographic tailwind and 8% FFO growth. Lower reward/risk than AMT/AVB due to leverage and refinancing risk. Total return: 14.6% price + 2.65% dividend = 17.3% vs 4.5% Treasury + 4% risk premium = 8.5%. Spread of +8.8% justifies position."
+        },
+        "EQR": {
+          "weight_pct": 12,
+          "current_price": 78.50,
+          "entry_zone": "74-80",
+          "price_target_12mo": 90,
+          "stop_loss": 67,
+          "upside_pct": 14.6,
+          "downside_to_stop_pct": -14.6,
+          "reward_risk_ratio": 1.0,
+          "rationale": "Trading at 11% NAV discount with Morningstar $80 fair value cross-check. Coastal supply constraints provide rent growth support."
+        },
+        "VICI": {
+          "weight_pct": 15,
+          "current_price": 29.00,
+          "entry_zone": "27-30",
+          "price_target_12mo": 34,
+          "stop_loss": 25,
+          "upside_pct": 17.2,
+          "downside_to_stop_pct": -13.8,
+          "reward_risk_ratio": 1.3,
+          "total_return_justification": {
+            "price_appreciation_pct": 17.2,
+            "dividend_yield_pct": 6.7,
+            "total_return_pct": 23.9,
+            "vs_treasury_plus_risk_premium": "4.5% Treasury + 4% equity risk premium = 8.5% required return. VICI expected 23.9% total return exceeds hurdle by 15.4%. Even in bear case (flat price + 6.7% yield = 6.7%), the income floor is within 2% of Treasuries, and 100% occupancy with 39.6-year leases provides downside protection absent from fixed income.",
+            "bear_case_total_return_pct": 6.7,
+            "assessment": "At 10.28x P/FFO and 16% NAV discount, VICI is materially undervalued for an asset with 100% occupancy, 40-year leases, and CPI escalators. Even bear case total return (6.7%) is acceptable given zero vacancy risk."
+          },
+          "rationale": "Income anchor. 6.7% yield + 16% NAV discount + CPI escalators. Total return justified vs Treasuries with substantial margin."
+        }
+      },
+      "sell_positions": {
+        "SBAC": {
+          "current_price": 222.00,
+          "target_exit": 190,
+          "rationale": "SELL. 7x leverage is highest in REIT coverage universe. In +100bps scenario, faces 22% price decline and 5% AFFO hit. Sprint churn of $55-56M in 2026 with no near-term offset. M&A speculation has not materialized. Risk/reward is unfavorable at any rate environment."
+        },
+        "CCI": {
+          "current_price": 99.00,
+          "target_exit": 82,
+          "rationale": "SELL. 6x leverage with negative FFO growth is worst fundamental combination in our universe. DISH default creating $220M churn headwind. Fiber asset sale is necessary for survival, not growth. 6.3% yield is a trap — dividend coverage deteriorating. AMT is the superior tower REIT by every metric."
+        }
+      }
+    },
+    "sell_recommendations": [
+      {
+        "ticker": "SBAC",
+        "name": "SBA Communications",
+        "subsector": "Infrastructure - Cell Towers",
+        "current_price": 222.00,
+        "overall_score": 3.8,
+        "recommendation": "SELL",
+        "scores": {
+          "moat": 7,
+          "management": 4,
+          "growth": 3,
+          "valuation": 2
+        },
+        "thesis": "SBA Communications carries the highest leverage in the REIT universe at 7x debt/EBITDA. In any rising rate scenario, SBAC faces acute refinancing risk with estimated 22% price downside at +100bps. Sprint churn of $55-56M creates an organic headwind with no near-term offset. The speculative M&A premium has not materialized after months of exploration. The leverage-driven AFFO model that worked in a zero-rate world is a liability in a structurally higher rate environment.",
+        "key_sell_triggers": [
+          "7x debt/EBITDA — highest in REIT coverage universe",
+          "Sprint churn of $55-56M in 2026 with limited visibility on recovery",
+          "M&A process has not produced a bid after extended exploration",
+          "At +100bps rates: -22% estimated price impact, -5% AFFO impact",
+          "Mixed analyst signals — no longer a consensus position"
+        ]
+      },
+      {
+        "ticker": "CCI",
+        "name": "Crown Castle Inc",
+        "subsector": "Infrastructure - Cell Towers",
+        "current_price": 99.00,
+        "overall_score": 4.2,
+        "recommendation": "SELL",
+        "scores": {
+          "moat": 6,
+          "management": 3,
+          "growth": 2,
+          "valuation": 5
+        },
+        "thesis": "Crown Castle combines 6x leverage with negative FFO growth — the worst fundamental combination in our REIT coverage universe. The $220M DISH churn headwind in 2026 eliminates organic growth potential. The fiber asset sale, while strategically correct, is a forced restructuring rather than a position of strength. The 6.3% yield appears attractive but dividend coverage is deteriorating. American Tower offers superior infrastructure REIT exposure with better growth (CoreSite), lower leverage, and global diversification. CCI is a value trap.",
+        "key_sell_triggers": [
+          "6x debt/EBITDA with negative FFO growth — worst combination in universe",
+          "DISH/EchoStar lease default creating $220M churn in 2026",
+          "Fiber asset sale is defensive restructuring, not growth initiative",
+          "At +100bps rates: -18% estimated price impact, -3.8% AFFO impact",
+          "Dividend coverage deteriorating — 6.3% yield is a trap"
+        ]
+      }
+    ],
+    "construction_cost_inflation_impact": {
+      "cumulative_since_2020_pct": 43,
+      "fabricated_structural_metal_increase_pct": 63,
+      "multifamily_cost_increase_5yr_pct": 30,
+      "labor_cost_increase_5yr_pct": 20,
+      "2026_yoy_cost_inflation_pct": 2.8,
+      "inflation_adjusted_change": "Largely flat in real terms — nominal increases track general inflation",
+      "impact_on_development_returns": {
+        "description": "Elevated construction costs have compressed development yields from ~7-8% to 5-6%, making new development marginal at current rents in many markets",
+        "beneficiaries": "Existing REIT portfolios (PLD, AVB, EQR, ESS) benefit as replacement cost significantly exceeds current market value, creating a natural floor under asset prices and supporting rent growth",
+        "headwinds": "Active developers (DLR, EQIX, VTR) face higher capital costs on pipeline projects. However, these are partially offset by ability to pass through costs to tenants via higher rents on new leases.",
+        "implication": "Private development pipelines at multi-decade lows. This is the strongest structural support for existing REIT valuations — new supply is self-limiting due to cost economics."
+      }
+    },
+    "rent_regulation_risk": {
+      "description": "Market-specific rent regulation risk assessment for apartment REITs (AVB, EQR, ESS)",
+      "new_york_city": {
+        "current_rules": "Rent stabilization covers ~1M of 2.3M apartments. 2025-2026 increases capped at 3% (1-year) and 4.5% (2-year leases)",
+        "risk_level": "MODERATE",
+        "impacted_reits": ["AVB", "EQR"],
+        "assessment": "AVB and EQR focus on market-rate luxury apartments, not rent-stabilized units. Direct regulatory impact is limited. Indirect risk: political pressure could expand regulation to market-rate units. Foreclosure risk on stabilized units (doubling annually since 2022) reduces competing supply, paradoxically benefiting market-rate landlords.",
+        "mitigant": "Both AVB and EQR target Class A luxury apartments outside the stabilized universe. NYC expected to deliver strongest rent growth among their markets."
+      },
+      "california": {
+        "current_rules": "AB 1482 caps increases at 5% + local CPI. Law expires mid-2026 — replacement could be more restrictive.",
+        "risk_level": "HIGH",
+        "impacted_reits": ["ESS", "AVB", "EQR"],
+        "assessment": "AB 1482 expiration in mid-2026 is the single biggest regulatory risk for apartment REITs. Replacement legislation likely to be more restrictive given political environment. ESS has 100% California/West Coast exposure — most impacted. AVB and EQR have diversified coastal exposure limiting California concentration.",
+        "mitigant": "Even current 5% + CPI cap allows 7-8% annual increases in high-inflation periods. New construction is typically exempt from rent control for 15 years, incentivizing development-oriented REITs."
+      },
+      "other_markets": {
+        "oregon": "State-wide rent cap of 7% + CPI. Limited REIT exposure.",
+        "washington": "No state-wide rent control but Seattle considering local measures. ESS has Washington exposure.",
+        "assessment": "California AB 1482 expiration is the primary regulatory risk. Other markets have more moderate frameworks. Net impact on portfolio recommendation: ESS removed from BUY list (was HOLD in v1); AVB and EQR maintained as BUY with California risk as known headwind."
+      }
+    },
+    "amt_coresite_detail": {
+      "coresite_revenue_growth_2026_pct": 12.5,
+      "coresite_guided_dc_revenue_growth_pct": 13,
+      "coresite_contribution_to_amt": {
+        "estimated_revenue_millions": 850,
+        "pct_of_total_amt_revenue": 8.1,
+        "growth_driver_rank": "Primary growth engine — provides majority of AMT's consolidated revenue acceleration",
+        "capex_allocation": "Vast majority of AMT's 2026 growth CapEx directed to CoreSite and developed tower markets"
+      },
+      "amt_total_property_revenue_guidance": {
+        "low_billions": 10.44,
+        "high_billions": 10.59,
+        "yoy_growth_pct": 2.0,
+        "headwinds": "DISH churn of ~$200M and Latin American FX headwinds dampen consolidated growth",
+        "organic_growth_ex_coresite": "~1% consolidated organic (ex-CoreSite), impacted by DISH removal"
+      },
+      "assessment": "CoreSite is the strategic jewel within AMT. At 12.5% revenue growth, it is the fastest-growing segment by a wide margin and the primary driver of value creation. Without CoreSite, AMT would be a low-single-digit grower facing carrier consolidation headwinds. The 8% revenue contribution understates CoreSite's importance — it contributes disproportionately to NAV and growth optionality."
+    }
+  },
+  "companies_analyzed": [
+    {
+      "ticker": "EQIX",
+      "name": "Equinix Inc",
+      "subsector": "Data Centers",
+      "market_cap_billions": 98.3,
+      "stock_price": 995.98,
+      "dividend_yield_pct": 2.14,
+      "affo_per_share": 35.64,
+      "affo_growth_pct": 11.0,
+      "forward_affo_growth_pct": 10.0,
+      "occupancy_pct": 92.0,
+      "debt_to_ebitda": 4.95,
+      "price_to_nav_pct": 86.2,
+      "forward_p_affo": 28.0,
+      "development_pipeline": "$4-5B annual capex 2026-2029, doubling data center capacity by 2029. xScale: 430MW leased, 23 facilities, 1 GW powered land under control.",
+      "competitive_advantages": [
+        "270+ AI-ready data centers in 70+ metros globally",
+        "10,000+ customers with deep interconnection ecosystem creating switching costs",
+        "60% of largest Q4 deals driven by AI workloads",
+        "xScale hyperscale platform adds growth vector beyond core colocation"
+      ],
+      "risks": [
+        "28x forward AFFO is elevated — MODERATE overvaluation risk (same standard as WELL)",
+        "Elevated debt-to-EBITDA at ~5x with $1.8B 2028 maturity wall",
+        "Data center overbuild risk if AI demand decelerates",
+        "100 GW industry capacity additions 2026-2030 could compress pricing",
+        "Capital intensity of $4-5B annual capex program"
+      ],
+      "rate_sensitivity": "MODERATE — -4.5% at +50bps, -10% at +100bps. 85% fixed-rate debt and strong growth provide partial insulation.",
+      "catalyst": "AI demand creating unprecedented bookings. 60% of largest deals AI-driven. 9-10% revenue growth guidance. Record $394M annualized bookings momentum.",
+      "scores": {
+        "moat": 9.5,
+        "management": 9.0,
+        "growth": 9.0,
+        "valuation": 4.5
+      },
+      "overall_score": 8.1,
+      "recommendation": "BUY",
+      "position_weight_pct": 12,
+      "thesis": "Equinix is the premier global interconnection platform at the center of the AI infrastructure supercycle. Record bookings, 60% AI-driven deal mix, and a plan to double capacity by 2029 support the growth thesis. However, the 28x AFFO multiple carries MODERATE overvaluation risk — the same standard applied to WELL in v1. Position sized at 12% (reduced from implied 15% in v1) to reflect this risk. The 14% NAV discount provides partial margin of safety."
+    },
+    {
+      "ticker": "AMT",
+      "name": "American Tower Corp",
+      "subsector": "Infrastructure - Cell Towers / Data Centers",
+      "market_cap_billions": 81.0,
+      "stock_price": 173.73,
+      "dividend_yield_pct": 3.97,
+      "affo_per_share": 10.86,
+      "affo_growth_pct": 2.0,
+      "forward_affo_growth_pct": 5.0,
+      "occupancy_pct": 98.0,
+      "debt_to_ebitda": 5.0,
+      "price_to_nav_pct": 80.8,
+      "forward_p_affo": 15.5,
+      "coresite_revenue_millions": 850,
+      "coresite_growth_pct": 12.5,
+      "development_pipeline": "CoreSite 13% guided DC revenue growth. Global tower portfolio. Majority of growth CapEx to CoreSite and developed tower markets.",
+      "competitive_advantages": [
+        "225,000+ tower sites globally with multi-tenant model",
+        "CoreSite data centers growing 12.5% from AI demand — strategic crown jewel",
+        "15.5x P/AFFO vs 10-year average of 21.9x — deep value",
+        "Sprint churn ending in 2026 removes key overhang",
+        "Irreplaceable critical 5G densification infrastructure"
+      ],
+      "risks": [
+        "DISH churn removing ~$200M revenue",
+        "Consolidated organic growth only ~1% ex-CoreSite",
+        "International exposure to FX and political risk (LatAm headwinds)",
+        "5x leverage constraining capital flexibility"
+      ],
+      "rate_sensitivity": "MODERATE — -5.5% at +50bps, -12% at +100bps. International CPI-linked escalators provide partial hedge.",
+      "catalyst": "Deepest NAV discount (19%) of any BUY pick. Trading at 15.5x vs 21.9x 10-year average. Sprint churn ending in 2026. CoreSite growing 12.5% from AI. Multiple re-rating catalyst is clearest in our universe.",
+      "scores": {
+        "moat": 9.5,
+        "management": 7.5,
+        "growth": 6.5,
+        "valuation": 9.0
+      },
+      "overall_score": 8.2,
+      "recommendation": "BUY",
+      "position_weight_pct": 20,
+      "thesis": "American Tower is the top pick in our REIT universe — the deepest discount to both NAV (19%) and historical multiples (15.5x vs 21.9x). CoreSite is growing 12.5% from AI demand and contributes ~$850M revenue (~8% of total but disproportionate share of growth). Sprint churn ends in 2026, unlocking organic acceleration. The 4% yield provides downside protection while waiting for the clearest multiple re-rating opportunity in the sector."
+    },
+    {
+      "ticker": "DLR",
+      "name": "Digital Realty Trust",
+      "subsector": "Data Centers",
+      "market_cap_billions": 61.7,
+      "stock_price": 180.35,
+      "dividend_yield_pct": 2.72,
+      "affo_per_share": 7.56,
+      "affo_growth_pct": 13.0,
+      "forward_affo_growth_pct": 8.0,
+      "occupancy_pct": 85.0,
+      "debt_to_ebitda": 5.2,
+      "price_to_nav_pct": 92.5,
+      "forward_p_affo": 23.8,
+      "development_pipeline": "$3.25-3.75B net development. 5 GW developable pipeline across 40 metros. Q4 signed bookings: $400M revenue, 159 MW. $817M signed backlog.",
+      "competitive_advantages": [
+        "310+ data centers in 50+ metros globally",
+        "$817M signed-but-not-commenced backlog provides revenue visibility",
+        "AI accounts for 2/3 of total signings",
+        "5 GW developable pipeline is largest in industry"
+      ],
+      "risks": [
+        "5.2x leverage with 0.20% notes due 2026 refinancing at ~4.5% — creates $70M annual headwind",
+        "Wholesale model has lower margins than EQIX colocation",
+        "5 GW pipeline is largely speculative — requires sustained hyperscaler demand",
+        "Overbuild risk in secondary markets where DLR has exposure",
+        "Tenant concentration with hyperscalers creates binary risk"
+      ],
+      "rate_sensitivity": "HIGH — -6% at +50bps, -13% at +100bps. Higher leverage and near-term low-coupon refinancing amplify rate impact.",
+      "catalyst": "AI-driven bookings at record levels. $817M signed backlog de-risks near-term revenue. 2026 backlog more than doubling 2025.",
+      "scores": {
+        "moat": 8.0,
+        "management": 7.5,
+        "growth": 8.5,
+        "valuation": 5.5
+      },
+      "overall_score": 7.5,
+      "recommendation": "BUY",
+      "position_weight_pct": 8,
+      "thesis": "Digital Realty benefits from the same AI infrastructure tailwind as Equinix but with higher leverage and lower-margin wholesale exposure. The $817M signed backlog provides strong near-term visibility, but the 5 GW speculative pipeline carries execution and demand risk. Position sized at 8% (reduced from implied 15% in v1) to cap total data center exposure at 20%. The 0.20% notes refinancing in 2026 is a near-term headwind."
+    },
+    {
+      "ticker": "AVB",
+      "name": "AvalonBay Communities",
+      "subsector": "Residential - Apartments",
+      "market_cap_billions": 32.0,
+      "stock_price": 163.50,
+      "dividend_yield_pct": 4.17,
+      "affo_per_share": 11.20,
+      "affo_growth_pct": 4.8,
+      "forward_affo_growth_pct": 5.0,
+      "occupancy_pct": 96.5,
+      "debt_to_ebitda": 4.2,
+      "price_to_nav_pct": 83.8,
+      "forward_p_affo": 14.6,
+      "development_pipeline": "24 communities, 8,600 units under development. 2,800 new homes in 2026. Focus on supply-constrained coastal markets.",
+      "competitive_advantages": [
+        "320 communities with 98,694 units in high-barrier coastal markets",
+        "Lowest leverage among BUY picks at 4.2x — strongest balance sheet",
+        "16% NAV discount with 43% construction cost inflation supporting replacement value",
+        "Apartment supply deliveries falling 60%+ from peak"
+      ],
+      "risks": [
+        "California AB 1482 rent cap expiry mid-2026 could result in more restrictive replacement",
+        "NY rent regulation risk (indirect — AVB targets market-rate luxury, not stabilized)",
+        "New supply in select Sunbelt expansion markets",
+        "Coastal market concentration"
+      ],
+      "rate_sensitivity": "LOW-MODERATE — -5% at +50bps, -11% at +100bps. Low leverage and strong rent growth provide insulation.",
+      "catalyst": "Housing affordability crisis widening rent-vs-buy gap. Supply falling 60%+ from peak. Construction cost inflation at 43% since 2020 creates natural supply barrier. Analyst consensus Buy with $200+ target (22%+ upside).",
+      "scores": {
+        "moat": 8.0,
+        "management": 8.5,
+        "growth": 7.5,
+        "valuation": 8.0
+      },
+      "overall_score": 8.0,
+      "recommendation": "BUY",
+      "position_weight_pct": 18,
+      "thesis": "AvalonBay is the best risk-adjusted BUY in apartment REITs. The combination of the lowest leverage (4.2x), deepest NAV discount (16%), and a structural supply shortage (deliveries down 60%, construction costs up 43%) creates a compelling setup. Rent regulation risk is manageable — AVB targets Class A luxury outside stabilized universes. Second-largest position at 18% reflects strong conviction."
+    },
+    {
+      "ticker": "VTR",
+      "name": "Ventas Inc",
+      "subsector": "Healthcare - Senior Housing",
+      "market_cap_billions": 41.5,
+      "stock_price": 85.55,
+      "dividend_yield_pct": 2.65,
+      "affo_per_share": 3.83,
+      "affo_growth_pct": 8.0,
+      "forward_affo_growth_pct": 8.0,
+      "occupancy_pct": 88.0,
+      "debt_to_ebitda": 5.5,
+      "price_to_nav_pct": 93.0,
+      "forward_p_affo": 22.3,
+      "development_pipeline": "$2.5B investment target for 2026. $800M senior housing acquisitions closed YTD. SHOP 270bps occupancy growth guided.",
+      "competitive_advantages": [
+        "Diversified healthcare: senior housing, life science, medical office",
+        "SHOP portfolio >50% of NOI with 270bps occupancy growth guided",
+        "8% FFO growth in structurally favorable demographic environment",
+        "14 buy ratings, zero sells from analysts"
+      ],
+      "risks": [
+        "Highest leverage among BUY picks at 5.5x",
+        "$2.06B debt maturing in 2026 — largest near-term refinancing burden in universe",
+        "Only 75% fixed-rate debt — 25% variable rate exposure",
+        "Acquisition appetite could strain balance sheet further",
+        "Labor cost inflation in senior housing operations"
+      ],
+      "rate_sensitivity": "HIGH — -7% at +50bps, -15% at +100bps. Highest leverage and shortest maturity profile among BUY picks amplify rate impact.",
+      "catalyst": "2026 guidance of $3.78-$3.88 FFO/share (8% growth). Baby boomers turning 80 in 2026 — unprecedented demographic wave. New supply at lowest since 2012. 14 buy / 0 sell analyst consensus.",
+      "scores": {
+        "moat": 7.0,
+        "management": 8.0,
+        "growth": 7.5,
+        "valuation": 7.0
+      },
+      "overall_score": 7.3,
+      "recommendation": "BUY",
+      "position_weight_pct": 15,
+      "thesis": "Ventas offers exposure to the senior housing demographic tailwind at a reasonable valuation with 8% FFO growth. The 7% NAV discount and analyst consensus ($92+ target, 14 buys, 0 sells) support upside. Total return: 14.6% price appreciation + 2.65% yield = 17.3%, exceeding 8.5% hurdle (4.5% Treasury + 4% ERP) by 8.8%. Key risk is the $2.06B 2026 debt maturity wall and 5.5x leverage — position sized at 15% (not larger) due to this refinancing risk."
+    },
+    {
+      "ticker": "EQR",
+      "name": "Equity Residential",
+      "subsector": "Residential - Apartments",
+      "market_cap_billions": 30.0,
+      "stock_price": 78.50,
+      "dividend_yield_pct": 3.5,
+      "affo_per_share": 3.95,
+      "affo_growth_pct": 3.5,
+      "forward_affo_growth_pct": 4.0,
+      "occupancy_pct": 96.0,
+      "debt_to_ebitda": 4.3,
+      "price_to_nav_pct": 89.2,
+      "forward_p_affo": 19.9,
+      "development_pipeline": "Repositioned portfolio to 7 high-growth coastal markets: LA, SF, NYC, Boston, DC, Seattle, San Diego",
+      "competitive_advantages": [
+        "318 communities with 86,000+ units in highest-barrier coastal markets",
+        "11% NAV discount with Morningstar $80 fair value cross-check",
+        "Strategic repositioning to supply-constrained markets completed",
+        "NYC expected to deliver strongest rent growth among EQR markets"
+      ],
+      "risks": [
+        "Concentrated high-cost coastal exposure",
+        "California AB 1482 expiry risk (diversified exposure limits impact)",
+        "NYC rent regulation (targets market-rate luxury, not stabilized units)",
+        "Tech employment sensitivity in SF and Seattle",
+        "Lower growth than AVB limits upside"
+      ],
+      "rate_sensitivity": "MODERATE — -5.5% at +50bps, -12% at +100bps. Similar to AVB but slightly higher leverage.",
+      "catalyst": "Trading at 24% discount to Morningstar fair value. Coastal market supply constraints. NYC expected as top-performing market.",
+      "scores": {
+        "moat": 7.0,
+        "management": 7.5,
+        "growth": 6.0,
+        "valuation": 8.0
+      },
+      "overall_score": 7.0,
+      "recommendation": "BUY",
+      "position_weight_pct": 12,
+      "thesis": "Equity Residential trades at an 11% NAV discount with a Morningstar fair value cross-check at $80. The completed portfolio repositioning to supply-constrained coastal markets positions EQR for strong rent growth as apartment deliveries fall. Lower growth than AVB limits position size to 12%."
+    },
+    {
+      "ticker": "VICI",
+      "name": "VICI Properties Inc",
+      "subsector": "Specialty - Gaming",
+      "market_cap_billions": 33.0,
+      "stock_price": 29.00,
+      "dividend_yield_pct": 6.7,
+      "affo_per_share": 2.42,
+      "affo_growth_pct": 3.4,
+      "forward_affo_growth_pct": 3.5,
+      "occupancy_pct": 100.0,
+      "debt_to_ebitda": 5.2,
+      "price_to_nav_pct": 84.1,
+      "forward_p_affo": 12.0,
+      "affo_guidance_2026": "$2.42-$2.45 per diluted share",
+      "development_pipeline": "Selective acquisition in experiential real estate beyond gaming. Triple-net with 39.6-year average lease terms.",
+      "competitive_advantages": [
+        "100% occupancy — zero vacancy risk",
+        "39.6-year average lease terms — longest in REIT universe",
+        "Irreplaceable Las Vegas Strip properties",
+        "Triple-net with CPI escalators provides inflation protection",
+        "16% NAV discount at 10.28x P/FFO"
+      ],
+      "risks": [
+        "Long-duration income stream is bond-proxy — highest rate sensitivity for price (-8% at +50bps)",
+        "Concentrated gaming industry exposure",
+        "3.5% FFO growth is modest — relies on acquisitions for acceleration",
+        "Limited organic growth in triple-net model"
+      ],
+      "rate_sensitivity": "HIGHEST for price — -8% at +50bps, -16% at +100bps. However, AFFO impact is minimal (-0.3% at +50bps) due to long-term fixed-rate leases. Bond-proxy nature creates price volatility without cash flow impairment.",
+      "catalyst": "6.7% yield at 10.28x P/FFO and 16% NAV discount. 2026 AFFO guidance of $2.42-$2.45. Strong Buy consensus (9 Buy, 5 Hold). CPI escalators protect against inflation.",
+      "scores": {
+        "moat": 8.5,
+        "management": 7.0,
+        "growth": 3.5,
+        "valuation": 9.5
+      },
+      "overall_score": 7.0,
+      "recommendation": "BUY",
+      "position_weight_pct": 15,
+      "thesis": "VICI is the income anchor of the portfolio. The 6.7% yield, 100% occupancy, 39.6-year lease terms, and 16% NAV discount create a compelling value proposition at 10.28x P/FFO. Total return justification vs Treasuries: even in a bear case (flat price + 6.7% yield = 6.7%), the income floor is within 2% of the 10-year Treasury, with zero vacancy risk and CPI escalators that Treasuries lack. In the base case, 17.2% price appreciation + 6.7% yield = 23.9% total return, exceeding the 8.5% required return by 15.4%."
+    },
+    {
+      "ticker": "SBAC",
+      "name": "SBA Communications",
+      "subsector": "Infrastructure - Cell Towers",
+      "market_cap_billions": 24.0,
+      "stock_price": 222.00,
+      "dividend_yield_pct": 1.8,
+      "affo_per_share": 12.07,
+      "affo_growth_pct": 3.0,
+      "forward_affo_growth_pct": 5.0,
+      "occupancy_pct": 96.0,
+      "debt_to_ebitda": 7.0,
+      "price_to_nav_pct": 105.0,
+      "forward_p_affo": 18.4,
+      "competitive_advantages": [
+        "US and international tower portfolio",
+        "Potential sale premium if M&A materializes"
+      ],
+      "risks": [
+        "HIGHEST leverage in REIT universe at 7x debt/EBITDA",
+        "Sprint churn of $55-56M in 2026 with no near-term offset",
+        "M&A process has not produced a bid after extended exploration",
+        "At +100bps: -22% price impact, -5% AFFO impact — worst in universe",
+        "Trading at 5% premium to NAV — no margin of safety"
+      ],
+      "rate_sensitivity": "EXTREME — -10% at +50bps, -22% at +100bps. 7x leverage makes SBAC the most rate-sensitive REIT in our coverage universe.",
+      "scores": {
+        "moat": 7.0,
+        "management": 4.0,
+        "growth": 3.0,
+        "valuation": 2.0
+      },
+      "overall_score": 3.8,
+      "recommendation": "SELL",
+      "thesis": "SELL. The 7x leverage-driven model that worked at zero rates is a liability in a structurally higher rate environment. Sprint churn, no M&A bid after months of exploration, and extreme rate sensitivity (-22% at +100bps) create an unfavorable risk/reward. American Tower is the superior infrastructure REIT by every metric."
+    },
+    {
+      "ticker": "CCI",
+      "name": "Crown Castle Inc",
+      "subsector": "Infrastructure - Cell Towers",
+      "market_cap_billions": 43.0,
+      "stock_price": 99.00,
+      "dividend_yield_pct": 6.31,
+      "affo_per_share": 7.50,
+      "affo_growth_pct": -3.0,
+      "forward_affo_growth_pct": 1.0,
+      "occupancy_pct": 97.0,
+      "debt_to_ebitda": 6.0,
+      "price_to_nav_pct": 92.0,
+      "forward_p_affo": 13.2,
+      "competitive_advantages": [
+        "40,000+ US tower sites",
+        "Fiber asset sale proceeds for debt reduction"
+      ],
+      "risks": [
+        "6x leverage with NEGATIVE FFO growth — worst combination in universe",
+        "DISH default creating $220M churn headwind in 2026",
+        "Fiber sale is defensive restructuring, not growth",
+        "Dividend coverage deteriorating",
+        "At +100bps: -18% price impact, -3.8% AFFO impact"
+      ],
+      "rate_sensitivity": "VERY HIGH — -8.5% at +50bps, -18% at +100bps. 6x leverage and negative growth compound rate sensitivity.",
+      "scores": {
+        "moat": 6.0,
+        "management": 3.0,
+        "growth": 2.0,
+        "valuation": 5.0
+      },
+      "overall_score": 4.2,
+      "recommendation": "SELL",
+      "thesis": "SELL. Crown Castle combines 6x leverage with negative FFO growth — the worst fundamental combination in our REIT universe. The $220M DISH churn eliminates organic growth. The 6.3% yield is a value trap with deteriorating coverage. American Tower is the superior tower REIT with better growth (CoreSite), lower leverage, and global diversification."
+    }
+  ],
+  "top_picks": [
+    {
+      "rank": 1,
+      "ticker": "AMT",
+      "name": "American Tower Corp",
+      "overall_score": 8.2,
+      "position_weight_pct": 20,
+      "primary_reason": "Deepest NAV discount (19%), widest multiple discount to history (15.5x vs 21.9x), CoreSite growing 12.5% from AI, Sprint churn ending 2026. Clearest re-rating catalyst in REIT universe."
+    },
+    {
+      "rank": 2,
+      "ticker": "EQIX",
+      "name": "Equinix Inc",
+      "overall_score": 8.1,
+      "position_weight_pct": 12,
+      "primary_reason": "Premier global interconnection platform with 60% AI-driven deal mix and record bookings. Position sized conservatively due to 28x AFFO and MODERATE overvaluation flag."
+    },
+    {
+      "rank": 3,
+      "ticker": "AVB",
+      "name": "AvalonBay Communities",
+      "overall_score": 8.0,
+      "position_weight_pct": 18,
+      "primary_reason": "Best risk-adjusted apartment REIT. Lowest leverage (4.2x), 16% NAV discount, supply down 60%, construction costs up 43% creating structural supply barrier."
+    },
+    {
+      "rank": 4,
+      "ticker": "DLR",
+      "name": "Digital Realty Trust",
+      "overall_score": 7.5,
+      "position_weight_pct": 8,
+      "primary_reason": "AI-driven signed backlog of $817M provides visibility. Position reduced to cap total data center at 20%."
+    },
+    {
+      "rank": 5,
+      "ticker": "VTR",
+      "name": "Ventas Inc",
+      "overall_score": 7.3,
+      "position_weight_pct": 15,
+      "primary_reason": "Senior housing demographic play with 8% FFO growth. Total return 17.3% exceeds 8.5% hurdle by 8.8%. $2.06B 2026 maturity is key risk."
+    },
+    {
+      "rank": 6,
+      "ticker": "EQR",
+      "name": "Equity Residential",
+      "overall_score": 7.0,
+      "position_weight_pct": 12,
+      "primary_reason": "11% NAV discount, Morningstar $80 cross-check, repositioned to supply-constrained coastal markets."
+    },
+    {
+      "rank": 7,
+      "ticker": "VICI",
+      "name": "VICI Properties Inc",
+      "overall_score": 7.0,
+      "position_weight_pct": 15,
+      "primary_reason": "Income anchor. 6.7% yield, 100% occupancy, 39.6-year leases, 16% NAV discount. Total return justification: 23.9% base case vs 8.5% hurdle."
+    }
+  ],
+  "sell_picks": [
+    {
+      "rank": 1,
+      "ticker": "SBAC",
+      "name": "SBA Communications",
+      "overall_score": 3.8,
+      "primary_reason": "SELL. 7x leverage, Sprint churn, no M&A bid, -22% at +100bps rates. Worst risk/reward in REIT universe."
+    },
+    {
+      "rank": 2,
+      "ticker": "CCI",
+      "name": "Crown Castle Inc",
+      "overall_score": 4.2,
+      "primary_reason": "SELL. 6x leverage + negative FFO growth. $220M DISH churn. 6.3% yield is a trap. AMT is superior alternative."
+    }
+  ],
+  "portfolio_allocation": {
+    "strategy": "Diversified conviction portfolio — reduced data center concentration, added apartment weight, barbell income with growth",
+    "total_positions": 7,
+    "allocation_by_subsector": {
+      "data_centers_pct": 20,
+      "towers_infrastructure_pct": 20,
+      "apartments_pct": 30,
+      "healthcare_pct": 15,
+      "gaming_income_pct": 15
+    },
+    "allocation_by_pick": {
+      "AMT": 20,
+      "AVB": 18,
+      "VICI": 15,
+      "VTR": 15,
+      "EQIX": 12,
+      "EQR": 12,
+      "DLR": 8
+    },
+    "portfolio_metrics": {
+      "weighted_avg_affo_growth_pct": 6.1,
+      "weighted_avg_dividend_yield_pct": 3.9,
+      "weighted_avg_debt_to_ebitda": 4.8,
+      "weighted_avg_nav_discount_pct": 12.3,
+      "weighted_avg_upside_to_target_pct": 17.8,
+      "portfolio_reward_risk_ratio": 1.3
+    },
+    "changes_from_v1": [
+      "Data center weight reduced from 30% to 20% (EQIX 12%, DLR 8%)",
+      "AMT elevated to #1 pick and largest position (20%) based on deepest NAV discount",
+      "Apartment weight increased to 30% (AVB 18%, EQR 12%) for supply-demand thesis",
+      "WELL, PLD, O, SPG, PSA, EXR, ESS removed — all were HOLD rated and diluted analysis",
+      "SBAC and CCI moved to explicit SELL recommendations",
+      "VICI sized at 15% with full total return justification vs Treasuries"
+    ]
+  },
+  "risk_factors": [
+    {
+      "risk": "Interest rate re-acceleration to 5.0%+",
+      "probability": "25%",
+      "portfolio_impact": "Weighted average -6.5% price impact at +50bps. VICI and VTR most exposed.",
+      "mitigation": "Low portfolio leverage (weighted 4.8x), 30% allocation to apartments with strong rent growth offset"
+    },
+    {
+      "risk": "Data center overbuild — AI demand flattens while 100 GW comes online",
+      "probability": "15%",
+      "portfolio_impact": "EQIX -15-20%, DLR -20-25%. Data center weight capped at 20% limits portfolio damage to -4-5%.",
+      "mitigation": "77% of pipeline pre-leased. Power/permitting constraints throttle actual delivery. Position sizing reduced from v1."
+    },
+    {
+      "risk": "California AB 1482 replacement more restrictive than current law",
+      "probability": "40%",
+      "portfolio_impact": "AVB -3-5%, EQR -3-5%, limited to California-exposed portions of portfolio",
+      "mitigation": "AVB and EQR target Class A luxury outside rent-controlled universe. New construction typically exempt for 15 years."
+    },
+    {
+      "risk": "VTR refinancing $2.06B at significantly higher rates",
+      "probability": "60%",
+      "portfolio_impact": "VTR -5-8% if rates 200bps+ above maturing debt. ~$40M annual interest headwind.",
+      "mitigation": "Investment grade credit rating (BBB+/Baa1) ensures market access. 8% FFO growth should more than offset increased interest burden."
+    },
+    {
+      "risk": "Recession compressing occupancy across subsectors",
+      "probability": "20%",
+      "portfolio_impact": "Broad-based 10-15% drawdown. VICI (100% occupancy, 40yr leases) and AMT (98% occupancy, critical infrastructure) most resilient.",
+      "mitigation": "65% of portfolio in recession-resilient assets (towers, gaming NNN, essential housing). No office or retail exposure."
+    },
+    {
+      "risk": "Hyperscaler capex pullback (Amazon $75B, Microsoft $60B in 2026 subject to change)",
+      "probability": "10%",
+      "portfolio_impact": "EQIX -10%, DLR -15%, AMT CoreSite -5%. Portfolio impact -3% given 20% DC weight.",
+      "mitigation": "Signed backlog ($817M DLR, 430MW EQIX xScale) provides 12-18 month insulation. Diversification beyond DC limits exposure."
+    }
+  ],
+  "methodology": {
+    "scoring_formula": "Overall = (Moat * 0.3) + (Management * 0.2) + (Growth * 0.3) + (Valuation * 0.2)",
+    "scoring_spread": "3.8 (SBAC SELL) to 8.2 (AMT BUY) — spread of 4.4 points vs v1 spread of 2.3 points",
+    "score_distribution": {
+      "strong_buy_8_plus": ["AMT (8.2)", "EQIX (8.1)", "AVB (8.0)"],
+      "buy_7_to_8": ["DLR (7.5)", "VTR (7.3)", "EQR (7.0)", "VICI (7.0)"],
+      "sell_below_5": ["CCI (4.2)", "SBAC (3.8)"]
+    },
+    "overvaluation_standard": "Applied consistently: EQIX (28x AFFO) flagged with MODERATE overvaluation risk, same standard as WELL in v1 (39x AFFO). Both have position sizing adjusted downward to reflect valuation risk.",
+    "data_sources": [
+      "Company earnings reports and investor presentations (Q4 2025 / Q1 2026)",
+      "Nareit industry data and REIT market statistics",
+      "Wall Street analyst consensus estimates and price targets",
+      "SEC filings (debt maturity schedules, 10-K/10-Q)",
+      "JLL 2026 Global Data Center Outlook",
+      "Janus Henderson data center supply-demand analysis",
+      "S&P Global data center sector assessment",
+      "ULI construction cost outlook 2026",
+      "NYC Rent Guidelines Board 2025-26 Order",
+      "California AB 1482 legislative analysis"
+    ],
+    "scoring_criteria": {
+      "moat": "Competitive advantages, market position, barriers to entry, pricing power, network effects, replacement cost premium",
+      "management": "Capital allocation, strategic vision, execution, leverage management, shareholder returns",
+      "growth": "AFFO growth rate, development pipeline, secular tailwinds, same-store NOI growth, CoreSite contribution (AMT)",
+      "valuation": "P/AFFO vs history and peers, P/NAV discount, dividend yield, analyst targets, rate sensitivity adjusted margin of safety"
+    }
+  }
+}

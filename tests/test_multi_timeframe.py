@@ -421,7 +421,7 @@ class TestRouterIntegration:
              patch.object(Config, "LLM_ANALYST_ENABLED", False), \
              patch.object(Config, "RL_STRATEGY_ENABLED", False), \
              patch("strategies.router.apply_mtf_filter") as mock_mtf:
-            mock_mtf.side_effect = lambda sig, df, weight: sig
+            mock_mtf.side_effect = lambda sig, df, weight, symbol=None: sig
             from strategies.router import compute_signals
             df = make_bars(200)
             compute_signals("AAPL", df)

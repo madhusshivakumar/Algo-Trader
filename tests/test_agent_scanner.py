@@ -113,7 +113,8 @@ class TestCheckDeadline:
 
     def test_after_deadline_morning(self):
         from agents.market_scanner import check_deadline
-        mock_now = datetime(2026, 3, 29, 6, 26, 0)
+        # Deadline is 6:45 AM; 6:46 is past it
+        mock_now = datetime(2026, 3, 29, 6, 46, 0)
         with patch("agents.market_scanner.datetime") as mock_dt:
             mock_dt.now.return_value = mock_now
             mock_dt.side_effect = lambda *a, **kw: datetime(*a, **kw)
@@ -145,7 +146,7 @@ class TestScoreCandidate:
     def test_good_candidate(self):
         from agents.market_scanner import score_candidate
         df = self._make_df(n=5, price=100, volume=5_000_000, atr_factor=1.0)
-        result = score_candidate("AAPL", df, 0.7, [], [])
+        result = score_candidate("AAPL", df, 0.7, [], [], set(), set())
         assert result is not None
         assert result["symbol"] == "AAPL"
         assert result["composite_score"] > 0
@@ -153,36 +154,36 @@ class TestScoreCandidate:
     def test_filtered_by_price_low(self):
         from agents.market_scanner import score_candidate
         df = self._make_df(n=5, price=5, volume=5_000_000)
-        assert score_candidate("PENNY", df, 0.5, [], []) is None
+        assert score_candidate("PENNY", df, 0.5, [], [], set(), set()) is None
 
     def test_filtered_by_price_high(self):
         from agents.market_scanner import score_candidate
         df = self._make_df(n=5, price=600, volume=5_000_000)
-        assert score_candidate("EXPENSIVE", df, 0.5, [], []) is None
+        assert score_candidate("EXPENSIVE", df, 0.5, [], [], set(), set()) is None
 
     def test_filtered_by_low_volume(self):
         from agents.market_scanner import score_candidate
         df = self._make_df(n=5, price=100, volume=100_000)
-        assert score_candidate("LOW_VOL", df, 0.5, [], []) is None
+        assert score_candidate("LOW_VOL", df, 0.5, [], [], set(), set()) is None
 
     def test_insufficient_data(self):
         from agents.market_scanner import score_candidate
         df = self._make_df(n=2, price=100)
-        assert score_candidate("X", df, 0.5, [], []) is None
+        assert score_candidate("X", df, 0.5, [], [], set(), set()) is None
 
     def test_avoid_penalty(self):
         from agents.market_scanner import score_candidate
         df = self._make_df(n=5, price=100, volume=5_000_000, atr_factor=1.0)
-        normal = score_candidate("AAPL", df, 0.7, [], [])
-        avoided = score_candidate("AAPL", df, 0.7, [], ["AAPL"])
+        normal = score_candidate("AAPL", df, 0.7, [], [], set(), set())
+        avoided = score_candidate("AAPL", df, 0.7, [], ["AAPL"], set(), set())
         if normal and avoided:
             assert avoided["composite_score"] < normal["composite_score"]
 
     def test_favor_boost(self):
         from agents.market_scanner import score_candidate
         df = self._make_df(n=5, price=100, volume=5_000_000, atr_factor=1.0)
-        normal = score_candidate("AAPL", df, 0.7, [], [])
-        favored = score_candidate("AAPL", df, 0.7, ["AAPL"], [])
+        normal = score_candidate("AAPL", df, 0.7, [], [], set(), set())
+        favored = score_candidate("AAPL", df, 0.7, ["AAPL"], [], set(), set())
         if normal and favored:
             assert favored["composite_score"] > normal["composite_score"]
 
@@ -330,6 +331,7 @@ class TestScannerMain:
                 return result
             return None
 
+        universe_symbols = [c["symbol"] for c in fake_candidates]
         with patch.object(scan_mod, "DATA_DIR", str(tmp_path)), \
              patch.object(scan_mod, "AGENT_STATE_FILE", str(tmp_path / "agent_state.json")), \
              patch.object(scan_mod, "ASSIGNMENTS_FILE", str(tmp_path / "optimizer" / "strategy_assignments.json")), \
@@ -339,7 +341,10 @@ class TestScannerMain:
              patch.object(scan_mod, "CANDIDATES_FILE", str(tmp_path / "scanner" / "candidates.json")), \
              patch.object(scan_mod, "ENV_FILE", str(env_file)), \
              patch("agents.market_scanner.Config") as mock_config, \
+             patch("agents.market_scanner.TradingClient"), \
              patch("agents.market_scanner.StockHistoricalDataClient"), \
+             patch("agents.market_scanner.build_dynamic_universe", return_value=universe_symbols), \
+             patch("agents.market_scanner.prefilter_with_snapshots", return_value=universe_symbols), \
              patch("agents.market_scanner.fetch_stock_data", side_effect=mock_fetch), \
              patch("agents.market_scanner.score_candidate", side_effect=mock_score), \
              patch("agents.market_scanner.check_deadline", return_value=False):
@@ -347,9 +352,8 @@ class TestScannerMain:
             mock_config.ALPACA_API_KEY = "test"
             mock_config.ALPACA_SECRET_KEY = "test"
             mock_config.CRYPTO_SYMBOLS = ["BTC/USD"]
-            # Provide enough symbols in SCAN_UNIVERSE
-            with patch.object(scan_mod, "SCAN_UNIVERSE", [c["symbol"] for c in fake_candidates]):
-                scan_mod.main()
+            mock_config.is_paper.return_value = True
+            scan_mod.main()
 
         # Verify outputs were written
         assert os.path.exists(str(tmp_path / "scanner" / "selected_symbols.json"))

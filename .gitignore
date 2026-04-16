@@ -1,5 +1,9 @@
-# Secrets
+# Secrets — NEVER commit these
 .env
+.env.*
+*.pem
+*.key
+credentials.json
 
 # Database
 trades.db
@@ -35,8 +39,13 @@ data/scanner/selected_symbols.json
 data/fallback_config.json
 data/learnings.json
 
-# Claude
+# Claude / ruflo / swarm — local agent state (tool-specific, not code)
 .claude/
+.claude-flow/
+.swarm/
+
+# DB backups (created by ad-hoc cleanup scripts)
+trades.db.backup_*
 
 # IDE
 .idea/
@@ -49,6 +58,20 @@ data/learnings.json
 # Bot PID files
 .bot.pid
 .dashboard.pid
+
+# Sprint 7: runtime data from new modules
+data/modifier_ab/
+data/strategy_regime/
+data/backtest_cache/
+data/backtest_oos/
+data/logs/
+data/alerts/
+data/earnings_calendar/
+data/sector_research/
+data/rl_models/train_log.json
+data/llm_analyst/.spend_log.lock
+data/runtime_state.json
+monitoring/grafana/
 
 # Coverage
 .coverage

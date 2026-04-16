@@ -38,11 +38,15 @@ class RLStrategySelector:
         """Check if model is loaded and ready for predictions."""
         return self.model is not None
 
-    def select_strategy(self, df) -> str | None:
+    def select_strategy(self, df, regime: str | None = None) -> str | None:
         """Select the best strategy for current market conditions.
 
         Args:
             df: DataFrame with OHLCV data.
+            regime: Current market regime from `core.regime_detector`, one of
+                'low_vol' / 'normal' / 'high_vol' / 'crisis'. Sprint 6E plumbs
+                this into `extract_features` so the policy can condition its
+                pick on whether the market is trending vs stressed.
 
         Returns:
             Strategy key string, or None if prediction fails.
@@ -50,7 +54,7 @@ class RLStrategySelector:
         if not self.is_ready():
             return None
 
-        features = extract_features(df)
+        features = extract_features(df, regime=regime)
         if features is None:
             log.warning("Insufficient data for RL feature extraction")
             return None
@@ -66,6 +70,9 @@ class RLStrategySelector:
                 log.warning(f"RL predicted invalid action: {action_idx}")
                 return None
         except Exception as e:
+            # A shape mismatch here is expected right after the 10→16 dim
+            # migration until the next weekly retrain deploys a 16-dim model.
+            # Fallback is the default strategy map, so trading continues.
             log.error(f"RL prediction failed: {e}")
             return None
 
@@ -82,9 +89,13 @@ def get_selector() -> RLStrategySelector | None:
     return _selector
 
 
-def select_strategy(df) -> str | None:
-    """Convenience function: select strategy using the global selector."""
+def select_strategy(df, regime: str | None = None) -> str | None:
+    """Convenience function: select strategy using the global selector.
+
+    Sprint 6E: regime is plumbed through to extract_features so the model
+    can see the live regime bits alongside the market features.
+    """
     selector = get_selector()
     if selector is None or not selector.is_ready():
         return None
-    return selector.select_strategy(df)
+    return selector.select_strategy(df, regime=regime)

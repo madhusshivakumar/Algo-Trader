@@ -173,8 +173,29 @@ class DriftDetector:
     def should_alert(self) -> list[str]:
         """Return human-readable alerts for degraded symbols."""
         metrics = self.check_drift()
+        # Cache per-symbol degradation for cheap lookup by engine sizing path
+        self._degraded_cache = {m.symbol: m for m in metrics if m.is_degraded}
         alerts = []
         for m in metrics:
             if m.is_degraded:
                 alerts.append(f"DRIFT ALERT: {m.symbol} — {m.degradation_reason}")
         return alerts
+
+    def is_degraded(self, symbol: str) -> bool:
+        """Sprint 5E: O(1) check used by the engine sizing path.
+
+        Reads from a cache populated by `should_alert()` (called every 100 cycles).
+        Returns False if the cache hasn't been populated yet — fail-open so a
+        not-yet-checked symbol gets normal sizing rather than the 70% cut.
+        """
+        cache = getattr(self, "_degraded_cache", None)
+        if not cache:
+            return False
+        return symbol in cache
+
+    def get_recent_metrics(self, symbol: str) -> "DriftMetrics | None":
+        """Return cached DriftMetrics for `symbol`, or None if not in cache."""
+        cache = getattr(self, "_degraded_cache", None)
+        if not cache:
+            return None
+        return cache.get(symbol)

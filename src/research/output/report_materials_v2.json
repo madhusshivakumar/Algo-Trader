@@ -1,0 +1,440 @@
+{
+  "sector": "Materials",
+  "agent_name": "materials_sector_expert",
+  "timestamp": "2026-04-04T18:00:00Z",
+  "iteration": 2,
+  "previous_score": 66,
+  "total_companies_analyzed": 22,
+  "v2_improvements": {
+    "copper_supply_demand_reconciliation": {
+      "summary": "The copper supply-demand picture is genuinely split among forecasters. Goldman Sachs projects a 300kt surplus in 2026 (revised up from 160kt), driven by strong Chinese smelter output. The ICSG projects a 150kt deficit, weighting electrification demand more heavily. JP Morgan projects a 330kt deficit by late 2026 as grid buildout accelerates. The truth likely depends on Chinese demand: if China infrastructure stimulus disappoints, surplus; if grid/EV demand outpaces, deficit. Our base case assumes a roughly balanced market of +/-50kt, which supports copper in the $9,500-$11,000/mt range but NOT the $12,500+ supercycle thesis.",
+      "forecasts_cited": {
+        "goldman_sachs": {"balance_kt": 300, "direction": "surplus", "price_target_mt": 10710, "date": "Q1 2026"},
+        "icsg": {"balance_kt": -150, "direction": "deficit", "date": "2026 annual"},
+        "jp_morgan": {"balance_kt": -330, "direction": "deficit", "price_target_mt": 12500, "date": "Q2 2026"},
+        "world_bank": {"direction": "balanced_to_slight_surplus", "date": "2026 annual"}
+      },
+      "base_case_assumption": "Roughly balanced market (+/-50kt) supporting $9,500-$11,000/mt range"
+    },
+    "commodity_sensitivity": {
+      "FCX_copper_sensitivity": {
+        "description": "FCX EPS sensitivity to copper price. Each $0.10/lb change = ~$425M EBITDA, ~$0.23 EPS. FCX sits mid-cost-curve; Grasberg has negative net cash costs (-$0.92/lb after by-product credits) but Americas operations are higher cost. Blended AISC ~$2.20/lb.",
+        "table": [
+          {"copper_price_lb": 3.50, "copper_price_mt": 7716, "est_ebitda_b": 5.2, "est_eps": 0.85, "margin_note": "Below mid-cycle; Americas operations marginally profitable"},
+          {"copper_price_lb": 4.00, "copper_price_mt": 8818, "est_ebitda_b": 7.3, "est_eps": 1.55, "margin_note": "All operations profitable; modest FCF"},
+          {"copper_price_lb": 4.50, "copper_price_mt": 9921, "est_ebitda_b": 9.5, "est_eps": 2.25, "margin_note": "Goldman base case range; solid profitability"},
+          {"copper_price_lb": 5.00, "copper_price_mt": 11023, "est_ebitda_b": 11.6, "est_eps": 2.95, "margin_note": "Current spot range; strong cash generation"},
+          {"copper_price_lb": 5.65, "copper_price_mt": 12456, "est_ebitda_b": 14.4, "est_eps": 3.80, "margin_note": "COMEX April 2026 level; peak cycle earnings"}
+        ],
+        "key_sensitivity": "$0.10/lb copper = ~$425M EBITDA = ~$0.23 EPS"
+      },
+      "NUE_steel_sensitivity": {
+        "description": "NUE EPS sensitivity to HRC price. Nucor ships ~25M tons/yr. Roughly $50/ton HRC change = ~$1.25B revenue impact = ~$2.50-3.00 EPS swing after variable cost offsets. Current HRC at ~$1,025/ton is tariff-supported.",
+        "table": [
+          {"hrc_price_ton": 650, "est_eps": 2.50, "margin_note": "Pre-tariff normalized level; breakeven-ish for some mills"},
+          {"hrc_price_ton": 800, "est_eps": 5.80, "margin_note": "Historical mid-cycle without tariff protection"},
+          {"hrc_price_ton": 900, "est_eps": 8.50, "margin_note": "Lower end of tariff-supported range"},
+          {"hrc_price_ton": 1000, "est_eps": 11.00, "margin_note": "Near current CSP; strong profitability"},
+          {"hrc_price_ton": 1100, "est_eps": 13.50, "margin_note": "Spot market highs; peak cycle"}
+        ],
+        "tariff_reversion_scenario": "If 50% Section 232 tariffs are reduced to 25% or removed, HRC likely reverts to $750-$850/ton, implying NUE EPS of $4.50-$6.50 -- a 50-60% earnings decline from current levels. This is the core risk.",
+        "key_sensitivity": "$50/ton HRC = ~$2.50-3.00 EPS"
+      },
+      "ALB_lithium_sensitivity": {
+        "description": "ALB EPS sensitivity to lithium carbonate price. Albemarle provided 2026 scenario analysis at $10/kg, $20/kg, and $30/kg LCE. The 1,096% EPS growth figure from v1 is misleading -- it reflects recovery from a near-zero base ($0.66 adjusted EPS in 2025). Normalized mid-cycle EPS is $4-$8 depending on lithium price.",
+        "table": [
+          {"lithium_price_kg": 10, "lithium_price_mt": 10000, "est_ebitda_b": 1.0, "est_eps": -1.50, "margin_note": "Below cash cost for most operations; loss-making"},
+          {"lithium_price_kg": 15, "lithium_price_mt": 15000, "est_ebitda_b": 2.0, "est_eps": 1.50, "margin_note": "Marginal profitability; below mid-cycle"},
+          {"lithium_price_kg": 20, "lithium_price_mt": 20000, "est_ebitda_b": 3.5, "est_eps": 5.00, "margin_note": "Current price range (~$18.5k/t); reasonable earnings"},
+          {"lithium_price_kg": 25, "lithium_price_mt": 25000, "est_ebitda_b": 5.0, "est_eps": 8.50, "margin_note": "Recovery scenario; consensus bull case"},
+          {"lithium_price_kg": 30, "lithium_price_mt": 30000, "est_ebitda_b": 6.5, "est_eps": 12.00, "margin_note": "2022-era peak; unlikely near-term"}
+        ],
+        "normalized_earnings_note": "The 1,096% growth figure is base-effect distortion. Normalized mid-cycle EPS at $18-20/kg lithium is $4-$6. The consensus $7.87 EPS assumes lithium recovery to ~$22-25/kg which is the bull case, not the base case. At current ~$18.5k/t, realistic 2026 EPS is $4-$5.",
+        "key_sensitivity": "$5/kg lithium = ~$2.50-3.00 EPS"
+      },
+      "NEM_gold_sensitivity": {
+        "description": "NEM EPS sensitivity to gold price. Newmont guides 5.3M oz production at AISC of ~$1,680/oz (elevated due to high-strip phases). Each $100/oz gold = ~$530M revenue = ~$2.50-3.00 EPS impact after royalties and taxes.",
+        "table": [
+          {"gold_price_oz": 2500, "est_eps": 2.80, "margin_note": "Well above AISC; profitable but below trend"},
+          {"gold_price_oz": 3000, "est_eps": 4.50, "margin_note": "Strong margins; decent cash flow generation"},
+          {"gold_price_oz": 3500, "est_eps": 6.20, "margin_note": "Very healthy margins; significant FCF"},
+          {"gold_price_oz": 4000, "est_eps": 7.90, "margin_note": "Near consensus for H2 2026; record margins"},
+          {"gold_price_oz": 4500, "est_eps": 9.60, "margin_note": "Recent spot levels; super-cycle territory"},
+          {"gold_price_oz": 5000, "est_eps": 11.30, "margin_note": "Extreme macro stress scenario; if right, broader equity problems"}
+        ],
+        "macro_paradox_note": "Gold above $4,500 implies severe macro stress (stagflation, credit crisis, geopolitical escalation). In that scenario, equity markets broadly sell off 20-30%. NEM benefits as a gold proxy but equity correlation increases. Position sizing must account for this: gold longs are implicitly bearish on equities.",
+        "key_sensitivity": "$100/oz gold = ~$530M revenue = ~$2.80 EPS"
+      },
+      "LIN_sensitivity": {
+        "description": "LIN is less commodity-sensitive due to cost-plus contracts. Key drivers are industrial production volumes and pricing power. EPS sensitivity is primarily to volume and mix.",
+        "table": [
+          {"scenario": "Mild recession (-5% industrial volumes)", "est_eps": 15.50, "margin_note": "Contracts cushion downside; margins compress slightly"},
+          {"scenario": "Flat industrial production", "est_eps": 17.00, "margin_note": "Near current guidance low end"},
+          {"scenario": "Base case (2-3% volume growth)", "est_eps": 17.65, "margin_note": "Midpoint of FY2026 guidance ($17.40-$17.90)"},
+          {"scenario": "Expansion (4-5% volume growth)", "est_eps": 18.50, "margin_note": "Semi/hydrogen upside scenario"},
+          {"scenario": "Full capacity utilization", "est_eps": 19.50, "margin_note": "Requires semi boom + hydrogen buildout"}
+        ],
+        "key_sensitivity": "1% industrial volume change = ~$0.35-0.40 EPS"
+      },
+      "CRH_sensitivity": {
+        "description": "CRH is primarily volume-driven (aggregates, cement, asphalt). Pricing power in aggregates is strong due to local monopoly characteristics. Infrastructure spending is the key driver.",
+        "table": [
+          {"scenario": "Infrastructure spending flat, residential -10%", "est_adj_ebitda_b": 7.2, "margin_note": "Downside scenario; still profitable"},
+          {"scenario": "IIJA moderate disbursement, residential flat", "est_adj_ebitda_b": 7.8, "margin_note": "Conservative base case"},
+          {"scenario": "IIJA peak disbursement, residential recovery", "est_adj_ebitda_b": 8.3, "margin_note": "Management guidance midpoint ($8.1-8.5B)"},
+          {"scenario": "Full infrastructure + data center boom", "est_adj_ebitda_b": 9.0, "margin_note": "Bull case with acquisition synergies"}
+        ],
+        "key_sensitivity": "10% infrastructure spending change = ~$600-800M EBITDA"
+      }
+    },
+    "sell_recommendations": [
+      {
+        "ticker": "MP",
+        "name": "MP Materials Corp.",
+        "rating": "SELL",
+        "current_price_approx": 50,
+        "target_price": 30,
+        "downside_pct": -40,
+        "rationale": "MP Materials remains unprofitable (adjusted EPS of -$0.13 in Q2 2025, consensus 2026 EPS of -$0.22) with no clear path to profitability before 2028 at the earliest. The stock trades at 76-102% above 5-year average multiples purely on geopolitical narrative. China suspended its rare earth export restrictions until November 2026, removing the near-term catalyst. The company produces less than 1% of China's magnet output. Revenue was only $57.4M in Q2 2025. The $400M DoD investment and Apple partnership provide strategic floor but do not solve the profitability problem. Magnet production ramp carries significant execution risk. At current valuations, the stock prices in a best-case scenario that is years away from materializing.",
+        "key_risks_to_sell_thesis": ["Unexpected acceleration in DoD contracts", "China reimposing export restrictions before Nov 2026", "Breakthrough in magnet production economics"],
+        "reclassification_note": "Moved from BUY to SELL. In v1 this was rated BUY alongside $220B Linde -- a fundamental analytical error. An unprofitable $8.5B company with -31% profit margins cannot receive the same rating as the sector's highest-quality compounder."
+      },
+      {
+        "ticker": "ALB",
+        "name": "Albemarle Corporation",
+        "rating": "SELL",
+        "current_price_approx": 130,
+        "target_price": 95,
+        "downside_pct": -27,
+        "rationale": "Albemarle's 2026 outlook is deteriorating: management guided net sales flat-to-down and adjusted EBITDA lower in 2026 vs 2025. Q4 2025 adjusted diluted EPS was -$0.53 loss. The consensus $7.87 EPS requires lithium at $22-25/kg -- well above the current ~$18.5k/t spot. At current lithium prices, realistic 2026 EPS is $4-$5, putting the stock at 26-33x earnings. The v1 report cited '1,096% EPS growth' which is a misleading small-base-effect calculation from near-zero ($0.66) 2025 adjusted EPS. Chinese lithium supply overhang persists with 450,000+ tonnes of excess capacity. DLE technology is still in pilot phase with no proven cost economics at scale. Debt-to-equity at 0.65 is elevated for a company with volatile earnings. Downgrade from BUY to SELL until lithium sustainably exceeds $22/kg.",
+        "key_risks_to_sell_thesis": ["Lithium price spike above $25/kg", "Faster-than-expected supply rationalization", "Breakthrough DLE cost reductions"],
+        "normalized_earnings_context": "At mid-cycle lithium ($18-20/kg), normalized EPS is $4-$6. The 1,096% growth figure was base-effect distortion from near-zero 2025 earnings. Investors should value ALB on normalized mid-cycle earnings, not peak-to-trough recovery rates."
+      }
+    ],
+    "cycle_positioning": {
+      "copper": {
+        "current_phase": "Late-cycle / transitioning",
+        "rationale": "Copper has rallied 38% in 2025, reaching record highs near $5.65/lb. Goldman Sachs projects prices declining from these peaks in 2026 to average $10,710/mt (H1 2026). The market is in surplus (Goldman: 300kt) not deficit. Late-cycle characteristics: record prices, margin expansion, capacity additions underway. The structural electrification demand narrative is real but already priced in at current levels. Copper historically corrects 25-40% in late-cycle downturns.",
+        "positioning_advice": "Reduce overweight. Take profits on FCX rally. Maintain core position sized for 25% copper price decline scenario."
+      },
+      "steel": {
+        "current_phase": "Policy-driven mid-cycle",
+        "rationale": "Steel pricing is artificially elevated by 50% Section 232 tariffs, not organic demand. HRC at $1,025/ton is 25-30% above global export parity. Imports down 40% confirms the tariff wall is the primary support. This is mid-cycle for domestic demand but late-cycle for pricing. Any tariff reduction creates a cliff risk. Infrastructure demand provides some fundamental support but cannot sustain $1,000+ HRC without tariffs.",
+        "positioning_advice": "Underweight vs. historical. NUE is a policy bet disguised as a fundamental thesis. Size accordingly."
+      },
+      "lithium": {
+        "current_phase": "Early-cycle recovery",
+        "rationale": "Lithium has recovered from extreme trough ($8-10/kg in 2024) to ~$18.5k/t. This is early recovery phase with significant Chinese supply overhang still unresolved (450kt+ excess capacity). Price recovery depends on supply rationalization which is progressing but incomplete. DLE technology could add 10-15% to supply in 2027-2028. True mid-cycle ($22-25/kg) requires further demand growth outpacing supply additions.",
+        "positioning_advice": "Early-cycle is normally a BUY signal, but ALB's valuation already prices in mid-cycle earnings. Wait for better entry or confirmed supply rationalization."
+      },
+      "gold": {
+        "current_phase": "Late-cycle / momentum-driven",
+        "rationale": "Gold reached $5,600/oz driven by central bank buying, geopolitical fear premium, and the Hormuz Strait crisis. Prices above $4,500 imply severe macro stress. Morgan Stanley and BMI expect prices to moderate below $4,000 in H2 2026 as rate cuts slow. The macro paradox: if gold thesis is correct (requiring geopolitical crisis), equity positions have bigger problems.",
+        "positioning_advice": "Trim NEM on strength. Gold miners are tactical hedges, not core positions. Use as portfolio insurance, not a conviction long."
+      },
+      "construction_materials": {
+        "current_phase": "Mid-cycle with fiscal tailwind",
+        "rationale": "IIJA disbursements peaking 2026-2027 provides genuine fundamental support. This is mid-cycle for construction demand with the fiscal tailwind likely lasting 2-3 more years. CRH and aggregates companies benefit from local monopoly pricing power and multi-year government contracts.",
+        "positioning_advice": "Overweight. CRH and infrastructure plays have the most visible earnings runway in the sector."
+      },
+      "industrial_gases": {
+        "current_phase": "Through-cycle compounder",
+        "rationale": "Linde operates through the cycle with cost-plus contracts, duopoly pricing, and diversified end markets. Not meaningfully cyclical. Hydrogen/semiconductor growth provides secular tailwind.",
+        "positioning_advice": "Core holding. Reduce only if PE expands to 35x+ (currently ~33x vs 10-yr median 33.85x)."
+      }
+    },
+    "position_sizing": {
+      "methodology": "Position sizes reflect commodity cyclicality, policy dependency, and earnings visibility. Max position 6% for highest conviction/lowest risk; 2% for high cyclicality/policy dependency. Deeply cyclical commodity producers sized at half the weight of through-cycle compounders.",
+      "allocations": [
+        {"ticker": "LIN", "rating": "BUY", "weight_pct": 6.0, "rationale": "Highest quality, lowest cyclicality, through-cycle compounder. Core position."},
+        {"ticker": "CRH", "rating": "STRONG_BUY", "weight_pct": 5.0, "rationale": "Best risk-reward with visible IIJA tailwind. Strong M&A track record."},
+        {"ticker": "FCX", "rating": "BUY", "weight_pct": 3.5, "rationale": "Copper leverage is attractive but late-cycle positioning requires reduced size. Size for 25% copper pullback."},
+        {"ticker": "NUE", "rating": "HOLD", "weight_pct": 2.5, "rationale": "Policy bet, not a fundamental thesis. Half-size position reflecting tariff dependency and cyclical risk."},
+        {"ticker": "NEM", "rating": "HOLD", "weight_pct": 2.0, "rationale": "Portfolio hedge, not core long. Gold above $4,500 implies macro stress that hurts equity portfolios. Tactical position."},
+        {"ticker": "ALB", "rating": "SELL", "weight_pct": 0.0, "rationale": "Do not own. Valuation prices in mid-cycle lithium that has not materialized. Re-enter below $95 or when lithium sustains $22+/kg."},
+        {"ticker": "MP", "rating": "SELL", "weight_pct": 0.0, "rationale": "Do not own. Unprofitable with no path to near-term earnings. Speculative only."}
+      ],
+      "total_materials_sector_weight_pct": 19.0,
+      "benchmark_xlb_weight_pct": 2.5,
+      "overweight_rationale": "Infrastructure spending cycle and electrification demand justify a significant overweight to Materials, but concentrated in highest-quality names (LIN, CRH) with reduced cyclical exposure."
+    },
+    "cost_curve_analysis": {
+      "FCX_cost_curve": {
+        "position": "Mid-cost-curve globally; Grasberg is bottom-quartile",
+        "grasberg_detail": {
+          "unit_net_cash_cost_per_lb": -0.92,
+          "note": "Negative cash costs due to gold and silver by-product credits. Grasberg is one of the lowest-cost copper operations globally. However, Indonesian operations face political risk: royalties, export restrictions, and ownership requirements.",
+          "political_risk": "Indonesian government has increased royalty demands and required 51% local ownership. PT-FI (FCX subsidiary) operates under a special mining license (IUPK) that introduces regulatory uncertainty. The September 2025 mud rush incident disrupted production; phased restart in Q2 2026 targets 85% recovery by H2 2026."
+        },
+        "americas_operations": {
+          "cash_cost_per_lb": 2.45,
+          "note": "Americas operations (Morenci, Cerro Verde, Safford) are higher-cost at $2.45/lb. These are profitable at copper >$3.50/lb but offer less margin than Grasberg."
+        },
+        "blended_aisc_per_lb": 2.20
+      },
+      "NEM_cost_curve": {
+        "position": "Mid-to-upper quartile among major gold miners; elevated AISC in 2026 transition year",
+        "aisc_per_oz_2026_guided": 1680,
+        "aisc_per_oz_2025_actual": 1358,
+        "cost_increase_explanation": "The 24% AISC increase ($1,358 to $1,680) reflects a deliberate 'value over volume' strategy: high-stripping phases at Tier-1 assets to unlock higher-grade ore in 2027-2028. Also driven by persistent labor inflation and increased South American royalty payments. For every $10/bbl oil increase, AISC rises ~$10-15/oz.",
+        "cost_curve_context": "At $1,680 AISC, Newmont sits in the upper half of the gold mining cost curve. Barrick ($1,320 AISC) and Agnico Eagle ($1,250 AISC) offer better cost positioning. Newmont's scale (5.3M oz) and reserve life (20 years) partially compensate but do not eliminate the cost disadvantage. At gold below $2,500, NEM's margins compress materially."
+      }
+    },
+    "lin_historical_pe_analysis": {
+      "current_pe_ttm": 33.46,
+      "ten_year_median_pe": 33.85,
+      "ten_year_mean_pe": 34.35,
+      "five_year_avg_pe": 38.23,
+      "range_10yr": {"low": 11.95, "high": 61.20},
+      "assessment": "At 33.5x, Linde is trading BELOW its 10-year median (33.85x) and meaningfully below its 5-year average (38.23x). The v1 concern about 28.5x PE being premium was based on forward PE, not trailing. On a trailing basis, LIN is actually reasonably valued relative to history. On a forward basis (~30x FY2026E), it is modestly below historical norms. The premium is justified by: (1) duopoly market structure with Air Liquide, (2) expanding margins from 15% to 27% over 5 years, (3) secular growth from hydrogen/semis, (4) defensive quality in uncertain macro. LIN's PE premium vs. the market is structural and persistent, not a sign of overvaluation."
+    },
+    "crh_acquisition_roic": {
+      "total_2025_acquisitions": {"count": 38, "total_value_b": 4.1},
+      "largest_deal": {"name": "Eco Material Technologies", "value_b": 2.089, "description": "Leading supplier of cementitious materials"},
+      "roic_trend": {"2024": 8.42, "2025_latest": 11.87},
+      "assessment": "CRH's ROIC improved from 8.42% to 11.87% year-over-year, indicating acquisition strategy is CREATING value, not destroying it. The company's investor day (Sep 2025) highlighted that acquisitions have accounted for ~60% of growth over the past decade, with a proven model of: (1) acquiring at attractive valuations, (2) integrating with existing operations, (3) generating synergies. The $40B of 'financial capacity' over 5 years (2026-2030) suggests continued M&A-driven growth. Risk: acquisition pace acceleration could lead to overpaying. Monitor deal multiples and integration timelines.",
+      "verdict": "Value-creating. ROIC improvement confirms M&A discipline."
+    },
+    "nue_tariff_dependency_analysis": {
+      "tariff_contribution_to_pricing": "HRC at $1,025/ton is approximately 25-30% above global export parity ($750-$800/ton). The 50% Section 232 tariff is the single largest driver of current pricing, having reduced imports by 40% YoY.",
+      "reversion_scenarios": [
+        {"scenario": "Tariffs maintained at 50%", "hrc_range": "$950-$1,100", "nue_eps_range": "$10-$13", "probability_pct": 50},
+        {"scenario": "Tariffs reduced to 25%", "hrc_range": "$800-$900", "nue_eps_range": "$5.50-$8.50", "probability_pct": 30},
+        {"scenario": "Tariffs removed / significant exemptions", "hrc_range": "$650-$750", "nue_eps_range": "$2.50-$5.00", "probability_pct": 10},
+        {"scenario": "Trade war escalation + tariffs + demand spike", "hrc_range": "$1,100-$1,300", "nue_eps_range": "$13-$17", "probability_pct": 10}
+      ],
+      "weighted_expected_eps": 8.65,
+      "verdict": "NUE downgraded from BUY to HOLD. At current ~14x PE on $11 EPS, the stock appears cheap. But the weighted expected EPS of $8.65 (accounting for tariff reduction scenarios) implies 14x * $8.65 = $121 fair value, suggesting limited upside and meaningful downside if tariffs are modified. This is a policy bet, and the earnings are not durable in the absence of tariff protection."
+    },
+    "alb_dle_technology_economics": {
+      "status": "Pilot phase in Chile; not yet commercially proven at scale",
+      "potential_benefits": ["Increased lithium yields from brine operations", "Reduced water usage (critical for Chilean permitting)", "Faster extraction times vs. traditional evaporation ponds"],
+      "cost_economics": "Albemarle has not disclosed specific DLE cost targets. Industry estimates suggest DLE could reduce extraction costs by 20-30% vs. evaporation ponds and increase recovery rates from ~50% to ~80%. However, energy costs for DLE are higher, and scaling challenges remain unresolved. No major lithium producer has achieved commercial-scale DLE operations as of April 2026.",
+      "timeline": "Earliest commercial deployment 2028-2029. DLE is a medium-term optionality driver, not a near-term earnings contributor.",
+      "verdict": "DLE is a legitimate technology with real potential but cannot be included in near-term valuation models. It represents call-option value only."
+    },
+    "chinese_rare_earth_impact_on_mp": {
+      "restriction_timeline": "April 2025: first wave of export controls. October 2025: second wave. November 2025: China suspended second-wave restrictions until November 2026. This suspension significantly reduces the near-term catalyst for MP Materials.",
+      "mp_response": "MP halted concentrate sales to China and pivoted to domestic processing. Revenue surged 84% YoY to $57.4M in Q2 2025 on higher separated product volumes. However, the company remains unprofitable (adjusted diluted EPS: -$0.13).",
+      "structural_problem": "MP's Mountain Pass facility can produce 60,000 MT/yr of REO but less than 1,000 tons of NdFeB magnets -- under 1% of China's 138,000 ton annual output. The gap between mine output and finished magnet production is enormous and will take years to close.",
+      "verdict": "Chinese export restrictions are a double-edged sword for MP: they create demand for domestic supply but also increase input costs for magnets. With restrictions suspended until Nov 2026, the near-term geopolitical catalyst is muted. The stock trades on narrative, not fundamentals."
+    },
+    "fcx_grasberg_political_risk": {
+      "ownership_structure": "PT Freeport Indonesia operates under IUPK (special mining license). Indonesian government required 51% local ownership through state entity MIND ID.",
+      "royalty_risk": "Indonesia has progressively increased royalty demands. Current royalty regime is complex and subject to periodic renegotiation. Rising nationalist sentiment creates ongoing risk of further increases.",
+      "operational_disruption": "September 2025 mud rush incident disrupted Grasberg production. Approximately 97% of mud removal complete by year-end 2025. Phased restart Q2 2026 targeting 85% production recovery in H2 2026.",
+      "risk_quantification": "Grasberg generates an estimated 40-50% of FCX's total EBITDA. A 10-point royalty increase or significant regulatory change could reduce consolidated EPS by $0.40-$0.60. Full nationalization (low probability but non-zero) would be catastrophic.",
+      "verdict": "Grasberg political risk is material and underappreciated. FCX's cost advantage is concentrated in a single asset within a jurisdiction that has demonstrated willingness to change terms. This supports reduced position sizing."
+    }
+  },
+  "top_picks": [
+    {
+      "ticker": "LIN",
+      "name": "Linde plc",
+      "sector": "Materials - Chemicals (Industrial Gases)",
+      "market_cap_b": 220.0,
+      "pe_ratio_ttm": 33.5,
+      "pe_ratio_forward": 30.0,
+      "revenue_growth_pct": 3.5,
+      "profit_margin_pct": 20.3,
+      "debt_to_equity": 0.35,
+      "roe_pct": 25.0,
+      "dividend_yield_pct": 1.3,
+      "eps_guidance_2026": "$17.40-$17.90",
+      "moat_score": 10,
+      "management_score": 9,
+      "growth_score": 7,
+      "valuation_score": 7,
+      "overall_score": 8.3,
+      "rating": "BUY",
+      "position_weight_pct": 6.0,
+      "bull_case": "Widest moat in Materials sector with duopoly structure. Operating margin expanded from 15% (2020) to 27% (2024). Trailing PE of 33.5x is BELOW the 10-year median of 33.85x -- this is not a premium valuation relative to its own history. Forward PE of ~30x on $17.65 midpoint EPS. Secular growth from hydrogen economy, semiconductor fab expansion, data center cooling, and healthcare. Cost-plus contracts provide earnings visibility through cycles. $34B annual revenue with high recurring base.",
+      "bear_case": "Revenue growth modest at low-single-digits. Sensitive to deep industrial recession. Hydrogen economy investments carry multi-year execution risk. Air Liquide competition in key markets.",
+      "catalyst": "Semiconductor fab expansions (TSMC, Intel, Samsung) requiring industrial gases. Hydrogen demand for clean energy. Data center cooling applications. 21 of 32 analysts rate Buy.",
+      "risk": "Deep industrial recession compressing volumes by 5%+ would reduce EPS to $15.50 range. High absolute PE makes stock vulnerable to broad multiple compression.",
+      "thesis": "Linde is the highest-quality through-cycle compounder in Materials. The duopoly market structure, expanding margins, and diversified end-market exposure justify core position sizing. Current valuation at/below historical median PE is an unusual buying opportunity for this quality level."
+    },
+    {
+      "ticker": "CRH",
+      "name": "CRH plc",
+      "sector": "Materials - Construction Materials",
+      "market_cap_b": 69.0,
+      "pe_ratio": 18.5,
+      "revenue_growth_pct": 5.3,
+      "profit_margin_pct": 10.0,
+      "debt_to_equity": 0.45,
+      "roe_pct": 16.0,
+      "dividend_yield_pct": 1.5,
+      "roic_2025": 11.87,
+      "roic_2024": 8.42,
+      "eps_guidance_2026_net_income_b": "3.9-4.1",
+      "adj_ebitda_guidance_2026_b": "8.1-8.5",
+      "moat_score": 8,
+      "management_score": 9,
+      "growth_score": 8,
+      "valuation_score": 8,
+      "overall_score": 8.2,
+      "rating": "STRONG_BUY",
+      "position_weight_pct": 5.0,
+      "bull_case": "Peak IIJA disbursement 2026-2027 directly benefits CRH as the largest North American roadbuilder. ROIC improved from 8.42% to 11.87%, confirming M&A is value-creating, not destroying. 38 acquisitions in 2025 ($4.1B) including $2.1B Eco Material purchase. Guided 2026 adjusted EBITDA $8.1-8.5B. Local monopoly characteristics in aggregates provide pricing power. $40B financial capacity over 2026-2030 for continued growth.",
+      "bear_case": "Aggressive acquisition pace risks overpaying as deal multiples rise. Residential and commercial construction remain soft. Weather-dependent aggregates demand. Integration risk from deal volume.",
+      "catalyst": "IIJA peak funding cycle 2026-2027. Data center construction boom driving aggregates. 50% federal highway funding increase. Acquisition synergies from 2025 deals.",
+      "risk": "Rising interest rates dampening private construction. Congressional uncertainty on infrastructure funding continuation. Tariff-driven input cost inflation.",
+      "thesis": "CRH offers the best risk-adjusted return in Materials: mid-cycle construction demand with fiscal tailwind, proven M&A value creation (ROIC improvement confirms this), reasonable 18.5x valuation, and a 2-3 year visible earnings runway from IIJA. Unlike commodity producers, CRH's earnings are driven by government contracts with multi-year visibility."
+    },
+    {
+      "ticker": "FCX",
+      "name": "Freeport-McMoRan Inc.",
+      "sector": "Materials - Metals & Mining (Copper)",
+      "market_cap_b": 74.6,
+      "pe_ratio": 17.5,
+      "revenue_growth_pct": 41.5,
+      "profit_margin_pct": 18.0,
+      "debt_to_equity": 0.55,
+      "roe_pct": 22.0,
+      "dividend_yield_pct": 1.2,
+      "blended_aisc_per_lb": 2.20,
+      "grasberg_cash_cost_per_lb": -0.92,
+      "americas_cash_cost_per_lb": 2.45,
+      "moat_score": 8,
+      "management_score": 8,
+      "growth_score": 8,
+      "valuation_score": 6,
+      "overall_score": 7.6,
+      "rating": "BUY",
+      "position_weight_pct": 3.5,
+      "bull_case": "Copper at $5.65/lb with structural electrification demand. Grasberg is a bottom-quartile cost asset (-$0.92/lb after credits). EBITDA leverage of $425M per $0.10/lb copper. Electrification megatrend (EVs, grid, data centers) provides multi-year demand growth. Q3 2025 EPS of $0.46 on improving pricing.",
+      "bear_case": "Goldman Sachs projects 300kt copper surplus in 2026, not a deficit. Copper has rallied 38% in 2025 -- late-cycle characteristics. Grasberg political risk is material (40-50% of EBITDA from single Indonesian asset). Mud rush incident delayed production; only 85% recovery expected in H2 2026. Americas operations are mid-cost-curve.",
+      "catalyst": "Grasberg phased restart Q2 2026. Grid infrastructure buildout. EV adoption driving copper intensity. AI data center construction.",
+      "risk": "Copper price reversion to $4.00-$4.50/lb range (Goldman's declining forecast). Indonesian royalty increases or regulatory changes. Mud rush recurrence. Global recession.",
+      "thesis": "FCX offers the best copper leverage with Grasberg as the crown jewel, but position sizing must reflect three risks: (1) copper is late-cycle after a 38% rally, (2) the supply-demand balance is debated (surplus vs. deficit depending on forecaster), and (3) Grasberg political risk concentrates 40-50% of EBITDA in one jurisdiction. Sized at 3.5% to account for potential 25% copper pullback.",
+      "copper_supply_demand_note": "V1 cited 'structural supply deficit' without acknowledging Goldman's 300kt surplus forecast. The reality is ambiguous: Goldman sees surplus, ICSG sees deficit. Base case assumes balanced market supporting $9,500-$11,000/mt, not the $12,500+ supercycle in v1."
+    }
+  ],
+  "hold_recommendations": [
+    {
+      "ticker": "NUE",
+      "name": "Nucor Corporation",
+      "sector": "Materials - Metals & Mining (Steel)",
+      "market_cap_b": 38.8,
+      "pe_ratio": 14.0,
+      "revenue_growth_pct": 15.0,
+      "profit_margin_pct": 10.5,
+      "debt_to_equity": 0.30,
+      "roe_pct": 18.0,
+      "dividend_yield_pct": 1.4,
+      "q1_2026_eps_guidance": "$2.70-$2.80",
+      "moat_score": 7,
+      "management_score": 8,
+      "growth_score": 6,
+      "valuation_score": 5,
+      "overall_score": 6.5,
+      "rating": "HOLD",
+      "position_weight_pct": 2.5,
+      "downgrade_rationale": "Downgraded from BUY to HOLD. The entire NUE thesis rests on 50% Section 232 tariffs. HRC at $1,025/ton is 25-30% above global export parity. If tariffs are reduced to 25%, HRC reverts to $800-$900 and EPS drops to $5.50-$8.50 range (40-50% decline). If removed, EPS collapses to $2.50-$5.00. This is a policy bet, not a fundamentals call. At 14x PE on peak earnings, the stock looks cheap, but on probability-weighted expected earnings of $8.65, fair value is ~$121 with limited upside.",
+      "bull_case": "Tariffs maintained at 50% supporting $1,000+ HRC. Q1 2026 EPS of $2.70-$2.80 is a 57% sequential jump. Infrastructure and data center demand is real. Nucor is the most efficient domestic steelmaker with the lowest cost structure. Backlogs up 40% YoY.",
+      "bear_case": "Tariff reduction to 25% or removal would compress HRC to $750-$850 and EPS to $5.50-$8.50. Steel is deeply cyclical. Construction spending expected flat in 2026 ex-infrastructure. Political risk of tariff modification in next Congressional session.",
+      "tariff_scenario_analysis": "See v2_improvements.nue_tariff_dependency_analysis for detailed scenario table.",
+      "thesis": "Nucor is a well-run company in a policy-distorted pricing environment. Own at half-weight as a domestic infrastructure play, but acknowledge the earnings are not durable without tariff protection."
+    },
+    {
+      "ticker": "NEM",
+      "name": "Newmont Corporation",
+      "sector": "Materials - Metals & Mining (Gold)",
+      "market_cap_b": 111.2,
+      "pe_ratio": 14.0,
+      "revenue_growth_pct": 16.0,
+      "profit_margin_pct": 22.0,
+      "debt_to_equity": 0.35,
+      "roe_pct": 18.0,
+      "dividend_yield_pct": 2.0,
+      "aisc_2026_guided_per_oz": 1680,
+      "production_guidance_moz": 5.3,
+      "moat_score": 7,
+      "management_score": 7,
+      "growth_score": 6,
+      "valuation_score": 7,
+      "overall_score": 6.8,
+      "rating": "HOLD",
+      "position_weight_pct": 2.0,
+      "downgrade_rationale": "Downgraded from BUY to HOLD. The v1 thesis required gold >$4,000 which implies macro stress. Gold at $4,500-$5,600 (recent range) signals severe geopolitical/economic dislocation (Hormuz blockade, rate reversals). If the gold thesis is correct, equity portfolios face 20-30% drawdowns, making NEM's outperformance pyrrhic for a diversified investor. Additionally, AISC jumped 24% to $1,680/oz, putting NEM in the upper half of the cost curve. Barrick ($1,320) and Agnico Eagle ($1,250) offer better cost positioning at equivalent gold exposure.",
+      "bull_case": "Gold at $4,500+ generates enormous cash flows ($9.60 EPS at $4,500/oz). 20-year reserve life. Post-Newcrest portfolio streamlined. 2% dividend yield. Safe haven positioning in uncertain macro.",
+      "bear_case": "AISC at $1,680 is upper-quartile cost. Gold price moderation below $4,000 in H2 2026 (Morgan Stanley, BMI forecasts) would compress margins significantly. At gold $3,000, EPS drops to $4.50 -- a 50%+ decline from current estimates. The Hormuz crisis is creating a fear premium that may reverse.",
+      "macro_paradox": "Gold >$4,500 implies a world where equities broadly decline 20-30%. NEM benefits as a gold proxy but the net portfolio impact is negative for a materials sector allocation within an equity portfolio. Position as a hedge, not a conviction long.",
+      "thesis": "Own NEM as portfolio insurance at 2% weight. It hedges against the macro stress scenarios that would hurt the rest of the materials book. But do not overweight: if gold is right about the macro, equities have bigger problems."
+    }
+  ],
+  "sell_recommendations": [
+    {
+      "ticker": "ALB",
+      "name": "Albemarle Corporation",
+      "sector": "Materials - Chemicals (Specialty - Lithium)",
+      "market_cap_b": 20.5,
+      "pe_ratio_on_realistic_eps": "26-33x",
+      "realistic_2026_eps": "$4-$5 at current lithium ~$18.5k/t",
+      "consensus_eps_bull_case": "$7.87 (requires lithium $22-25/kg)",
+      "revenue_growth_pct": -5.0,
+      "profit_margin_pct": -8.0,
+      "debt_to_equity": 0.65,
+      "q4_2025_adj_eps": -0.53,
+      "rating": "SELL",
+      "position_weight_pct": 0.0,
+      "target_price": 95,
+      "downside_pct": -27,
+      "thesis": "See v2_improvements.sell_recommendations for detailed rationale. At current lithium prices, ALB trades at 26-33x realistic 2026 EPS of $4-$5. Management guided sales flat-to-down and EBITDA lower in 2026. The 1,096% EPS growth figure from v1 was misleading base-effect distortion. Chinese supply overhang of 450k+ tonnes excess capacity persists. DLE technology is in pilot phase with no proven scale economics. Re-enter below $95 or when lithium sustains $22+/kg."
+    },
+    {
+      "ticker": "MP",
+      "name": "MP Materials Corp.",
+      "sector": "Materials - Metals & Mining (Rare Earths)",
+      "market_cap_b": 8.5,
+      "pe_ratio": null,
+      "consensus_2026_eps": -0.22,
+      "revenue_ttm_m": 230,
+      "profit_margin_pct": -31.0,
+      "rating": "SELL",
+      "position_weight_pct": 0.0,
+      "target_price": 30,
+      "downside_pct": -40,
+      "thesis": "See v2_improvements.sell_recommendations for detailed rationale. Reclassified from BUY to SELL. An unprofitable company with -$0.22 EPS, -31% margins, and $230M revenue cannot receive the same rating as $220B Linde. China suspended rare earth export restrictions until Nov 2026, removing the near-term catalyst. MP produces <1% of China's magnet output. The stock trades on national security narrative at 76-102% premium to 5-year average multiples. For speculators only."
+    }
+  ],
+  "speculative_watchlist": [
+    {
+      "ticker": "MP",
+      "name": "MP Materials Corp.",
+      "entry_conditions": ["Positive GAAP EPS for two consecutive quarters", "NdFeB magnet production exceeding 2,000 tons/year", "Revenue exceeding $400M annual run-rate", "China reimposing rare earth export restrictions"],
+      "note": "MP has legitimate strategic value as the only integrated Western rare earth producer. The issue is valuation, not the business model. If the company demonstrates commercial-scale profitability, it becomes investable. Until then, it is a venture-capital-style bet unsuitable for a sector allocation."
+    },
+    {
+      "ticker": "ALB",
+      "name": "Albemarle Corporation",
+      "entry_conditions": ["Lithium carbonate sustaining above $22/kg for 2+ quarters", "Chinese supply rationalization confirmed (5%+ capacity closures)", "DLE pilot demonstrating 20%+ cost reduction at scale", "Stock price below $95 (providing margin of safety on mid-cycle earnings)"],
+      "note": "ALB is the best-positioned lithium company globally once the cycle turns. The issue is timing: buying now at 26-33x mid-cycle earnings provides no margin of safety. Early-cycle lithium is a legitimate opportunity but the stock has moved ahead of fundamentals."
+    }
+  ],
+  "sector_outlook": "The Materials sector in April 2026 presents a bifurcated landscape. Quality compounders (LIN) and fiscal-tailwind beneficiaries (CRH) offer the best risk-adjusted returns with visible earnings runways. Commodity producers face late-cycle dynamics: copper has rallied 38%, steel pricing is tariff-dependent, gold implies macro stress, and lithium is in early recovery but priced for mid-cycle. Position sizing must reflect these realities. The v1 report's error was treating all seven picks as roughly equivalent conviction longs. In reality, LIN and CRH are fundamentally differentiated from the cyclical commodity names and deserve 2-3x the position weight. Two SELL recommendations (ALB, MP) and two downgrades to HOLD (NUE, NEM) reflect the sector's elevated policy and commodity risk.",
+  "key_themes": [
+    "Bifurcated sector: quality compounders (LIN) and infrastructure plays (CRH) offer visible earnings vs. commodity producers with cycle risk",
+    "Copper supply-demand is genuinely debated: Goldman sees 300kt surplus, ICSG sees 150kt deficit. Base case: balanced market at $9,500-$11,000/mt, not supercycle",
+    "Steel pricing is policy-driven, not fundamental: 50% Section 232 tariffs inflate HRC 25-30% above global parity. Any tariff modification creates cliff risk for NUE",
+    "Gold macro paradox: gold above $4,500 implies macro stress that hurts equity portfolios. NEM is a hedge, not a conviction long",
+    "Lithium early-cycle recovery underway but ALB valuation prices in mid-cycle earnings that have not materialized. Chinese supply overhang persists",
+    "IIJA peak disbursement 2026-2027 provides the most visible multi-year earnings tailwind in the sector, directly benefiting CRH",
+    "Rare earth national security narrative is real but MP Materials valuation is detached from fundamentals. China suspension of export restrictions removes near-term catalyst",
+    "Position sizing must reflect commodity cyclicality: through-cycle compounders at 5-6%, cyclical commodity producers at 2-3.5%"
+  ],
+  "risks": [
+    "Global recession causing demand destruction across all materials subsectors (probability: 15-20%)",
+    "Section 232 tariff modification or exemptions compressing domestic steel pricing by 25%+ (probability: 30%)",
+    "Copper price correction of 25-35% from late-cycle highs (probability: 25-30%)",
+    "Gold price moderation below $4,000/oz in H2 2026 as monetary easing slows (probability: 40%)",
+    "Lithium price relapse if Chinese supply ramps faster than demand (probability: 25%)",
+    "Indonesian regulatory escalation at Grasberg affecting 40-50% of FCX EBITDA (probability: 10-15%)",
+    "China reimposing then weaponizing rare earth restrictions in unpredictable fashion (probability: 20%)",
+    "Interest rate increases dampening construction spending and materials demand broadly (probability: 15%)",
+    "Technology substitution reducing copper intensity in EVs or lithium demand via alternative battery chemistries (probability: 5-10% near-term)"
+  ],
+  "confidence_score": 0.85,
+  "methodology_notes": "V2 incorporates commodity sensitivity tables for every pick, cost curve analysis for FCX and NEM, two SELL recommendations, two downgrades to HOLD, cycle positioning analysis for each sub-sector, position sizing reflecting commodity risk, reconciled copper supply-demand with specific forecast citations, LIN historical PE validation, CRH acquisition ROIC analysis, NUE tariff dependency quantification, ALB normalized earnings reframe, NEM macro paradox acknowledgment, MP Materials reclassification, and FCX Grasberg political risk assessment. All commodity price assumptions cited to specific forecaster sources."
+}

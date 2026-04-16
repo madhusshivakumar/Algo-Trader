@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-03T03:17:33.711683",
+  "updated": "2026-04-15T16:13:25.691808",
   "equity_symbols": [
     "INTC",
     "AMD",
@@ -18,21 +18,21 @@
     "IWM"
   ],
   "strategy_map": {
-    "INTC": "mean_reversion_aggressive",
     "AMD": "mean_reversion_aggressive",
+    "INTC": "mean_reversion_aggressive",
     "PLTR": "mean_reversion_aggressive",
-    "TSLA": "mean_reversion",
     "SOFI": "mean_reversion_aggressive",
-    "CRM": "mean_reversion_aggressive",
+    "TSLA": "mean_reversion",
     "MRVL": "mean_reversion_aggressive",
-    "NFLX": "mean_reversion_aggressive",
     "RIVN": "mean_reversion_aggressive",
-    "C": "mean_reversion_aggressive",
+    "ORCL": "mean_reversion_aggressive",
+    "NFLX": "mean_reversion_aggressive",
     "LYFT": "mean_reversion_aggressive",
     "BAC": "mean_reversion_aggressive",
-    "SLB": "mean_reversion_aggressive",
-    "ARKK": "mean_reversion_aggressive",
+    "COIN": "mean_reversion_aggressive",
     "IWM": "mean_reversion_aggressive",
+    "XLK": "mean_reversion_aggressive",
+    "C": "mean_reversion_aggressive",
     "BTC/USD": "mean_reversion_aggressive",
     "ETH/USD": "volume_profile"
   },

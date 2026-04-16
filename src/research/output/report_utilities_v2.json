@@ -1,0 +1,544 @@
+{
+    "sector": "utilities",
+    "agent_name": "utilities_expert",
+    "version": 2,
+    "timestamp": "2026-04-04T14:00:00Z",
+    "total_companies_analyzed": 22,
+    "sector_outlook": "The US Utilities sector is experiencing a structural demand inflection driven by data center buildouts for AI workloads, grid modernization, and electrification. US data center power demand is projected to reach 106 GW near-term and 176 GW by 2035. EIA forecasts 2.4% electricity demand growth in 2025 and 1.7% in 2026, with data-center-heavy regions seeing 3-4% growth. The sector surged 70% from late-2023 lows through 2025 and now trades approximately 7% above fair value on aggregate.\n\nCRITICAL VALUATION WARNING: At 7% above fair value with average forward P/E near 22x (vs 15-year average of 17x), the sector is pricing in flawless execution on massive capex programs AND sustained low interest rates. The 10-year Treasury yield at 4.38% already exceeds the sector average dividend yield of ~3%, one of the longest inversions in 30 years. Every 50bp rise in the 10-year compresses utility P/E multiples by approximately 1.0-1.5x historically. Investors must distinguish between contracted demand (signed ESAs with creditworthy counterparties) and speculative pipeline demand (interconnection queue requests that may never materialize).\n\nBEHIND-THE-METER RISK: Up to 25 GW of behind-the-meter generation is expected to be deployed over the next five years, predominantly natural gas with fuel cells and SMRs gaining traction. Google's $4.75B acquisition of Intersect Power signals hyperscalers are moving beyond procurement toward direct energy asset ownership. This represents a structural headwind to the 'all demand flows through the grid' thesis underpinning many utility valuations.\n\nINTERCONNECTION QUEUE REALITY: PJM has 30,000 MW remaining in transition queue for 2026 processing plus 63,000 MW additional. ERCOT's large load queue has swelled to 226 GW with data centers adding 5-7 GW annually vs only 2-3 GW of new supply delivered. Average time from interconnection application to commercial operation has risen from 2 years (2008) to over 8 years (2025). This severely constrains the timeline for speculative demand to convert to actual revenue.",
+    "key_themes": [
+        "Data center and AI-driven power demand creating multi-decade load growth inflection, but with critical distinction between 'contracted' (signed ESAs, ~30-40 GW) and 'speculative' (queue requests, ~200+ GW) demand that may never materialize",
+        "Nuclear renaissance driving premium PPAs with hyperscalers, but natural gas at $3.80/MMBtu creates a price ceiling on nuclear PPA economics — if gas stays below $4.50, nuclear PPAs above $60/MWh face renegotiation risk in future cycles",
+        "Record utility capex cycles ($37B-$103B plans) require continuous constructive regulation, equity issuance, and affordable bill trajectories — regulatory lag of 12-18 months on rate cases during rapid cost escalation creates structural earnings drag of 50-150bp annually"
+    ],
+    "risks": [
+        "Interest rate sensitivity: at current 4.38% 10yr yield, sector already under pressure; move to 5.0% could compress sector P/E by 2-3x and trigger 10-15% drawdown",
+        "Behind-the-meter generation: 25 GW pipeline over 5 years represents demand that bypasses utility grids entirely, directly undermining the load growth thesis for regulated utilities",
+        "Regulatory lag and affordability: consumer bills up 6-7% with further increases planned; rate case processing takes 12-18 months, creating persistent cost-recovery mismatch during capex ramps",
+        "Interconnection queue backlogs of 8+ years from application to commercial operation mean speculative data center demand may not convert to utility revenue until 2030+",
+        "Equity dilution: utilities with negative FCF yields (AEP -7.2%) must issue equity to fund capex, diluting existing shareholders by 2-4% annually"
+    ],
+    "confidence_score": 7,
+    "v2_improvements": {
+        "interest_rate_sensitivity": {
+            "methodology": "Historical regression of utility sector P/E vs 10-year Treasury yield, calibrated to current forward earnings estimates. Each scenario assumes Fed holds or adjusts; no credit spread widening included.",
+            "current_10yr_yield_pct": 4.38,
+            "current_sector_avg_pe": 22.0,
+            "scenarios": [
+                {
+                    "yield_pct": 4.5,
+                    "implied_sector_pe": 21.5,
+                    "sector_impact": "Modest compression. Current valuations hold for names with 7%+ EPS growth. Dividend yield spread narrows further but remains investable for total return buyers.",
+                    "most_vulnerable": ["NEE", "ETR"],
+                    "most_resilient": ["VST", "CEG"]
+                },
+                {
+                    "yield_pct": 5.0,
+                    "implied_sector_pe": 19.5,
+                    "sector_impact": "Significant compression of 11-12% from current levels. Bond proxies (DUK, SO, NEE) face 12-18% drawdowns. Growth names with contracted PPAs (CEG, VST) hold up better as earnings growth offsets multiple compression. Dividend sustainability comes under scrutiny as debt refinancing costs rise.",
+                    "most_vulnerable": ["NEE", "DUK", "SO"],
+                    "most_resilient": ["VST", "CEG"]
+                },
+                {
+                    "yield_pct": 5.5,
+                    "implied_sector_pe": 17.5,
+                    "sector_impact": "Severe compression of 20%+ from current levels. Sector re-rates to historical average. Capex plans become uneconomic at weighted average cost of capital above 8%. Expect dividend cuts or growth plan reductions from highly leveraged names. Only names with locked-in PPAs and low leverage survive without material downside.",
+                    "most_vulnerable": ["NEE", "ETR", "DUK", "AEP"],
+                    "most_resilient": ["VST"]
+                }
+            ],
+            "per_stock_sensitivity": {
+                "NEE": {"pe_at_4.5": 24.5, "pe_at_5.0": 22.0, "pe_at_5.5": 19.5, "price_impact_at_5.5_pct": -22},
+                "CEG": {"pe_at_4.5": 25.0, "pe_at_5.0": 23.5, "pe_at_5.5": 21.5, "price_impact_at_5.5_pct": -12},
+                "VST": {"pe_at_4.5": 18.5, "pe_at_5.0": 17.5, "pe_at_5.5": 16.5, "price_impact_at_5.5_pct": -8},
+                "DUK": {"pe_at_4.5": 20.0, "pe_at_5.0": 18.0, "pe_at_5.5": 16.0, "price_impact_at_5.5_pct": -24},
+                "AEP": {"pe_at_4.5": 19.0, "pe_at_5.0": 17.5, "pe_at_5.5": 16.0, "price_impact_at_5.5_pct": -19},
+                "ETR": {"pe_at_4.5": 25.5, "pe_at_5.0": 22.5, "pe_at_5.5": 20.0, "price_impact_at_5.5_pct": -25},
+                "SO": {"pe_at_4.5": 20.5, "pe_at_5.0": 19.0, "pe_at_5.5": 17.0, "price_impact_at_5.5_pct": -19}
+            }
+        },
+        "sell_recommendations": [
+            {
+                "ticker": "NEE",
+                "rating": "SELL",
+                "rationale": "At 25.3x forward earnings and 68-70% payout ratio, NEE is the most expensive large-cap utility with the least near-term earnings leverage to data center demand. The $295B investment plan is overwhelmingly renewables-focused, but hyperscalers increasingly demand firm baseload (nuclear/gas), not intermittent generation. The 2.42% dividend yield provides minimal downside cushion vs 4.38% risk-free rate. Behind-the-meter solar+storage directly competes with NEE's renewable PPA business model. Florida regulatory risk from hurricane cost recovery adds further headwind.",
+                "entry_trigger": "Re-enter below 20x forward PE (~$76/share) where dividend yield exceeds 3.2%",
+                "target_downside_pct": -15,
+                "catalyst_for_sell": "Rising rates compress premium multiple; BTM generation erodes renewable PPA demand; Florida regulatory scrutiny on hurricane cost recovery"
+            }
+        ],
+        "dividend_analysis": {
+            "methodology": "Payout ratio calculated as dividends per share / EPS. Dividend coverage = EPS / DPS. FCF coverage = (Operating CF - Capex) / Total Dividends. Negative FCF coverage indicates external financing required to pay dividends during capex ramp.",
+            "per_stock": {
+                "NEE": {
+                    "dividend_yield_pct": 2.42,
+                    "payout_ratio_pct": 69.0,
+                    "dividend_coverage_x": 1.45,
+                    "fcf_coverage_x": -0.8,
+                    "annual_dividend_growth_pct": 10.0,
+                    "consecutive_increases_yrs": 32,
+                    "sustainability_rating": "MODERATE",
+                    "comment": "Earnings cover dividend but FCF is deeply negative due to massive capex. 10% dividend growth rate is aggressive given negative FCF. Sustainable only if capital markets remain open for equity/debt issuance."
+                },
+                "CEG": {
+                    "dividend_yield_pct": 0.51,
+                    "payout_ratio_pct": 5.2,
+                    "dividend_coverage_x": 19.2,
+                    "fcf_coverage_x": 12.5,
+                    "annual_dividend_growth_pct": 25.0,
+                    "consecutive_increases_yrs": 3,
+                    "sustainability_rating": "STRONG",
+                    "comment": "Minimal payout ratio provides enormous flexibility. Dividend is a non-factor in the investment thesis — this is a growth and capital return (buyback) story."
+                },
+                "VST": {
+                    "dividend_yield_pct": 0.56,
+                    "payout_ratio_pct": 4.8,
+                    "dividend_coverage_x": 20.8,
+                    "fcf_coverage_x": 8.5,
+                    "annual_dividend_growth_pct": 15.0,
+                    "consecutive_increases_yrs": 2,
+                    "sustainability_rating": "STRONG",
+                    "comment": "Negligible payout ratio. Massive FCF generation ($3.9-4.7B guided) easily covers the token dividend. Primary capital return is via $4.25B share repurchase program."
+                },
+                "DUK": {
+                    "dividend_yield_pct": 3.24,
+                    "payout_ratio_pct": 67.0,
+                    "dividend_coverage_x": 1.49,
+                    "fcf_coverage_x": -1.2,
+                    "annual_dividend_growth_pct": 5.0,
+                    "consecutive_increases_yrs": 15,
+                    "sustainability_rating": "MODERATE",
+                    "comment": "Earnings cover dividend but FCF is negative during $103B capex ramp. Requires continuous debt/equity issuance. Sustainable if regulated returns remain constructive."
+                },
+                "AEP": {
+                    "dividend_yield_pct": 2.90,
+                    "payout_ratio_pct": 60.0,
+                    "dividend_coverage_x": 1.67,
+                    "fcf_coverage_x": -2.1,
+                    "annual_dividend_growth_pct": 6.0,
+                    "consecutive_increases_yrs": 17,
+                    "sustainability_rating": "WATCH",
+                    "comment": "FCF yield of -7.2% is deeply negative. $72B capex plan requires continuous equity issuance diluting EPS growth by 2-4% annually. Dividend growth could slow if regulatory outcomes disappoint."
+                },
+                "ETR": {
+                    "dividend_yield_pct": 2.80,
+                    "payout_ratio_pct": 74.0,
+                    "dividend_coverage_x": 1.35,
+                    "fcf_coverage_x": -1.5,
+                    "annual_dividend_growth_pct": 6.0,
+                    "consecutive_increases_yrs": 10,
+                    "sustainability_rating": "WATCH",
+                    "comment": "Highest payout ratio among picks at 74%. At 26.6x PE, the 11.5% EPS CAGR must deliver consistently or payout ratio balloons above 80%. Hurricane exposure adds lumpy capex risk."
+                },
+                "SO": {
+                    "dividend_yield_pct": 3.20,
+                    "payout_ratio_pct": 65.0,
+                    "dividend_coverage_x": 1.54,
+                    "fcf_coverage_x": -0.9,
+                    "annual_dividend_growth_pct": 5.0,
+                    "consecutive_increases_yrs": 24,
+                    "sustainability_rating": "MODERATE",
+                    "comment": "Vogtle construction debt still elevated (D/E 2.11). $81B capex plan for 2026-2030 keeps FCF negative. 24-year dividend growth streak provides floor, but growth rate limited to 5% during deleveraging."
+                }
+            }
+        },
+        "contracted_vs_speculative_demand": {
+            "methodology": "Contracted = signed electric service agreements (ESAs) or PPAs with identified counterparties and specified MW. Speculative = interconnection queue requests, letters of intent, pipeline discussions without binding contracts.",
+            "per_stock": {
+                "NEE": {
+                    "contracted_gw": 2.5,
+                    "speculative_pipeline_gw": 15.0,
+                    "contracted_revenue_start": "2025-2027",
+                    "speculative_revenue_start": "2028-2032",
+                    "conversion_probability_pct": 20,
+                    "comment": "Renewables PPAs are shorter duration and subject to BTM substitution risk. Much of the pipeline is speculative with low conversion rates given interconnection backlogs."
+                },
+                "CEG": {
+                    "contracted_gw": 8.5,
+                    "speculative_pipeline_gw": 12.0,
+                    "contracted_revenue_start": "2024-2026",
+                    "speculative_revenue_start": "2027-2030",
+                    "conversion_probability_pct": 45,
+                    "comment": "Nuclear PPAs with Microsoft, Meta are 10-20yr firm contracts. Calpine gas fleet adds immediate capacity. Crane nuclear restart (2027) is key execution milestone. Higher conversion probability due to baseload scarcity."
+                },
+                "VST": {
+                    "contracted_gw": 5.2,
+                    "speculative_pipeline_gw": 8.0,
+                    "contracted_revenue_start": "2025-2026",
+                    "speculative_revenue_start": "2027-2029",
+                    "conversion_probability_pct": 40,
+                    "comment": "Meta PPA for 2,600+ MW nuclear is contracted. Additional pipeline across nuclear and gas assets. ERCOT market positioning provides merchant upside but also volatility."
+                },
+                "DUK": {
+                    "contracted_gw": 4.5,
+                    "speculative_pipeline_gw": 9.0,
+                    "contracted_revenue_start": "2027-2028",
+                    "speculative_revenue_start": "2029-2032",
+                    "conversion_probability_pct": 35,
+                    "comment": "4.5 GW of signed ESAs but revenue contribution doesn't start meaningfully until late 2027/2028. Investors paying today for 2028+ earnings are taking duration risk equivalent to a 2-year call option on regulatory approval."
+                },
+                "AEP": {
+                    "contracted_gw": 6.0,
+                    "speculative_pipeline_gw": 28.0,
+                    "contracted_revenue_start": "2026-2028",
+                    "speculative_revenue_start": "2028-2033",
+                    "conversion_probability_pct": 25,
+                    "comment": "28 GW signed load additions but 190 GW pipeline is overwhelmingly speculative. Piketon 10 GW campus depends on Ohio regulatory approval and third-party transmission funding. High ambition, low near-term visibility."
+                },
+                "ETR": {
+                    "contracted_gw": 3.0,
+                    "speculative_pipeline_gw": 7.0,
+                    "contracted_revenue_start": "2026-2027",
+                    "speculative_revenue_start": "2028-2030",
+                    "conversion_probability_pct": 35,
+                    "comment": "Gulf Coast industrial demand (LNG, petrochemical) has higher conversion probability than pure data center pipeline. Nuclear fleet provides baseload optionality."
+                },
+                "SO": {
+                    "contracted_gw": 3.5,
+                    "speculative_pipeline_gw": 8.0,
+                    "contracted_revenue_start": "2026-2027",
+                    "speculative_revenue_start": "2028-2031",
+                    "conversion_probability_pct": 30,
+                    "comment": "Southeast data center migration is real but competitive. Vogtle nuclear capacity is fully operational and contracted. SMR optionality is speculative with no firm commitments."
+                }
+            }
+        },
+        "natural_gas_stress_test": {
+            "current_henry_hub_pct": 3.80,
+            "scenario_low": {
+                "gas_price_mmbtu": 2.50,
+                "impact": "Nuclear PPAs become even more valuable as gas-fired generation costs drop but nuclear's zero-fuel-cost advantage widens on a total cost basis. However, merchant power prices decline, hurting VST and CEG gas fleet margins. Net positive for pure nuclear thesis, negative for diversified generators.",
+                "winners": ["CEG_nuclear_fleet", "VST_nuclear_fleet"],
+                "losers": ["VST_gas_fleet", "CEG_calpine_gas"]
+            },
+            "scenario_base": {
+                "gas_price_mmbtu": 3.80,
+                "impact": "Current consensus case. Nuclear PPAs at $40-60/MWh remain attractive vs gas-fired generation at $45-55/MWh (depending on heat rate and carbon costs). Both nuclear and gas fleets are profitable."
+            },
+            "scenario_high": {
+                "gas_price_mmbtu": 6.00,
+                "impact": "Nuclear economics become extraordinarily attractive. PPAs signed at $50-60/MWh deliver massive margin expansion as gas-fired alternatives cost $70-90/MWh. Existing nuclear PPAs appreciate. CEG and VST nuclear fleets see material upside. However, regulated utilities face higher purchased power costs that must be passed through in rate cases, increasing regulatory lag drag.",
+                "winners": ["CEG", "VST"],
+                "losers": ["DUK", "SO", "AEP"]
+            },
+            "key_insight": "The nuclear PPA thesis is robust across gas price scenarios. At gas below $3/MMBtu, nuclear PPAs still beat gas on levelized cost; at gas above $5/MMBtu, nuclear PPAs deliver outsized margins. The risk is not gas prices killing nuclear economics — it is gas prices staying so low ($2-3/MMBtu) that hyperscalers question the premium paid for nuclear PPAs in future contracting rounds."
+        },
+        "position_sizing": {
+            "methodology": "Kelly-criterion-inspired sizing adjusted for sector correlation and individual stock volatility. Maximum sector allocation 12% of portfolio. Individual position max 3% for STRONG_BUY, 2% for BUY, 1.5% for HOLD.",
+            "recommended_sector_weight_pct": 9.0,
+            "rationale": "Sector 7% overvalued warrants underweight vs benchmark ~10%. Concentrate in high-conviction contracted-demand names with rate protection.",
+            "per_stock": {
+                "CEG": {"weight_pct": 2.5, "sizing_rationale": "Highest conviction: contracted nuclear PPAs, Calpine accretive, strongest earnings momentum"},
+                "VST": {"weight_pct": 2.0, "sizing_rationale": "Strong earnings growth but 3-4x leverage requires position discipline; size down vs CEG for risk management"},
+                "AEP": {"weight_pct": 1.5, "sizing_rationale": "Transmission backbone thesis is unique but equity dilution and Ohio regulatory risk warrant modest position"},
+                "DUK": {"weight_pct": 1.5, "sizing_rationale": "Quality franchise but paying 2 years early for data center revenue; size reflects duration risk"},
+                "SO": {"weight_pct": 1.0, "sizing_rationale": "Defensive hold; Vogtle operational de-risking offset by moderate growth rate and legacy debt"},
+                "ETR": {"weight_pct": 0.5, "sizing_rationale": "Smallest position reflects 26.6x PE stress-test vulnerability; add on pullback to 22x"},
+                "NEE": {"weight_pct": 0.0, "sizing_rationale": "SELL recommendation; no position until valuation resets to 20x or below"}
+            }
+        },
+        "entry_exit_criteria": {
+            "sector_level": {
+                "entry_trigger": "Sector average forward PE below 19x OR 10yr yield below 4.0% with sector PE below 21x",
+                "exit_trigger": "Sector average forward PE above 24x OR 10yr yield above 5.0% with no offsetting earnings revision upward",
+                "rebalance_trigger": "Any individual stock PE deviating more than 20% from target range"
+            },
+            "per_stock": {
+                "CEG": {"buy_below_pe": 24.0, "add_below_pe": 20.0, "trim_above_pe": 30.0, "sell_above_pe": 35.0},
+                "VST": {"buy_below_pe": 18.0, "add_below_pe": 15.0, "trim_above_pe": 22.0, "sell_above_pe": 25.0},
+                "AEP": {"buy_below_pe": 19.0, "add_below_pe": 16.0, "trim_above_pe": 22.0, "sell_above_pe": 25.0},
+                "DUK": {"buy_below_pe": 20.0, "add_below_pe": 17.0, "trim_above_pe": 23.0, "sell_above_pe": 26.0},
+                "SO": {"buy_below_pe": 20.0, "add_below_pe": 17.0, "trim_above_pe": 23.0, "sell_above_pe": 25.0},
+                "ETR": {"buy_below_pe": 22.0, "add_below_pe": 18.0, "trim_above_pe": 27.0, "sell_above_pe": 30.0},
+                "NEE": {"buy_below_pe": 20.0, "add_below_pe": 17.0, "trim_above_pe": 24.0, "sell_above_pe": 27.0}
+            }
+        },
+        "ceg_calpine_acquisition_analysis": {
+            "purchase_price_b": 26.6,
+            "ev_ebitda_multiple": 7.9,
+            "combined_capacity_gw": 60,
+            "deal_closed": "2026-01-07",
+            "key_risks": [
+                "Integration of Calpine's gas and geothermal fleet while maintaining nuclear safety standards for Crane restart",
+                "Post-acquisition leverage increase and debt exchange complexity keeping investor focus on balance sheet",
+                "Crane Clean Energy Center restart faces potential transmission bottleneck — pivoting to Fully Isolated Co-Located Load model for Microsoft deal",
+                "Modeling complexity from combined nuclear + gas fleet creating Wall Street uncertainty on normalized earnings power",
+                "Required $5B asset divestiture to satisfy antitrust conditions reduces synergy capture"
+            ],
+            "bull_case_multiple": "7.9x EBITDA is attractive for 60 GW of generation capacity including nuclear and geothermal. Comparable gas-only acquisitions have traded at 8-10x EBITDA recently.",
+            "bear_case_multiple": "Adjusted for integration risk, Crane restart uncertainty, and required divestitures, effective multiple is closer to 9-10x on retained assets. Premium vs pre-deal standalone trading multiple of CEG.",
+            "earnings_accretion_timeline": "Immediately accretive to EBITDA but EPS accretion depends on debt refinancing costs and integration expense timing. Full synergy realization expected 2027-2028."
+        },
+        "regulatory_lag_quantification": {
+            "average_rate_case_duration_months": 15,
+            "annual_earnings_drag_bp": "50-150",
+            "worst_case_states": ["Ohio", "Louisiana", "Mississippi"],
+            "best_case_states": ["Florida", "Georgia", "Indiana"],
+            "per_stock_exposure": {
+                "NEE": {"primary_jurisdictions": ["Florida"], "regulatory_quality": "Constructive", "lag_risk": "LOW"},
+                "CEG": {"primary_jurisdictions": ["PJM_market"], "regulatory_quality": "N/A_unregulated", "lag_risk": "NONE"},
+                "VST": {"primary_jurisdictions": ["ERCOT_market"], "regulatory_quality": "N/A_unregulated", "lag_risk": "NONE"},
+                "DUK": {"primary_jurisdictions": ["North_Carolina", "South_Carolina", "Florida", "Indiana"], "regulatory_quality": "Mixed", "lag_risk": "MODERATE"},
+                "AEP": {"primary_jurisdictions": ["Ohio", "Virginia", "West_Virginia", "Indiana"], "regulatory_quality": "Mixed_to_Constructive", "lag_risk": "MODERATE"},
+                "ETR": {"primary_jurisdictions": ["Louisiana", "Mississippi", "Arkansas", "Texas"], "regulatory_quality": "Below_Average", "lag_risk": "HIGH"},
+                "SO": {"primary_jurisdictions": ["Georgia", "Alabama", "Mississippi"], "regulatory_quality": "Constructive", "lag_risk": "LOW"}
+            }
+        },
+        "so_vogtle_repeat_risk": {
+            "vogtle_34_final_cost_b": 35.0,
+            "vogtle_34_original_estimate_b": 14.0,
+            "cost_overrun_pct": 150,
+            "delay_years": 7,
+            "current_status": "Units 3 and 4 fully operational as of 2026. Construction risk is ZERO for existing units.",
+            "future_nuclear_risk": "Southern's $81B capex plan (2026-2030) does NOT include new large-scale nuclear construction. SMR partnerships are exploratory only. The Vogtle experience makes SO management extremely cautious about new nuclear commitments. Repeat risk is LOW for the current capex cycle.",
+            "legacy_debt_impact": "Vogtle construction debt contributes to SO's 2.11x D/E ratio. FFO-to-debt improvement is a management priority under new CFO David Poroch. Deleveraging will constrain dividend growth to 5% annually through 2028.",
+            "investor_implication": "Vogtle is a sunk cost. The investment case rests on the operational nuclear fleet generating reliable baseload revenue, not on new nuclear construction. Do not overpay for 'SMR optionality' that management has not committed to."
+        },
+        "etr_growth_stress_test": {
+            "claimed_eps_cagr_pct": 11.5,
+            "current_pe": 26.6,
+            "forward_pe": 23.6,
+            "peg_ratio": 2.3,
+            "stress_scenarios": [
+                {
+                    "scenario": "Bull — 11.5% growth delivers",
+                    "pe_in_2028": 18.0,
+                    "implied_return_pct": 22,
+                    "probability_pct": 25,
+                    "conditions": "All Gulf Coast data center and LNG projects materialize on schedule. Regulatory outcomes constructive in all 4 states. No major hurricanes."
+                },
+                {
+                    "scenario": "Base — 8% growth (regulatory lag and delays)",
+                    "pe_in_2028": 20.0,
+                    "implied_return_pct": 8,
+                    "probability_pct": 45,
+                    "conditions": "Some project delays. Louisiana and Mississippi regulatory lag absorbs 200-300bp of growth. Moderate hurricane costs."
+                },
+                {
+                    "scenario": "Bear — 5% growth (execution miss)",
+                    "pe_in_2028": 22.0,
+                    "implied_return_pct": -8,
+                    "probability_pct": 25,
+                    "conditions": "Data center demand slows or shifts BTM. Multiple states push back on rate increases. Major hurricane in service territory."
+                },
+                {
+                    "scenario": "Stress — 2% growth (multiple headwinds)",
+                    "pe_in_2028": 16.0,
+                    "implied_return_pct": -35,
+                    "probability_pct": 5,
+                    "conditions": "Rising rates to 5.5% crush valuation. Regulatory disallowance of capex recovery. Dividend cut required to fund capex."
+                }
+            ],
+            "probability_weighted_return_pct": 5.8,
+            "verdict": "At 26.6x PE with PEG of 2.3, ETR is priced for the bull case that has only 25% probability. The probability-weighted expected return of 5.8% barely exceeds the risk-free rate. HOLD with tight entry discipline — only add below 22x PE."
+        }
+    },
+    "top_picks": [
+        {
+            "ticker": "CEG",
+            "name": "Constellation Energy",
+            "sector": "utilities",
+            "market_cap_b": 104.5,
+            "pe_ratio": 25.9,
+            "revenue_growth_pct": 12.0,
+            "profit_margin_pct": 18.5,
+            "debt_to_equity": 1.1,
+            "roe_pct": 22.0,
+            "dividend_yield_pct": 0.51,
+            "moat_score": 9,
+            "management_score": 8,
+            "growth_score": 9,
+            "valuation_score": 6,
+            "overall_score": 8.1,
+            "rating": "BUY",
+            "bull_case": "Constellation owns the premier US nuclear fleet and closed the $26.6B Calpine acquisition in January 2026, creating a 60 GW diversified generation portfolio at an attractive 7.9x EV/EBITDA. Hyperscaler PPAs with Microsoft and Meta provide 10-20yr contracted revenue visibility. As an unregulated generator, CEG avoids regulatory lag risk entirely. 81% of analysts rate Buy/Strong Buy with $398 consensus target.",
+            "bear_case": "Calpine integration risk is material — absorbing a $26.6B acquisition while maintaining nuclear safety for Crane restart is operationally demanding. Required $5B asset divestiture reduces synergy capture. Post-deal balance sheet complexity (debt exchanges, integration costs) keeps leverage elevated near-term. Stock has already re-rated massively from 2023 lows. Crane restart transmission bottleneck creates 2027 timeline uncertainty. Nuclear operational incident risk is ever-present.",
+            "catalyst": "Calpine synergy realization in 2H 2026; Crane Clean Energy Center restart milestone in 2027; additional hyperscaler nuclear PPA announcements",
+            "risk": "Calpine integration execution; Crane restart delay; nuclear incident; PJM capacity market reform reducing scarcity pricing",
+            "thesis": "CEG is the best-positioned utility for the nuclear renaissance with contracted demand, no regulatory lag, and Calpine adding immediate capacity. Downgraded from STRONG_BUY to BUY due to Calpine execution risk, elevated post-deal leverage, and need to prove integration before re-rating further.",
+            "entry_pe": 24.0,
+            "exit_pe": 35.0,
+            "position_size_pct": 2.5
+        },
+        {
+            "ticker": "VST",
+            "name": "Vistra Corp",
+            "sector": "utilities",
+            "market_cap_b": 55.0,
+            "pe_ratio": 18.7,
+            "revenue_growth_pct": 15.0,
+            "profit_margin_pct": 12.5,
+            "debt_to_equity": 3.36,
+            "roe_pct": 28.0,
+            "dividend_yield_pct": 0.56,
+            "moat_score": 7,
+            "management_score": 8,
+            "growth_score": 9,
+            "valuation_score": 7,
+            "overall_score": 7.5,
+            "rating": "BUY",
+            "bull_case": "Vistra is the largest US unregulated power producer with 6,400 MW nuclear capacity backed by 20-year Meta PPA for 2,600+ MW. 2026 EBITDA guidance of $6.8-7.6B represents 65% YoY growth. Adjusted FCF of $3.9-4.7B funds $4.25B buyback program. Forward P/E of 18.7x is attractive relative to explosive earnings trajectory. No regulatory lag risk as unregulated generator.",
+            "bear_case": "LEVERAGE IS THE CRITICAL RISK: D/E ratio of 3.36 (updated from 2.8x) ranks worse than 89% of independent power producers. Altman Z-Score is in the distress zone. Substantial debt service obligations constrain financial flexibility and make VST highly vulnerable to rising rates. As unregulated generator, earnings are exposed to power price volatility. ERCOT market structure provides no capacity payment floor. A nuclear operational incident at any of 6 reactors would be catastrophic for a levered balance sheet.",
+            "catalyst": "2026 EBITDA delivery proving guidance credibility; deleveraging progress below 3x D/E; additional hyperscaler contracts",
+            "risk": "Leverage at 3.36x D/E in distress zone; power price volatility; nuclear operational risk amplified by leverage; rising rates increasing debt service costs",
+            "thesis": "VST offers compelling growth at a reasonable valuation but the 3.36x D/E ratio is a genuine risk that prevents a STRONG_BUY rating. The Meta PPA and nuclear fleet provide structural earnings support, but the levered balance sheet means any earnings miss or operational incident has amplified downside. Downgraded from STRONG_BUY to BUY. Investors must monitor D/E quarterly — if it exceeds 3.5x, downgrade to HOLD.",
+            "entry_pe": 18.0,
+            "exit_pe": 25.0,
+            "position_size_pct": 2.0,
+            "leverage_monitor": {
+                "current_de": 3.36,
+                "target_de": 2.5,
+                "downgrade_trigger_de": 3.5,
+                "deleveraging_timeline": "2027-2028 expected via FCF application to debt reduction"
+            }
+        },
+        {
+            "ticker": "AEP",
+            "name": "American Electric Power",
+            "sector": "utilities",
+            "market_cap_b": 71.8,
+            "pe_ratio": 19.8,
+            "revenue_growth_pct": 6.5,
+            "profit_margin_pct": 13.5,
+            "debt_to_equity": 1.65,
+            "roe_pct": 10.8,
+            "dividend_yield_pct": 2.9,
+            "moat_score": 8,
+            "management_score": 8,
+            "growth_score": 8,
+            "valuation_score": 7,
+            "overall_score": 7.5,
+            "rating": "BUY",
+            "bull_case": "AEP owns 90% of US 765-kV high-voltage transmission — the irreplaceable backbone for AI-era power delivery. 28 GW of signed load additions and $72B capex plan translate demand into rate base growth. Piketon 10 GW campus is transformational. 7-9% EPS growth guidance is among highest for regulated utilities.",
+            "bear_case": "FCF yield of -7.2% means continuous equity issuance diluting shareholders 2-4% annually. 190 GW pipeline is overwhelmingly speculative with only 28 GW contracted. Ohio regulatory scrutiny could slow Piketon approvals. The 28 GW of 'signed' additions includes letters of intent that may not convert. Massive capex requires constructive outcomes in 4+ regulatory jurisdictions simultaneously.",
+            "catalyst": "Piketon campus construction commencement; Ohio regulatory approval of data center infrastructure cost recovery; 2026 EPS delivery within $6.15-$6.45 guidance",
+            "risk": "Ohio regulatory denial or modification of Piketon cost recovery; equity dilution from capex funding; speculative demand non-conversion",
+            "thesis": "AEP's transmission monopoly is genuinely unique and provides structural demand exposure that cannot be replicated. However, the gap between 28 GW contracted and 190 GW speculative pipeline is enormous. Downgraded from STRONG_BUY to BUY to reflect equity dilution headwind and regulatory approval uncertainty.",
+            "entry_pe": 19.0,
+            "exit_pe": 25.0,
+            "position_size_pct": 1.5
+        },
+        {
+            "ticker": "DUK",
+            "name": "Duke Energy",
+            "sector": "utilities",
+            "market_cap_b": 91.3,
+            "pe_ratio": 20.95,
+            "revenue_growth_pct": 5.5,
+            "profit_margin_pct": 14.8,
+            "debt_to_equity": 1.55,
+            "roe_pct": 9.5,
+            "dividend_yield_pct": 3.24,
+            "moat_score": 8,
+            "management_score": 7,
+            "growth_score": 7,
+            "valuation_score": 6,
+            "overall_score": 7.1,
+            "rating": "HOLD",
+            "bull_case": "Duke's $103B capex plan targets the high-growth Southeast data center corridor. 4.5 GW signed ESAs provide contracted demand. 3.24% yield plus 5-7% EPS growth offers attractive total return. 15 consecutive years of dividend increases. Multi-state diversification reduces single-jurisdiction risk.",
+            "bear_case": "DATA CENTER REVENUE DOESN'T START UNTIL 2027-2028. At 21x forward PE, investors are paying a 2-year duration premium for earnings that haven't materialized. The $103B capex plan requires constructive regulation across 5 states simultaneously. Behind-the-meter generation in the Southeast directly competes with Duke's grid delivery model. Hurricane exposure adds lumpy, unpredictable costs. 9 GW speculative pipeline has only ~35% conversion probability. At 5% 10yr yield, Duke faces 24% price decline.",
+            "catalyst": "First material data center revenue contribution in late 2027; constructive North Carolina and South Carolina rate case outcomes",
+            "risk": "Paying 21x for 2028 earnings that require multiple regulatory approvals; hurricane risk; BTM generation eroding grid demand",
+            "thesis": "Duke is a high-quality franchise with legitimate data center demand exposure, but the 2-year gap between current valuation and revenue realization makes this a HOLD. The risk-reward is poor at current prices — better entry exists below 18x forward PE. Downgraded from BUY to HOLD to reflect duration risk and interest rate sensitivity.",
+            "entry_pe": 18.0,
+            "exit_pe": 26.0,
+            "position_size_pct": 1.5
+        },
+        {
+            "ticker": "SO",
+            "name": "Southern Company",
+            "sector": "utilities",
+            "market_cap_b": 96.0,
+            "pe_ratio": 21.0,
+            "revenue_growth_pct": 5.0,
+            "profit_margin_pct": 14.0,
+            "debt_to_equity": 2.11,
+            "roe_pct": 13.5,
+            "dividend_yield_pct": 3.2,
+            "moat_score": 8,
+            "management_score": 7,
+            "growth_score": 6,
+            "valuation_score": 6,
+            "overall_score": 6.8,
+            "rating": "HOLD",
+            "bull_case": "Vogtle Units 3&4 fully operational, de-risking the construction narrative. 2026 EPS guidance of $4.50-$4.60 implies 5-7% growth. Southeast territory benefits from population growth and data center migration. 24 consecutive years of dividend increases. Unique nuclear deployment expertise could attract SMR partnership premium.",
+            "bear_case": "Vogtle legacy debt (D/E 2.11) constrains financial flexibility. $81B capex plan for 2026-2030 keeps FCF negative and limits dividend growth to 5%. The 5% growth rate is middle-of-pack and doesn't justify 21x forward PE when the 10yr yields 4.38%. SMR optionality is speculative — management has NOT committed to any new nuclear construction. Georgia rate case outcome is uncertain. Competition from other Southeast utilities (DUK, NEE FPL) limits incremental data center capture.",
+            "catalyst": "SMR partnership announcement (speculative); constructive Georgia rate case; FFO-to-debt improvement toward investment-grade target",
+            "risk": "Vogtle debt deleveraging slower than expected; moderate growth rate insufficient for current multiple; rising rates compressing valuation",
+            "thesis": "Southern Company is a quality defensive utility but the combination of Vogtle legacy debt, moderate growth, and 21x valuation at 4.38% 10yr yield creates unfavorable risk-reward. HOLD for existing positions; do not add above 20x PE. Downgraded from BUY to HOLD.",
+            "entry_pe": 18.0,
+            "exit_pe": 25.0,
+            "position_size_pct": 1.0
+        },
+        {
+            "ticker": "ETR",
+            "name": "Entergy Corporation",
+            "sector": "utilities",
+            "market_cap_b": 47.0,
+            "pe_ratio": 26.6,
+            "revenue_growth_pct": 9.0,
+            "profit_margin_pct": 13.6,
+            "debt_to_equity": 1.82,
+            "roe_pct": 12.5,
+            "dividend_yield_pct": 2.8,
+            "moat_score": 7,
+            "management_score": 7,
+            "growth_score": 8,
+            "valuation_score": 4,
+            "overall_score": 6.5,
+            "rating": "HOLD",
+            "bull_case": "Gulf Coast service territory is among fastest-growing with data centers, LNG, and industrial reshoring. $43B capex plan (2026-2029) targets grid modernization and new generation. Revenue grew 9% in 2025 with earnings up 66.6% YoY. Diversified demand drivers (industrial + data center) reduce single-sector dependency.",
+            "bear_case": "AT 26.6x PE WITH PEG OF 2.3, ETR IS THE MOST OVERVALUED NAME IN THE SECTOR relative to risk-adjusted growth. The claimed 11.5% EPS CAGR has only 25% probability of delivery (see stress test). Regulatory quality in Louisiana, Mississippi, and Arkansas is below average. 74% payout ratio leaves minimal buffer if earnings disappoint. Hurricane exposure adds 10-15% annual earnings variance. Probability-weighted expected return of 5.8% barely exceeds risk-free rate.",
+            "catalyst": "Constructive Louisiana/Mississippi rate case outcomes; data center customer announcements in Gulf Coast territory",
+            "risk": "Valuation implies bull-case scenario that has low probability; regulatory lag in 4 below-average jurisdictions; hurricane exposure; 74% payout ratio vulnerability",
+            "thesis": "Entergy has a legitimate demand growth story but 26.6x PE with a 2.3 PEG ratio prices in perfection that is unlikely to materialize across 4 challenging regulatory jurisdictions. Downgraded from BUY to HOLD. The stock becomes interesting below 22x PE where risk-reward improves materially. Current holders should maintain but not add.",
+            "entry_pe": 22.0,
+            "exit_pe": 30.0,
+            "position_size_pct": 0.5
+        },
+        {
+            "ticker": "NEE",
+            "name": "NextEra Energy",
+            "sector": "utilities",
+            "market_cap_b": 194.2,
+            "pe_ratio": 25.3,
+            "revenue_growth_pct": 5.3,
+            "profit_margin_pct": 24.9,
+            "debt_to_equity": 1.45,
+            "roe_pct": 13.2,
+            "dividend_yield_pct": 2.42,
+            "moat_score": 9,
+            "management_score": 9,
+            "growth_score": 7,
+            "valuation_score": 3,
+            "overall_score": 5.8,
+            "rating": "SELL",
+            "bull_case": "World's largest generator of wind and solar with industry-leading $295B-$325B investment plan through 2032. Florida Power & Light is the largest US electric utility with constructive regulation. 32 consecutive years of dividend increases. 8%+ EPS growth target through 2035. Scale advantages in renewables are nearly impossible to replicate.",
+            "bear_case": "AT 25.3x FORWARD PE WITH A 2.42% YIELD VS 4.38% RISK-FREE RATE, NEE OFFERS NEGATIVE RISK PREMIUM. The $295B investment plan is predominantly renewables-focused, but hyperscalers increasingly demand firm baseload (nuclear/gas), not intermittent wind/solar. Behind-the-meter solar+storage directly competes with NEE's renewable PPA model. The 69% payout ratio with deeply negative FCF means dividend is entirely funded by capital markets access. At 5.5% 10yr yield, NEE faces 22% downside. The 10% dividend growth rate is unsustainable with negative FCF. Florida hurricane exposure adds tail risk that is underpriced at current multiple.",
+            "catalyst": "None at current valuation. Re-enter on significant pullback to 20x PE.",
+            "risk": "Rising rates compressing premium multiple; BTM generation eroding renewable PPA demand; Florida regulatory scrutiny; negative FCF sustainability",
+            "thesis": "NextEra is a world-class franchise but at 25.3x forward PE with a 2.42% yield in a 4.38% rate environment, the stock offers negative expected alpha. The market is paying a massive premium for a renewables platform that faces increasing BTM competition and rate sensitivity. SELL and re-enter below 20x PE where the quality franchise earns its premium.",
+            "entry_pe": 20.0,
+            "exit_pe": 27.0,
+            "position_size_pct": 0.0
+        }
+    ],
+    "rating_distribution": {
+        "STRONG_BUY": 0,
+        "BUY": 3,
+        "HOLD": 3,
+        "SELL": 1,
+        "rationale": "Sector 7% above fair value with 10yr yield at 4.38% warrants conservative posture. No STRONG_BUY ratings because even the best-positioned names (CEG, VST) carry material execution or leverage risks that prevent highest conviction. BUY ratings reserved for names with contracted demand and favorable risk-reward. HOLD for quality franchises with unfavorable near-term risk-reward. SELL for NEE where negative risk premium and BTM competition create poor expected returns."
+    },
+    "sources": [
+        "Gabelli Research: Utilities U.S. (gabelli.com)",
+        "Morningstar 2026 Utilities Outlook Report",
+        "EIA Short-Term Energy Outlook",
+        "Constellation Energy Calpine acquisition filings and press releases",
+        "PV Magazine USA: Behind-the-meter generation scaling (Jan 2026)",
+        "PJM Interconnection 2026 cycle data",
+        "ERCOT large load queue data (Latitude Media)",
+        "S&P Global / MacroTrends financial data",
+        "StockAnalysis.com valuation metrics",
+        "LPL Research Fixed Income Outlook 2026"
+    ]
+}

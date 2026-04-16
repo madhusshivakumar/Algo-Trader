@@ -1,0 +1,58 @@
+{
+    "sector": "materials",
+    "agent_name": "materials_judge",
+    "timestamp": "2026-04-04T14:00:00Z",
+    "overall_quality_score": 66,
+    "thesis_rigor_score": 65,
+    "risk_assessment_score": 60,
+    "data_quality_score": 65,
+    "contrarian_thinking_score": 55,
+    "actionability_score": 40,
+    "major_flaws": [
+        "MP Materials is recommended as a BUY despite being UNPROFITABLE with a consensus 2026 loss of $0.22/share and negative profit margin of -31%. Recommending an unprofitable micro-cap ($8.5B) with no PE ratio alongside mega-cap stalwarts like Linde is incoherent portfolio construction.",
+        "The report contradicts itself on copper: FCX's bull case cites a structural supply deficit while the risks section cites Goldman Sachs projecting a 160kt copper surplus in 2026. Which is it? Both cannot be true simultaneously.",
+        "NUE's entire thesis depends on 50% Section 232 tariffs. The report acknowledges 'any rollback would compress HRC pricing below $950/ton' but still rates it BUY. This is a political risk bet disguised as a fundamental recommendation.",
+        "ALB's '1,096% YoY earnings growth' is meaningless because the base was depressed (lithium winter). This is a classic small-base-effect distortion. The report presents it as a bull point, which is misleading.",
+        "No position sizing, entry criteria, stop-losses, or exit conditions for any of the 7 picks. For a sector this cyclical, risk management is the most important element and it is completely absent.",
+        "NEM's thesis rests on gold exceeding $4,000/oz. Gold at $4,000 implies extreme macro stress. If that thesis is correct, equity portfolios have bigger problems than gold miner performance."
+    ],
+    "missing_analysis": [
+        "No cost curve analysis for copper (FCX) or gold (NEM). Where does each company sit on the industry cost curve? What happens to profitability if commodity prices drop 20%?",
+        "LIN at 28.5x with 3.5% revenue growth -- where is the historical PE comparison? Is 28.5x above or below the 10-year average? The report does not say.",
+        "CRH's acquisition-driven growth (38 acquisitions, $4.1B in 2025) -- what is the historical ROIC on CRH acquisitions? Are they creating or destroying value? Serial acquirers often overpay at cycle peaks.",
+        "Missing: Inventory cycle analysis for NUE. Steel is deeply cyclical. If HRC prices revert from $1,025/ton to $800/ton (still elevated historically), what is the EPS impact?",
+        "ALB's DLE technology is mentioned as improving extraction economics. What is the cost-per-ton reduction? How does this compare to conventional extraction? At what lithium price does DLE break even?",
+        "No analysis of Chinese rare earth export restrictions and their impact on MP Materials. If China floods the market to undercut Western producers, MP's losses deepen.",
+        "FCX's Grasberg mine in Indonesia -- what is the current Indonesian government's stance on mining royalties and export restrictions? Political risk is hand-waved."
+    ],
+    "logical_fallacies": [
+        "The report cites 50% Section 232 tariffs as both a bull case for NUE and a risk. It is simultaneously the core thesis AND the key vulnerability. This is not a sound investment thesis -- it is a policy bet.",
+        "MP Materials getting a moat_score of 8 despite being the ONLY large-scale US rare earth operation is logically inconsistent. If there is no competition, that is a 10. If profitability is negative, that undermines the moat score. Pick one.",
+        "ALB's 85% lithium price recovery is presented as bullish. But recovering from a trough is not the same as reaching a sustainable level. The report conflates bounce-back with fundamental improvement.",
+        "NEM's thesis argues gold will exceed $4,000/oz, but this requires continued geopolitical instability and central bank buying. The investment is betting on disorder, not on company fundamentals."
+    ],
+    "biases_detected": [
+        "EXTREME RECENCY BIAS: Copper at $5.65/lb, steel at $1,025/ton, gold above $3,000 -- all near record levels. The report recommends buying at cycle peaks across every commodity.",
+        "NARRATIVE FALLACY: 'Electrification supercycle,' 'tariff-protected domestic metals,' 'nuclear renaissance' -- each commodity pick gets its own compelling narrative, but the common thread is that everything is at cyclical highs.",
+        "ANCHORING BIAS: Current commodity prices anchor all earnings estimates. FCX EBITDA of $12B at $5.65/lb copper would be very different at $4.00/lb copper.",
+        "CONFIRMATION BIAS: Goldman Sachs is cited when bullish (copper deficit, rising prices) but the same firm's copper surplus projection is buried in the risk section.",
+        "SURVIVORSHIP BIAS: Only winning materials companies are analyzed. Where are the companies that suffered during the 2015-2016 commodity downturn? What lessons were learned?"
+    ],
+    "questions_to_answer": [
+        "At what copper price does FCX's thesis break down? Show the EPS at $4.00/lb, $4.50/lb, $5.00/lb, and $5.50/lb copper.",
+        "NUE's EPS jumped from $1.73 to $2.70-$2.80 sequentially. How much of this is volume vs. price? If HRC reverts to $800/ton, what is EPS?",
+        "MP Materials has revenue of only $275M and is unprofitable. What is the path to profitability? When does the company reach break-even? What is the cash burn rate?",
+        "If Section 232 tariffs are partially rolled back (from 50% to 25%), what happens to domestic HRC pricing and NUE's margins?",
+        "ALB's consensus EPS of $7.87 represents 1,096% growth. But what is the 3-year average EPS including the lithium winter? Is $7.87 above or below normalized earnings?",
+        "CRH spent $4.1B on 38 acquisitions in 2025. What is the average acquisition multiple? How does this compare to CRH's own trading multiple? Are they creating value?"
+    ],
+    "improvement_demands": [
+        "ADD COMMODITY SENSITIVITY TABLES for every pick. EPS at various commodity price levels. This is mandatory for materials analysis.",
+        "Include SELL recommendations. If gold reverts to $2,500, NEM is a sell. If tariffs are rolled back, NUE is a sell. Make these explicit.",
+        "Remove MP Materials or move it to a speculative watchlist. An unprofitable $8.5B company does not belong alongside $220B Linde in a BUY portfolio.",
+        "Add a cycle positioning analysis: Where are we in the copper, steel, lithium, and gold cycles? Early, mid, or late? Use historical analogs.",
+        "Provide position sizing guidance that reflects commodity price risk. If NUE is a tariff-dependent bet, it should have a smaller allocation than LIN.",
+        "Reconcile the copper supply-demand contradiction. Is there a surplus or a deficit in 2026? Cite the specific forecasts and explain why you favor one over the other."
+    ],
+    "verdict": "NEEDS_WORK"
+}

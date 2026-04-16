@@ -15,6 +15,79 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
 
 
+@pytest.fixture(autouse=True)
+def _reset_user_profile():
+    """Reset Config._PROFILE between tests so profile state doesn't leak.
+
+    The engine initializes a UserProfile from the live account balance at startup.
+    In tests we don't go through engine.initialize(), so we want the fallback
+    legacy-config path — not a cached profile from a sibling test's setup.
+    """
+    from config import Config
+    prior = Config._PROFILE
+    Config._PROFILE = None
+    yield
+    Config._PROFILE = prior
+
+
+@pytest.fixture(autouse=True)
+def _isolate_trades_db(tmp_path_factory, monkeypatch, request):
+    """Sprint 7: prevent tests from writing to the real trades.db.
+
+    Root cause this fixture fixes: tests that construct a TradingEngine
+    via ``__new__()`` without mocking ``log.trade()`` end up calling the
+    real ``utils.logger.log.trade(...)``, which writes to the repo-level
+    ``trades.db``. This polluted the real DB with 191 test rows in
+    April 2026 and violated the user's "no test data in dashboard" rule.
+
+    Strategy: point ``utils.logger.DB_PATH`` at an isolated temp DB AND
+    pre-create the schema there so existing ``log.trade()`` calls don't
+    blow up with "no such table: trades".
+
+    Tests that explicitly test Logger (e.g. ``test_logger.py``) override
+    this via their own ``patch("utils.logger.DB_PATH", ...)`` context.
+    """
+    # test_logger.py creates its own fresh schemas and needs the real
+    # ``_init_db()`` path to run — skip the fixture there.
+    if "test_logger" in request.node.nodeid:
+        yield
+        return
+
+    import utils.logger as _logger_mod
+    tmp_db = tmp_path_factory.mktemp("db_iso") / "trades_test.db"
+
+    # Pre-create a full schema so log.trade() + log_order() + equity calls
+    # all succeed.
+    conn = sqlite3.connect(str(tmp_db))
+    conn.executescript("""
+        CREATE TABLE trades (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT, symbol TEXT, side TEXT, amount REAL, price REAL,
+            reason TEXT, pnl REAL DEFAULT 0, strategy TEXT DEFAULT '',
+            sentiment_score REAL, llm_conviction REAL,
+            rl_selected TEXT DEFAULT '', regime TEXT DEFAULT '',
+            explanation TEXT DEFAULT ''
+        );
+        CREATE TABLE orders (
+            order_id TEXT PRIMARY KEY, symbol TEXT, side TEXT, order_type TEXT,
+            requested_notional REAL, requested_qty REAL, limit_price REAL,
+            stop_price REAL, expected_price REAL, state TEXT,
+            filled_qty REAL DEFAULT 0, filled_avg_price REAL DEFAULT 0,
+            slippage REAL DEFAULT 0, submitted_at TEXT, filled_at TEXT,
+            last_updated TEXT, error TEXT DEFAULT ''
+        );
+        CREATE TABLE equity_snapshots (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT, equity REAL, cash REAL
+        );
+    """)
+    conn.commit()
+    conn.close()
+
+    monkeypatch.setattr(_logger_mod, "DB_PATH", str(tmp_db))
+    yield
+
+
 # ── Market Data Fixtures ──────────────────────────────────────────────
 
 

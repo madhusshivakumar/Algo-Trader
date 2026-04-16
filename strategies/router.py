@@ -12,6 +12,7 @@ import os
 from config import Config
 from core.signal_modifiers import apply_sentiment, apply_llm_conviction, apply_earnings_blackout
 from core.multi_timeframe import apply_mtf_filter
+from core.regime_detector import is_strategy_allowed
 
 from strategies import (
     mean_reversion_aggressive,
@@ -125,31 +126,70 @@ def get_strategy_key(symbol: str) -> str:
     return STRATEGY_MAP.get(symbol, DEFAULT_STRATEGY)
 
 
-def compute_signals(symbol: str, df):
-    """Route to the correct strategy, compute signals, and apply modifiers."""
-    rl_selected = ""
+def compute_signals(symbol: str, df, regime: str | None = None):
+    """Route to the correct strategy, compute signals, and apply modifiers.
 
-    # RL strategy selection (if enabled and model available)
+    Args:
+        symbol: Trading symbol.
+        df: OHLCV DataFrame (or None).
+        regime: Optional current market regime ('low_vol' / 'normal' / 'high_vol'
+            / 'crisis'). When provided, strategies that are known to fail in
+            that regime are forced to 'hold' (Sprint 6C). None disables the
+            filter — useful for tests and for callers that haven't wired the
+            regime detector yet.
+    """
+    rl_selected = ""
+    chosen_key: str | None = None
+
+    # RL strategy selection (if enabled and model available).
+    # Sprint 6E: pass regime to the selector so the policy sees the live
+    # regime bits in the 16-dim state; matters most for mean-rev vs momentum
+    # decisions in stressed markets.
     if Config.RL_STRATEGY_ENABLED and df is not None:
         try:
             from core.rl_strategy_selector import select_strategy as rl_select
-            rl_key = rl_select(df)
+            rl_key = rl_select(df, regime=regime)
             if rl_key and rl_key in STRATEGY_REGISTRY:
                 rl_selected = rl_key
+                chosen_key = rl_key
                 name = STRATEGY_DISPLAY_NAMES.get(rl_key, rl_key)
                 fn = STRATEGY_REGISTRY[rl_key]
             else:
                 name, fn = get_strategy(symbol)
+                chosen_key = get_strategy_key(symbol)
         except Exception:
             name, fn = get_strategy(symbol)
+            chosen_key = get_strategy_key(symbol)
     else:
         name, fn = get_strategy(symbol)
+        chosen_key = get_strategy_key(symbol)
 
     if df is None:
-        return {"action": "hold", "reason": "no data", "strength": 0, "strategy": name}
+        return {
+            "action": "hold", "reason": "no data", "strength": 0,
+            "strategy": name, "strategy_key": chosen_key, "regime": regime,
+        }
+
+    # Sprint 6C: regime filter — some strategies are known to misfire in
+    # specific vol regimes (mean reversion in crisis, momentum in low_vol).
+    # When that's the case, short-circuit to hold *before* running the
+    # strategy so we don't waste work or log a noisy reason.
+    if regime is not None and chosen_key and not is_strategy_allowed(chosen_key, regime):
+        return {
+            "action": "hold",
+            "reason": f"{chosen_key} skipped in {regime} regime",
+            "strength": 0,
+            "strategy": name,
+            "strategy_key": chosen_key,
+            "regime": regime,
+            "rl_selected": rl_selected,
+        }
 
     signal = fn(df)
     signal["strategy"] = name
+    signal["strategy_key"] = chosen_key
+    if regime is not None:
+        signal["regime"] = regime
     if rl_selected:
         signal["rl_selected"] = rl_selected
 
@@ -161,7 +201,7 @@ def compute_signals(symbol: str, df):
 
     # Apply multi-timeframe filter (resamples existing bars, no extra API calls)
     if Config.MTF_ENABLED:
-        signal = apply_mtf_filter(signal, df, weight=Config.MTF_WEIGHT)
+        signal = apply_mtf_filter(signal, df, weight=Config.MTF_WEIGHT, symbol=symbol)
 
     # Apply earnings blackout (equity only — reduces sizing near earnings)
     if Config.EARNINGS_CALENDAR_ENABLED:

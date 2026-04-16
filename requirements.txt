@@ -21,6 +21,12 @@ anthropic==0.42.0
 stable-baselines3==2.4.1
 gymnasium==1.0.0
 
+# Sprint 7: Production hardening
+structlog==24.4.0
+prometheus_client==0.21.0
+sentry-sdk==2.19.2
+
 # Testing
 pytest==8.3.4
 pytest-cov==6.0.0
+hypothesis==6.119.3

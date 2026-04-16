@@ -1,6 +1,7 @@
 """Full coverage tests for the trading engine with mocked broker."""
 
 import signal
+import sys
 import time
 import pytest
 from unittest.mock import MagicMock, patch, PropertyMock, call
@@ -569,6 +570,7 @@ class TestSignalHandling:
         engine._handle_sigterm(signal.SIGTERM, None)
         assert engine._shutdown_requested is True
 
+    @pytest.mark.skipif(sys.platform == "win32", reason="SIGHUP not available on Windows")
     def test_sighup_sets_reload_flag(self, engine, mock_broker):
         engine._handle_sighup(signal.SIGHUP, None)
         assert engine._reload_requested is True
@@ -586,7 +588,8 @@ class TestSignalHandling:
             calls = mock_signal.call_args_list
             signames = [c[0][0] for c in calls]
             assert signal.SIGTERM in signames
-            assert signal.SIGHUP in signames
+            if hasattr(signal, "SIGHUP"):
+                assert signal.SIGHUP in signames
 
     def test_shutdown_saves_state(self, engine, mock_broker):
         engine.risk.initialize(100000)

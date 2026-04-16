@@ -6,9 +6,9 @@ Provides a thin wrapper around the Anthropic SDK with:
   - Cost tracking per call
 """
 
-import fcntl
 import json
 import os
+import sys
 import tempfile
 import time
 from datetime import datetime, date
@@ -84,7 +84,12 @@ def _record_spend(model: str, input_tokens: int, output_tokens: int, cost: float
     _ensure_data_dir()
     lock_fd = open(_SPEND_LOCK, "w")
     try:
-        fcntl.flock(lock_fd, fcntl.LOCK_EX)
+        if sys.platform == "win32":
+            import msvcrt
+            msvcrt.locking(lock_fd.fileno(), msvcrt.LK_LOCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(lock_fd, fcntl.LOCK_EX)
         log_data = _load_spend_log()
         today = str(date.today())
 
@@ -104,7 +109,12 @@ def _record_spend(model: str, input_tokens: int, output_tokens: int, cost: float
             log_data["calls"] = log_data["calls"][-500:]
         _save_spend_log(log_data)
     finally:
-        fcntl.flock(lock_fd, fcntl.LOCK_UN)
+        if sys.platform == "win32":
+            import msvcrt
+            msvcrt.locking(lock_fd.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(lock_fd, fcntl.LOCK_UN)
         lock_fd.close()
 
 

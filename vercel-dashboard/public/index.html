@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algo Trader Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #e6edf3; --text-dim: #8b949e; --green: #3fb950;
+    --red: #f85149; --blue: #58a6ff; --yellow: #d29922;
+    --purple: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Mono', 'Fira Code', monospace; padding: 20px; }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .subtitle { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 20px; }
+  .live-dot { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; margin-right: 6px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .card-label { color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .card-value { font-size: 1.8rem; font-weight: 700; }
+  .card-value.green { color: var(--green); }
+  .card-value.red { color: var(--red); }
+  .card-sub { color: var(--text-dim); font-size: 0.8rem; margin-top: 4px; }
+
+  .chart-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+  .chart-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+
+  .positions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .position-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .position-card .symbol { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .position-card .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.85rem; }
+  .position-card .row .label { color: var(--text-dim); }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  tr:hover { background: rgba(88, 166, 255, 0.05); }
+  .badge { padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+  .badge-buy { background: rgba(63, 185, 80, 0.15); color: var(--green); }
+  .badge-sell { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+  .pnl-pos { color: var(--green); }
+  .pnl-neg { color: var(--red); }
+  .no-data { text-align: center; color: var(--text-dim); padding: 40px; }
+  .updated { color: var(--text-dim); font-size: 0.75rem; text-align: right; margin-top: 12px; }
+  .section-title { font-size: 1rem; font-weight: 600; margin-bottom: 12px; }
+
+  .error-banner { background: rgba(248, 81, 73, 0.1); border: 1px solid var(--red); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; color: var(--red); font-size: 0.85rem; display: none; }
+
+  /* Sprint 6H: view mode toggle */
+  .view-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
+  .view-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 16px; color: var(--text-dim); font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+  .view-btn.active { background: var(--blue); color: var(--bg); border-color: var(--blue); font-weight: 600; }
+  .view-btn:hover { border-color: var(--blue); }
+
+  /* Protection badge */
+  .protection-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 16px; }
+  .protection-green { background: rgba(63, 185, 80, 0.15); color: var(--green); border: 1px solid rgba(63, 185, 80, 0.3); }
+  .protection-yellow { background: rgba(210, 153, 34, 0.15); color: var(--yellow); border: 1px solid rgba(210, 153, 34, 0.3); }
+  .protection-red { background: rgba(248, 81, 73, 0.15); color: var(--red); border: 1px solid rgba(248, 81, 73, 0.3); }
+
+  /* Regime indicator */
+  .regime-tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px; }
+  .regime-low_vol { background: rgba(63, 185, 80, 0.1); color: var(--green); }
+  .regime-normal { background: rgba(88, 166, 255, 0.1); color: var(--blue); }
+  .regime-high_vol { background: rgba(210, 153, 34, 0.1); color: var(--yellow); }
+  .regime-crisis { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+
+  /* Framing box */
+  .framing-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; font-size: 0.82rem; line-height: 1.6; color: var(--text-dim); }
+  .framing-box .disclaimer { color: var(--yellow); font-weight: 600; margin-top: 8px; }
+
+  /* Notifications panel (advanced) */
+  .notif-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; max-height: 260px; overflow-y: auto; }
+  .notif-item { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-level { font-weight: 700; text-transform: uppercase; font-size: 0.7rem; margin-right: 6px; }
+
+  /* View-mode section visibility */
+  .view-standard, .view-advanced { display: none; }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    body { padding: 12px; }
+    .card-value { font-size: 1.4rem; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .positions-grid { grid-template-columns: 1fr; }
+    table { font-size: 0.75rem; }
+    td, th { padding: 6px 8px; }
+    .chart-container { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+  <div>
+    <h1><span class="live-dot"></span> Algo Trader Dashboard <span class="regime-tag" id="regimeTag" style="display:none"></span></h1>
+    <div class="subtitle" id="subtitle">Loading...</div>
+  </div>
+  <div class="updated" id="lastUpdate">Loading...</div>
+</div>
+
+<!-- Sprint 6H: view mode toggle -->
+<div class="view-toggle">
+  <button class="view-btn active" data-view="simple" onclick="setView('simple')">Simple</button>
+  <button class="view-btn" data-view="standard" onclick="setView('standard')">Standard</button>
+  <button class="view-btn" data-view="advanced" onclick="setView('advanced')">Advanced</button>
+</div>
+
+<!-- Protection status badge -->
+<div id="protectionBadge" class="protection-badge protection-green">All systems healthy</div>
+
+<!-- Expected-return framing (Sprint 6I) -->
+<div class="framing-box" id="framingBox" style="display:none">
+  <div id="framingSharpe"></div>
+  <div id="framingReturn"></div>
+  <div id="framingBand" style="margin-top: 4px;"></div>
+  <div id="framingDisclaimer" class="disclaimer"></div>
+</div>
+
+<div class="error-banner" id="errorBanner"></div>
+
+<div class="grid" id="statsCards">
+  <div class="card"><div class="card-label">Equity</div><div class="card-value" id="equity">&mdash;</div><div class="card-sub" id="equityChange"></div></div>
+  <div class="card"><div class="card-label">Cash</div><div class="card-value" id="cash">&mdash;</div></div>
+  <div class="card"><div class="card-label">Total P&L</div><div class="card-value" id="totalPnl">&mdash;</div><div class="card-sub" id="pnlTrades"></div></div>
+  <div class="card"><div class="card-label">Win Rate</div><div class="card-value" id="winRate">&mdash;</div><div class="card-sub" id="winLoss"></div></div>
+</div>
+
+<!-- Standard + Advanced: equity chart -->
+<div class="chart-container view-standard view-advanced">
+  <div class="chart-title">Equity Curve (30 Days)</div>
+  <canvas id="equityChart" height="80"></canvas>
+  <div id="noEquityData" class="no-data" style="display:none;">Equity data will appear after the bot runs for a few cycles</div>
+</div>
+
+<!-- Standard + Advanced: open positions -->
+<div class="view-standard view-advanced">
+  <div class="section-title">Open Positions</div>
+  <div class="positions-grid" id="positions">
+    <div class="no-data">No open positions</div>
+  </div>
+</div>
+
+<!-- Standard + Advanced: P&L chart -->
+<div class="chart-container view-standard view-advanced" style="margin-top: 24px;">
+  <div class="chart-title">P&L per Trade</div>
+  <canvas id="pnlChart" height="60"></canvas>
+  <div id="noPnlData" class="no-data" style="display:none;">Trade P&L data will appear after completed trades</div>
+</div>
+
+<!-- All views: recent trades table -->
+<div class="chart-container">
+  <div class="section-title">Recent Trades</div>
+  <table>
+    <thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th>Amount</th><th class="view-standard view-advanced">Price</th><th class="view-standard view-advanced">P&L</th></tr></thead>
+    <tbody id="tradesBody"><tr><td colspan="6" class="no-data">No trades yet</td></tr></tbody>
+  </table>
+</div>
+
+<!-- Advanced: notification center -->
+<div class="view-advanced">
+  <div class="section-title">Notifications (last 30 alerts)</div>
+  <div class="notif-panel" id="notifPanel">
+    <div class="no-data">No alerts recorded</div>
+  </div>
+</div>
+
+<script>
+let equityChart = null;
+let pnlChart = null;
+let currentView = localStorage.getItem('dashView') || 'simple';
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function fmt(n, decimals=2) { return n != null ? '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals}) : '\u2014'; }
+function fmtPct(n) { return n != null ? Number(n).toFixed(1) + '%' : '\u2014'; }
+function pnlClass(n) { return n > 0 ? 'pnl-pos' : n < 0 ? 'pnl-neg' : ''; }
+function pnlColor(n) { return n > 0 ? '#3fb950' : n < 0 ? '#f85149' : '#8b949e'; }
+
+/* Sprint 6H: progressive-disclosure view modes */
+function setView(mode) {
+  currentView = mode;
+  localStorage.setItem('dashView', mode);
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === mode));
+  // Show/hide sections
+  document.querySelectorAll('.view-standard').forEach(el => el.style.display = (mode === 'standard' || mode === 'advanced') ? '' : 'none');
+  document.querySelectorAll('.view-advanced').forEach(el => el.style.display = mode === 'advanced' ? '' : 'none');
+}
+setView(currentView); // Apply on load
+
+function updateProtectionBadge(data) {
+  const badge = document.getElementById('protectionBadge');
+  const p = data.protection || { level: 'green', label: 'All systems healthy' };
+  badge.className = 'protection-badge protection-' + p.level;
+  badge.textContent = (p.level === 'green' ? '\u2705 ' : p.level === 'yellow' ? '\u26a0\ufe0f ' : '\ud83d\udea8 ') + p.label;
+}
+
+function updateRegimeTag(regime) {
+  const tag = document.getElementById('regimeTag');
+  if (!regime) { tag.style.display = 'none'; return; }
+  tag.style.display = 'inline-flex';
+  tag.className = 'regime-tag regime-' + regime;
+  tag.textContent = regime.replace('_', ' ');
+}
+
+function updateFraming(framing) {
+  const box = document.getElementById('framingBox');
+  if (!framing) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  document.getElementById('framingSharpe').textContent = framing.sharpe_line || '';
+  document.getElementById('framingReturn').textContent = framing.return_line || '';
+  document.getElementById('framingBand').textContent = framing.pct_band_line || '';
+  document.getElementById('framingDisclaimer').textContent = framing.disclaimer_line || '';
+}
+
+function updateNotifications(alerts) {
+  const panel = document.getElementById('notifPanel');
+  if (!alerts || alerts.length === 0) { panel.innerHTML = '<div class="no-data">No alerts recorded</div>'; return; }
+  panel.innerHTML = alerts.map(a => {
+    const level = esc(a.level || 'info');
+    const color = level === 'error' ? 'var(--red)' : level === 'warning' ? 'var(--yellow)' : 'var(--text-dim)';
+    return '<div class="notif-item"><span class="notif-level" style="color:' + color + '">' + level + '</span> ' + esc(a.msg || a.message || JSON.stringify(a)) + '</div>';
+  }).join('');
+}
+
+async function fetchJSON(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url}: ${res.status}`);
+  return res.json();
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorBanner');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 15000);
+}
+
+function fmtTimestamp(ts) {
+  try {
+    const d = new Date(ts);
+    if (isNaN(d)) return ts;
+    return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  } catch { return ts; }
+}
+
+async function refresh() {
+  try {
+    const [account, stats, trades, equity] = await Promise.all([
+      fetchJSON('/api/account'),
+      fetchJSON('/api/stats'),
+      fetchJSON('/api/trades'),
+      fetchJSON('/api/equity'),
+    ]);
+
+    // Sprint 6H: fetch view-specific data (best-effort — never blocks)
+    let viewData = {};
+    try { viewData = await fetchJSON('/api/view_data?view=' + currentView); } catch (_) {}
+    updateProtectionBadge(viewData);
+    updateRegimeTag(viewData.regime);
+    updateFraming(viewData.framing);
+    if (currentView === 'advanced' && viewData.alerts) { updateNotifications(viewData.alerts); }
+
+    // Subtitle
+    const mode = account.account.equity > 0 ? 'Live' : 'Paper';
+    const posCount = account.positions.length;
+    document.getElementById('subtitle').textContent = `${posCount} position${posCount !== 1 ? 's' : ''} open \u00b7 ${stats.total_trades} trades`;
+
+    // Stats cards
+    document.getElementById('equity').textContent = fmt(account.account.equity);
+    document.getElementById('cash').textContent = fmt(account.account.cash);
+
+    const pnlEl = document.getElementById('totalPnl');
+    pnlEl.textContent = fmt(stats.total_pnl);
+    pnlEl.className = 'card-value ' + (stats.total_pnl >= 0 ? 'green' : 'red');
+    document.getElementById('pnlTrades').textContent = stats.total_trades + ' trades';
+
+    const wrEl = document.getElementById('winRate');
+    wrEl.textContent = fmtPct(stats.win_rate);
+    wrEl.className = 'card-value ' + (stats.win_rate >= 50 ? 'green' : stats.win_rate > 0 ? 'red' : '');
+    document.getElementById('winLoss').textContent = stats.wins + 'W / ' + stats.losses + 'L';
+
+    // Positions
+    const posDiv = document.getElementById('positions');
+    if (account.positions.length === 0) {
+      posDiv.innerHTML = '<div class="no-data">No open positions</div>';
+    } else {
+      posDiv.innerHTML = account.positions.map(p => `
+        <div class="position-card">
+          <div class="symbol">${esc(p.symbol)}</div>
+          <div class="row"><span class="label">Quantity</span><span>${Number(p.qty).toFixed(6)}</span></div>
+          <div class="row"><span class="label">Entry Price</span><span>${fmt(p.avg_entry_price)}</span></div>
+          <div class="row"><span class="label">Current Price</span><span>${fmt(p.current_price)}</span></div>
+          <div class="row"><span class="label">Market Value</span><span>${fmt(p.market_value)}</span></div>
+          <div class="row"><span class="label">Unrealized P&L</span><span class="${pnlClass(p.unrealized_pl)}">${fmt(p.unrealized_pl)} (${(p.unrealized_plpc * 100).toFixed(2)}%)</span></div>
+        </div>
+      `).join('');
+    }
+
+    // Trades table
+    const tbody = document.getElementById('tradesBody');
+    if (trades.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="no-data">No trades yet \u2014 bot is scanning for signals...</td></tr>';
+    } else {
+      tbody.innerHTML = trades.map(t => `
+        <tr>
+          <td style="color:var(--text-dim)">${esc(fmtTimestamp(t.timestamp))}</td>
+          <td><strong>${esc(t.symbol)}</strong></td>
+          <td><span class="badge badge-${esc(t.side)}">${esc(t.side.toUpperCase())}</span></td>
+          <td>${fmt(t.amount)}</td>
+          <td>${fmt(t.price)}</td>
+          <td class="${pnlClass(t.pnl)}">${t.pnl != null ? fmt(t.pnl) : '\u2014'}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Equity chart
+    if (equity.length > 1) {
+      document.getElementById('noEquityData').style.display = 'none';
+      const labels = equity.map(e => {
+        try { return new Date(e.timestamp).toLocaleDateString('en-US', {month:'short', day:'numeric'}); }
+        catch { return e.timestamp; }
+      });
+      const data = equity.map(e => e.equity);
+      if (equityChart) {
+        equityChart.data.labels = labels;
+        equityChart.data.datasets[0].data = data;
+        equityChart.update('none');
+      } else {
+        equityChart = new Chart(document.getElementById('equityChart'), {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              data,
+              borderColor: '#58a6ff',
+              backgroundColor: 'rgba(88,166,255,0.1)',
+              fill: true,
+              tension: 0.3,
+              pointRadius: 0,
+              borderWidth: 2,
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { display: true, ticks: { color: '#8b949e', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: '#21262d' } },
+              y: { ticks: { color: '#8b949e', callback: v => '$' + v.toLocaleString() }, grid: { color: '#21262d' } }
+            }
+          }
+        });
+      }
+    } else {
+      document.getElementById('noEquityData').style.display = 'block';
+    }
+
+    // PnL chart — from sell trades with computed PnL
+    const sellTrades = trades.filter(t => t.side === 'sell' && t.pnl != null).reverse();
+    if (sellTrades.length > 0) {
+      document.getElementById('noPnlData').style.display = 'none';
+      const pnlLabels = sellTrades.map((t, i) => '#' + (i + 1) + ' ' + t.symbol);
+      const pnlData = sellTrades.map(t => t.pnl);
+      const pnlColors = pnlData.map(v => pnlColor(v));
+      if (pnlChart) {
+        pnlChart.data.labels = pnlLabels;
+        pnlChart.data.datasets[0].data = pnlData;
+        pnlChart.data.datasets[0].backgroundColor = pnlColors;
+        pnlChart.update('none');
+      } else {
+        pnlChart = new Chart(document.getElementById('pnlChart'), {
+          type: 'bar',
+          data: {
+            labels: pnlLabels,
+            datasets: [{
+              data: pnlData,
+              backgroundColor: pnlColors,
+              borderRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { ticks: { color: '#8b949e', font: { size: 10 } }, grid: { display: false } },
+              y: { ticks: { color: '#8b949e', callback: v => '$' + v.toFixed(2) }, grid: { color: '#21262d' } }
+            }
+          }
+        });
+      }
+    } else {
+      document.getElementById('noPnlData').style.display = 'block';
+    }
+
+    document.getElementById('lastUpdate').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+  } catch (err) {
+    console.error('Refresh failed:', err);
+    showError('Failed to load data: ' + err.message);
+  }
+}
+
+refresh();
+setInterval(refresh, 30000);  // Refresh every 30s (rate-limit friendly)
+</script>
+</body>
+</html>

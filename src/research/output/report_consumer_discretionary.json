@@ -1,0 +1,429 @@
+{
+  "sector": "Consumer Discretionary",
+  "agent_name": "consumer_discretionary_sector_expert",
+  "timestamp": "2026-04-04T12:00:00Z",
+  "total_companies_analyzed": 20,
+  "companies_analyzed": [
+    "AMZN", "TSLA", "HD", "MCD", "SBUX", "BKNG", "ABNB", "TJX", "COST",
+    "NKE", "LULU", "CMG", "HLT", "DHI", "LEN", "LVMHF", "MELI", "BYD",
+    "LOW", "ROST"
+  ],
+  "sector_outlook": {
+    "rating": "Neutral-to-Cautious",
+    "summary": "The Consumer Discretionary sector faces a challenging environment in April 2026. Consumer confidence hovers near recessionary levels with the Conference Board Expectations Index at 70.9 and 86% of consumers anxious about tariff impacts on personal finances. The sector total market cap stands at approximately $8.64 trillion across 549 stocks. Three of four sub-industries face operating margin compression from tariffs (autos, consumer durables/apparel, consumer services). However, pockets of strength exist in travel/experiences, off-price retail, and companies with strong digital ecosystems. The bifurcation between value-conscious spending and premium experiences continues to widen.",
+    "consumer_spending_trend": "Value-oriented with 'cheap thrills' focus; premium experiences resilient for high-income cohort; big-ticket discretionary purchases under severe pressure",
+    "macro_environment": "Elevated mortgage rates constraining housing; tariff uncertainty compressing margins; employment expectations near Great Recession levels at 32.1% expecting decline"
+  },
+  "key_themes": [
+    "Tariff disruption creating winners (off-price retail) and losers (import-dependent brands like Nike)",
+    "EV market entering 'grind-it-out' phase with Tesla delivery misses and BYD gaining global share",
+    "Travel and experiences spending remains resilient with US travel spending projected at $1.2 trillion",
+    "Housing market in transition year with flat single-family starts but mortgage rates dipping below 6%",
+    "AI and cloud infrastructure driving outsized growth within Amazon's ecosystem (AWS +24% YoY)",
+    "Luxury sector experiencing worst quarterly decline since 2008 as pricing power fades",
+    "Latin American e-commerce penetration decade behind US creating secular growth opportunity",
+    "Restaurant sector favoring scale players with digital loyalty programs (McDonald's 210M active users)",
+    "Consumer bifurcation: high-income spending on wellness/experiences vs mass market value-seeking",
+    "Off-price retail model thriving as tariff-pressured traditional retailers offload excess inventory"
+  ],
+  "risks": [
+    "Tariff escalation further compressing margins across apparel, autos, and consumer durables",
+    "Consumer confidence deterioration leading to spending pullback in discretionary categories",
+    "Elevated mortgage rates keeping housing turnover and remodeling activity suppressed",
+    "Geopolitical tensions (Middle East, China trade) dampening luxury and travel demand",
+    "Rising energy costs acting as an 'energy tax' on consumer spending power",
+    "EV market overcapacity with Tesla producing 50K+ excess vehicles in Q1 alone",
+    "China Guochao movement eroding Western brand market share in world's second-largest consumer market",
+    "Competitive intensity in Latin American e-commerce from Shopee's subsidy-driven expansion"
+  ],
+  "confidence_score": 0.78,
+  "top_picks": [
+    {
+      "ticker": "AMZN",
+      "name": "Amazon.com Inc.",
+      "exchange": "NASDAQ",
+      "subsector": "E-commerce / Cloud / Advertising",
+      "market_cap_billions": 2260,
+      "current_price": 210.57,
+      "pe_ratio_ttm": 28.88,
+      "scores": {
+        "moat": 9,
+        "management": 8,
+        "growth": 9,
+        "valuation": 7,
+        "overall": 8.3
+      },
+      "scoring_rationale": {
+        "moat": "Unmatched flywheel of e-commerce, AWS ($35.6B/qtr, +24% YoY), advertising ($21.3B/qtr, +22%), and logistics. AWS backlog of $244B signals years of locked-in demand. Prime ecosystem with 200M+ members globally creates massive switching costs.",
+        "management": "Andy Jassy executing well on cost discipline after 2022-2023 restructuring. $200B capex plan for AI/cloud infrastructure is aggressive but aligned with secular demand. Demonstrated ability to scale multiple business lines simultaneously.",
+        "growth": "Revenue growing 12% YoY to $213.4B in latest quarter. AWS acceleration to 24% growth rate. Advertising at 22% growth is fastest-growing segment. Q1 2026 revenue guide of $173.5-178.5B. AI integration across all segments creates new revenue streams.",
+        "valuation": "P/E of 28.88x is 39% below 3-year average of 47x, representing significant compression. Reasonable for a company with multiple high-growth segments. Forward estimates suggest further earnings growth acceleration."
+      },
+      "thesis": "Amazon is the best-positioned consumer discretionary company with its diversified ecosystem spanning e-commerce, cloud computing, advertising, and AI. AWS growth reacceleration to 24% with a $244B backlog provides earnings visibility, while the advertising business at 22% growth adds a high-margin revenue stream. Trading at a significant discount to historical P/E multiples despite improving fundamentals.",
+      "bull_case": [
+        "AWS AI workload demand accelerating with $244B backlog providing multi-year visibility",
+        "Advertising business approaching $85B+ annual run rate at 22% growth with high margins",
+        "P/E of 28.9x is historically cheap for Amazon with multiple growth vectors",
+        "Logistics network investment creating third-party fulfillment revenue opportunity",
+        "$200B capex positions Amazon as infrastructure leader for the AI era"
+      ],
+      "bear_case": [
+        "Consumer spending slowdown could pressure e-commerce growth in North America",
+        "$200B capex cycle may compress free cash flow and disappoint in near term",
+        "Tariffs on imported goods could raise prices and reduce purchase volumes",
+        "Antitrust regulatory risks remain ongoing across multiple jurisdictions",
+        "Cloud competition from Microsoft Azure and Google Cloud intensifying"
+      ],
+      "catalysts": [
+        "Q1 2026 earnings report on April 30 with potential AWS beat",
+        "AI product launches (Alexa+, Bedrock expansion) driving incremental revenue",
+        "Potential tariff exemptions for cloud/tech infrastructure investments"
+      ],
+      "target_allocation_pct": 20
+    },
+    {
+      "ticker": "BKNG",
+      "name": "Booking Holdings Inc.",
+      "exchange": "NASDAQ",
+      "subsector": "Travel / Online Travel Agency",
+      "market_cap_billions": 170,
+      "current_price": 4194.31,
+      "pe_ratio_forward": 15.6,
+      "scores": {
+        "moat": 8,
+        "management": 8,
+        "growth": 7,
+        "valuation": 8,
+        "overall": 7.7
+      },
+      "scoring_rationale": {
+        "moat": "Dominant global OTA platform with $186.1B in gross bookings (2025). Network effects strengthen as supplier and traveler bases grow. Alternative accommodations up 9% diversifies beyond hotels. Connected trip strategy deepening platform stickiness.",
+        "management": "Glenn Fogel delivering consistent execution with 36.9% adjusted EBITDA margins. Shareholder-friendly capital allocation with 9.4% dividend increase and 25-for-1 stock split. Disciplined cost management alongside growth investment.",
+        "growth": "16.1% Q4 revenue growth to $6.35B. Guide for low double-digit gross bookings and revenue growth in 2026. Mid-teens adjusted EPS growth target. $35.2B revenue target by 2029 implies sustained compounding.",
+        "valuation": "Forward P/E of 15.6x is attractive for a company with double-digit earnings growth and $9.1B in annual free cash flow. Significant discount to Airbnb (25.4x) despite stronger profitability metrics."
+      },
+      "thesis": "Booking Holdings offers the best risk-reward in consumer discretionary travel. At 15.6x forward earnings with mid-teens EPS growth, the valuation is compelling for a dominant platform generating $9.1B in free cash flow. The 25-for-1 stock split effective April 2026 improves retail accessibility. Global travel spending projected at $1.2T in the US alone with international inbound recovering at 3.7% growth.",
+      "bull_case": [
+        "Forward P/E of 15.6x with mid-teens EPS growth is deeply undervalued versus peers",
+        "$9.1B annual free cash flow enabling aggressive buybacks and dividend growth",
+        "25-for-1 stock split improving retail investor access and potential index reweighting",
+        "Connected trip strategy increasing booking density and customer lifetime value",
+        "Alternative accommodations growth at 9% expanding total addressable market"
+      ],
+      "bear_case": [
+        "Geopolitical tensions and war fears could dampen international travel demand",
+        "AI-powered travel planning (Google, ChatGPT) could disintermediate OTA platforms",
+        "Rising energy costs increasing airfare and reducing travel budget for consumers",
+        "European economic weakness pressuring core market demand",
+        "Currency headwinds from strong dollar impacting international revenue"
+      ],
+      "catalysts": [
+        "Post-split trading beginning April 6 attracting new retail investor base",
+        "Summer travel booking season historically strong for forward guidance",
+        "AI integration enhancing trip planning and increasing conversion rates"
+      ],
+      "target_allocation_pct": 15
+    },
+    {
+      "ticker": "TJX",
+      "name": "The TJX Companies Inc.",
+      "exchange": "NYSE",
+      "subsector": "Off-Price Retail",
+      "market_cap_billions": 150,
+      "current_price": 159.03,
+      "pe_ratio_forward": 31.0,
+      "scores": {
+        "moat": 8,
+        "management": 9,
+        "growth": 7,
+        "valuation": 6,
+        "overall": 7.5
+      },
+      "scoring_rationale": {
+        "moat": "Unique off-price buying model with 21,000+ vendor relationships. Tariff disruptions create more buying opportunities as traditional retailers offload excess inventory. Scale advantage with $60.4B in annual revenue. Treasure-hunt shopping experience drives repeat visits.",
+        "management": "CEO Ernie Herrman noted 'exceptional' merchandise availability. Beat on every line in Q4 fiscal 2026. Shrink returned to pre-COVID levels. Inventory up 14% strategically to capitalize on buying opportunities. Consistently strong execution across cycles.",
+        "growth": "Crossed $60B in annual revenue for first time. 4% comp sales growth. EPS guidance of $4.52-4.57 representing 6-7% YoY growth. 9.4% projected earnings growth. International expansion provides long-term runway.",
+        "valuation": "Forward P/E of 31x is modestly above industry average of 29.9x. Premium justified by counter-cyclical business model and consistent execution, but limits upside from current levels."
+      },
+      "thesis": "TJX is the premier tariff beneficiary in consumer discretionary. The off-price model thrives in exactly this environment: tariff-pressured traditional retailers create excess inventory that TJX acquires at steep discounts. With $60.4B in annual revenue, shrink back to pre-COVID levels, and the CEO calling merchandise availability 'exceptional,' TJX is positioned to gain market share as value-conscious consumers trade down.",
+      "bull_case": [
+        "Direct beneficiary of tariff disruption as excess inventory flows to off-price channel",
+        "Counter-cyclical model gains share as consumers become more value-conscious",
+        "Shrink returning to pre-COVID levels removes a key margin headwind",
+        "International expansion in Europe and Australia provides multi-year growth runway",
+        "Inventory up 14% strategically positions for best buying environment in years"
+      ],
+      "bear_case": [
+        "Premium valuation at 31x forward P/E limits upside if growth slows",
+        "Severe consumer downturn could still reduce traffic even at discount retailers",
+        "Rising competition from other off-price players (Ross, Burlington) and online resale",
+        "9% annual earnings growth may not justify current valuation premium",
+        "Rising minimum wages and labor costs could pressure margins"
+      ],
+      "catalysts": [
+        "Tariff escalation driving more branded inventory into off-price channel",
+        "Continued market share gains from traditional department stores",
+        "Potential HomeGoods expansion and format innovation"
+      ],
+      "target_allocation_pct": 15
+    },
+    {
+      "ticker": "MELI",
+      "name": "MercadoLibre Inc.",
+      "exchange": "NASDAQ",
+      "subsector": "E-commerce / Fintech (Latin America)",
+      "market_cap_billions": 110,
+      "current_price": 1910.0,
+      "pe_ratio_forward": 38.0,
+      "scores": {
+        "moat": 8,
+        "management": 9,
+        "growth": 10,
+        "valuation": 6,
+        "overall": 8.2
+      },
+      "scoring_rationale": {
+        "moat": "Dominant e-commerce and fintech ecosystem in Latin America with 120M+ unique active buyers. Integrated payments (Mercado Pago), logistics (Mercado Envios), and credit create a flywheel similar to early Amazon. E-commerce penetration in LatAm at mid-teens vs US at 20%+ creates structural runway.",
+        "management": "Marcos Galperin executing masterfully. $10.9B Brazil investment in 2026 (+50% YoY) shows conviction. 14 new fulfillment centers. Revenue grew 39% USD (52% local currency) in 2025. Aggressively investing while maintaining profitability.",
+        "growth": "Revenue at $28.9B in 2025, up 39% in USD. Latin American e-commerce market growing from $151B to $232B by 2028 (+54%). 120M+ active buyers with significant room for frequency and ARPU growth. Fintech lending and advertising as emerging high-margin verticals.",
+        "valuation": "Consensus target of $2,848 implies 41% upside. 23 of 26 analysts rate Buy/Strong Buy. Forward P/E elevated at ~38x but justified by 30%+ revenue growth and secular tailwinds. At 'record-low valuation' relative to growth rate."
+      },
+      "thesis": "MercadoLibre is the highest-growth opportunity in consumer discretionary with 39% USD revenue growth and a dominant position in Latin American e-commerce where penetration is a decade behind the US. The integrated ecosystem of e-commerce, fintech, logistics, and advertising mirrors Amazon's flywheel but in an earlier-stage, faster-growing market. $10.9B investment in Brazil in 2026 signals management confidence in the long-term opportunity.",
+      "bull_case": [
+        "Latin American e-commerce penetration at mid-teens with structural path to 25%+ over next decade",
+        "Fintech (Mercado Pago) and credit book creating high-margin recurring revenue streams",
+        "39% USD revenue growth with improving unit economics across segments",
+        "$10.9B Brazil investment building logistics moat that competitors cannot easily replicate",
+        "Consensus price target of $2,848 implies 41% upside from current levels"
+      ],
+      "bear_case": [
+        "Shopee's aggressive subsidy-driven expansion in Brazil and Mexico eroding market share",
+        "Latin American macro instability (currency devaluation, inflation) impacting profitability in USD terms",
+        "Credit book growth carries default risk in economically volatile markets",
+        "Elevated valuation at ~38x forward earnings creates downside risk if growth decelerates",
+        "Political and regulatory risks across multiple Latin American jurisdictions"
+      ],
+      "catalysts": [
+        "Continued acceleration in e-commerce penetration across Brazil and Mexico",
+        "Fintech lending book growth driving margin expansion",
+        "Advertising revenue emerging as third major growth pillar"
+      ],
+      "target_allocation_pct": 15
+    },
+    {
+      "ticker": "MCD",
+      "name": "McDonald's Corporation",
+      "exchange": "NYSE",
+      "subsector": "Restaurants / Quick Service",
+      "market_cap_billions": 220,
+      "current_price": 308.0,
+      "pe_ratio_forward": 23.5,
+      "scores": {
+        "moat": 9,
+        "management": 8,
+        "growth": 6,
+        "valuation": 7,
+        "overall": 7.5
+      },
+      "scoring_rationale": {
+        "moat": "Unmatched global QSR brand with 40,000+ restaurants in 100+ countries. 210M active digital loyalty program users creating data-driven pricing power. Asset-light franchise model generates high-margin royalty streams. Real estate ownership provides additional balance sheet strength.",
+        "management": "Consistent execution through cycles. 235% total return over 10 years outpacing S&P 500. $7.186B free cash flow in FY2025. Digital transformation with 210M loyalty users driving personalized marketing and increased visit frequency.",
+        "growth": "Consensus 2026 sales of $28.2B representing 5.7% YoY growth. Trading at ~16x EV/EBITDA below historical range. Market share gains in value segment as consumers trade down from casual dining. Digital/delivery growing as percentage of sales.",
+        "valuation": "Forward P/E of ~23.5x with 2.2% dividend yield. BMO Capital considers valuation reasonable and below typical range. Defensive characteristics command premium in uncertain environment."
+      },
+      "thesis": "McDonald's is the premier defensive play in consumer discretionary. In a value-conscious consumer environment, MCD gains share as diners trade down from casual restaurants. The 210M-user loyalty program drives repeat visits and data-driven pricing. BMO Capital identified MCD as a top restaurant pick for 2026, noting 'durable advantages in a challenged environment.' The 5.7% revenue growth with a 2.2% dividend yield provides total return in a volatile market.",
+      "bull_case": [
+        "Value positioning gains market share as consumers trade down amid economic uncertainty",
+        "210M active loyalty users provide data advantage and pricing precision",
+        "Trading below historical EV/EBITDA range despite defensive quality",
+        "2.2% dividend yield with consistent growth provides income floor",
+        "Asset-light franchise model insulates from labor cost inflation"
+      ],
+      "bear_case": [
+        "Commodity and food cost inflation compressing franchisee margins",
+        "Value menu wars with competitors could pressure average check growth",
+        "International exposure creates currency headwinds from strong dollar",
+        "Consumer health trends and GLP-1 adoption potentially reducing caloric intake long-term",
+        "Tariffs on imported food ingredients could raise operating costs"
+      ],
+      "catalysts": [
+        "Loyalty program monetization driving increased visit frequency and check size",
+        "International market recovery particularly in Europe and China",
+        "New menu innovation and delivery partnerships expanding addressable occasions"
+      ],
+      "target_allocation_pct": 12
+    },
+    {
+      "ticker": "CMG",
+      "name": "Chipotle Mexican Grill Inc.",
+      "exchange": "NYSE",
+      "subsector": "Restaurants / Fast Casual",
+      "market_cap_billions": 45,
+      "current_price": 32.56,
+      "pe_ratio_forward": 35.0,
+      "scores": {
+        "moat": 7,
+        "management": 7,
+        "growth": 8,
+        "valuation": 7,
+        "overall": 7.3
+      },
+      "scoring_rationale": {
+        "moat": "Premium fast-casual brand with strong consumer loyalty and pricing power. Company-owned model provides operational control. Supply chain focused on quality ingredients differentiates from QSR competitors. Digital ordering at 30%+ of sales.",
+        "management": "Post-Brian Niccol transition creating uncertainty but new leadership executing on 'Recipe for Growth' strategy. 350-370 new restaurant openings guided for 2026 shows aggressive expansion. Operational discipline maintained through leadership change.",
+        "growth": "350-370 new restaurant openings in 2026 represents ~7% unit growth. Same-store sales recovery potential as consumer confidence stabilizes. International expansion still in early innings. Revenue growth expected mid-to-high single digits.",
+        "valuation": "Down 28.8% from 52-week highs creating a better entry point. Trading at ~35x forward with median analyst target of $45 implying 38.2% upside. 29 analysts with Buy consensus. Valuation now more reasonable after correction."
+      },
+      "thesis": "Chipotle represents a compelling growth recovery story after a 29% correction from highs. The 'Recipe for Growth' strategy with 350-370 new restaurant openings in 2026 provides visible unit growth. With 79% of analysts rating it Buy and a median price target implying 38% upside, the risk-reward has improved significantly. The premium fast-casual positioning captures both value-conscious and experience-seeking consumer segments.",
+      "bull_case": [
+        "29% correction from highs creates attractive entry point with 38% analyst upside consensus",
+        "350-370 new restaurant openings providing 7% unit growth in 2026",
+        "Premium positioning captures consumers trading down from full-service dining",
+        "Digital ordering at 30%+ of sales driving operational efficiency and data insights",
+        "International expansion opportunity still largely untapped"
+      ],
+      "bear_case": [
+        "Post-Niccol management transition creating execution uncertainty",
+        "Food cost inflation from tariffs and supply chain disruption",
+        "Consumer spending weakness could impact traffic at premium price points",
+        "Valuation at 35x forward still elevated versus restaurant sector average",
+        "New unit productivity could disappoint if macro environment deteriorates further"
+      ],
+      "catalysts": [
+        "Q1 2026 earnings demonstrating execution under new leadership",
+        "Same-store sales recovery as loyalty program and menu innovation gain traction",
+        "International expansion announcements providing new growth vectors"
+      ],
+      "target_allocation_pct": 10
+    },
+    {
+      "ticker": "DHI",
+      "name": "D.R. Horton Inc.",
+      "exchange": "NYSE",
+      "subsector": "Homebuilders",
+      "market_cap_billions": 42,
+      "current_price": 128.0,
+      "pe_ratio_forward": 9.5,
+      "scores": {
+        "moat": 7,
+        "management": 8,
+        "growth": 7,
+        "valuation": 9,
+        "overall": 7.6
+      },
+      "scoring_rationale": {
+        "moat": "Largest US homebuilder by volume with scale advantages in land acquisition and construction costs. Focus on affordable entry-level homes aligns with structural housing shortage. Superior net margin of 9.9% vs peers demonstrates operational efficiency.",
+        "management": "Beat Q1 2026 earnings estimates. Strategic land investments position for eventual recovery. Effective use of mortgage rate buydowns to maintain volume. Consistently outperformed Lennar on margins (9.9% vs 5.4%).",
+        "growth": "2026 is a transition year with flat single-family starts but groundwork being laid for 2027 rebound. Volume-driven recovery expected as mortgage rates ease. Structural housing undersupply of 3-4 million units provides multi-year demand tailwind.",
+        "valuation": "Forward P/E of ~9.5x is deeply discounted reflecting housing pessimism. Down 27% from 52-week highs. Warren Buffett's Berkshire Hathaway invested in homebuilders, validating the long-term thesis. Compelling risk-reward for patient investors."
+      },
+      "thesis": "D.R. Horton is a deep value contrarian pick trading at just 9.5x forward earnings after a 27% decline. The US has a structural housing shortage of 3-4 million units that provides a multi-year demand tailwind. Mortgage rates dipping below 6% in February 2026 signal improving affordability. With industry-leading margins (9.9% net), strategic land positions, and Warren Buffett validation through Berkshire Hathaway's homebuilder investments, DHI offers asymmetric upside as housing conditions normalize.",
+      "bull_case": [
+        "Forward P/E of 9.5x is deeply undervalued for the largest US homebuilder",
+        "Structural housing shortage of 3-4 million units provides secular demand backdrop",
+        "Mortgage rates trending toward 6% improving affordability and buyer confidence",
+        "Industry-best net margins of 9.9% demonstrate operational superiority",
+        "Warren Buffett/Berkshire Hathaway homebuilder investments validate long-term thesis"
+      ],
+      "bear_case": [
+        "Elevated mortgage rates could remain higher for longer suppressing housing demand",
+        "Consumer confidence near recessionary levels with 32.1% expecting employment decline",
+        "Tariffs increasing construction material costs and compressing margins",
+        "Housing starts projected flat in 2026 before potential 2027 recovery",
+        "Recession risk could trigger meaningful home price corrections"
+      ],
+      "catalysts": [
+        "Further mortgage rate declines stimulating housing demand",
+        "Spring selling season 2026 results demonstrating buyer return",
+        "Federal housing policy initiatives to address affordability crisis"
+      ],
+      "target_allocation_pct": 13
+    }
+  ],
+  "watchlist": [
+    {
+      "ticker": "LULU",
+      "name": "Lululemon Athletica Inc.",
+      "rationale": "Down 50% creating potential deep value, trading at just 15x forward earnings with 7% revenue growth. However, consumer spending headwinds and athleisure market saturation create near-term risk. Watch for stabilization in same-store sales trends.",
+      "scores": {
+        "moat": 7,
+        "management": 7,
+        "growth": 6,
+        "valuation": 8,
+        "overall": 7.0
+      }
+    },
+    {
+      "ticker": "ABNB",
+      "name": "Airbnb Inc.",
+      "rationale": "Strong platform with 10% booking growth and 9.7% revenue growth expected in 2026. However, 25.4x forward P/E is premium vs Booking (15.6x). Better entry point may emerge if travel demand softens.",
+      "scores": {
+        "moat": 7,
+        "management": 8,
+        "growth": 7,
+        "valuation": 5,
+        "overall": 6.8
+      }
+    },
+    {
+      "ticker": "SBUX",
+      "name": "Starbucks Corporation",
+      "rationale": "Turnaround under CEO Brian Niccol showing first positive US comp transaction growth in 8 quarters. Stock up 17% YTD. At 81x earnings, valuation requires successful execution of 'Back to Starbucks' strategy. Monitor for sustained comp improvement.",
+      "scores": {
+        "moat": 8,
+        "management": 7,
+        "growth": 5,
+        "valuation": 3,
+        "overall": 5.8
+      }
+    },
+    {
+      "ticker": "HD",
+      "name": "Home Depot Inc.",
+      "rationale": "Market leader in home improvement with optionality on housing recovery. Down 14% YTD. Cautious 2026 guidance (flat to 2% comps) but 'accelerated recovery case' shows 5-6% potential. Wait for mortgage rate clarity and housing turnover improvement.",
+      "scores": {
+        "moat": 8,
+        "management": 8,
+        "growth": 5,
+        "valuation": 5,
+        "overall": 6.4
+      }
+    }
+  ],
+  "avoid_list": [
+    {
+      "ticker": "TSLA",
+      "name": "Tesla Inc.",
+      "rationale": "Q1 2026 deliveries missed at 358K vs 382K consensus. Stock down 20% YTD. Produced 50K+ excess vehicles signaling demand weakness. BYD overtaking globally. Musk political controversy driving consumer backlash. 'EV Winter' narrative gaining traction. Risk-reward unfavorable at current valuation.",
+      "key_risk": "Demand destruction from brand damage, rising competition, and EV market maturation"
+    },
+    {
+      "ticker": "NKE",
+      "name": "Nike Inc.",
+      "rationale": "At 8-year lows (~$52) in 'structural identity crisis.' China Guochao movement eroding market share as local brands rival Nike by end of 2026. Revenue grew only 1% vs Lululemon's 7%. Tariff exposure on imported goods. Turnaround under CEO Elliott Hill is early innings with uncertain timeline.",
+      "key_risk": "Structural market share loss in China to domestic brands, tariff margin compression"
+    },
+    {
+      "ticker": "LVMHF",
+      "name": "LVMH Moet Hennessy Louis Vuitton",
+      "rationale": "Worst quarterly start on record in Q1 2026 with shares down 28%. Luxury pricing power fading as sector shifts from price to volume growth. CEO Arnault warned '2026 won't be simple.' Fashion/leather goods division facing flat-to-negative growth. Geopolitical headwinds across Middle East and China.",
+      "key_risk": "Luxury demand normalization, China weakness, geopolitical disruption to tourism"
+    }
+  ],
+  "portfolio_construction": {
+    "total_allocation_pct": 100,
+    "strategy": "Barbell approach: combine high-growth compounders (AMZN, MELI) with defensive value plays (MCD, DHI) and a tariff-beneficiary hedge (TJX). Travel exposure (BKNG) captures resilient experience spending. CMG provides growth recovery optionality.",
+    "risk_management": "Position sizes reflect conviction-weighted approach. Larger allocations to AMZN and BKNG for quality and valuation support. DHI as contrarian value bet with strict 15% stop-loss given housing uncertainty. Rebalance quarterly based on macro data and earnings."
+  },
+  "methodology": {
+    "scoring_formula": "Overall = (Moat * 0.3) + (Management * 0.2) + (Growth * 0.3) + (Valuation * 0.2)",
+    "data_sources": [
+      "Company earnings reports and guidance (Q4 2025, Q1 2026)",
+      "Analyst consensus estimates (MarketBeat, Yahoo Finance, Nasdaq)",
+      "Sector research (Motley Fool, Seeking Alpha, BMO Capital, LPL Research)",
+      "Macroeconomic data (Conference Board Consumer Confidence, housing data)",
+      "Industry reports (Counterpoint Research EV data, travel spending projections)"
+    ],
+    "analysis_date": "2026-04-04"
+  }
+}

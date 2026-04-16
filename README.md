@@ -4,7 +4,35 @@ A fully automated algorithmic trading system for crypto and US equities, powered
 
 The bot runs **9 technical strategies**, selects the best one per symbol using daily backtesting, and enriches signals with **FinBERT sentiment analysis**, a **4-stage Claude LLM analyst pipeline**, and an optional **RL strategy selector (DQN)**. Ten autonomous agents handle optimization, scanning, analysis, feedback scoring, pattern discovery, and health checks on a daily schedule. A self-improving feedback loop scores prediction accuracy and injects learnings back into the LLM prompts.
 
-**Current state:** 1324 tests, ~95% coverage, 17 active symbols (2 crypto + 15 equities), paper trading. Docker-ready with automated startup and scheduling.
+**Current state:** 1914 tests, ~95% coverage, 17 active symbols (2 crypto + 15 equities), paper trading. Docker-ready with automated startup and scheduling. Sprints 0-7 complete — capital-tier profiles, modifier A/B framework, regime detector, OOS backtest harness, progressive-disclosure dashboard, structured logging + Prometheus/Sentry hooks.
+
+```mermaid
+graph TD
+    subgraph "Engine Loop (every 30s)"
+        A[Fetch Bars] --> B[Strategy Router]
+        B --> C{RL Selector?}
+        C -->|yes| D[DQN Select]
+        C -->|no| E[Default Strategy]
+        D --> F[Regime Filter]
+        E --> F
+        F --> G[Signal Modifiers]
+        G --> H{Buy / Sell / Hold}
+        H -->|buy/sell| I[Risk Manager]
+        I --> J[TWAP Execution]
+        J --> K[AlertManager]
+    end
+    subgraph "Weekly Agents"
+        L[Market Scanner] --> M[Strategy Optimizer]
+        N[RL Trainer] --> O[Deploy Gate]
+        P[Modifier A/B Report] --> Q[Auto-disable]
+        R[Regime Scan] --> S[Hard-skip JSON]
+    end
+    subgraph "Monitoring"
+        T[Dashboard v2] --> U[Simple / Standard / Advanced]
+        V[Prometheus /metrics] --> W[Grafana]
+        X[Sentry] --> Y[Error Tracking]
+    end
+```
 
 ---
 
@@ -397,8 +425,80 @@ v3 adds production-grade infrastructure, all behind feature flags:
 ### Deployment
 - **Docker Compose** — 3-service orchestration (engine + dashboard + agents) with named volumes
 - **Automated Startup** — Mac wake → Docker up → pre-market agents (parallel) → engine start
-- **Watchdog** — Post-startup verification that all containers are healthy
+- **Watchdog** — Post-startup verification that all containers are healthy, with a 06:00–13:30 PT time-of-day gate so scheduled shutdowns stick (override: `touch .watchdog_always_on`)
 - **Supercronic** — Container-friendly cron for post-market and weekly agent scheduling (US Eastern, DST-aware)
+
+---
+
+## Sprints 5–7 — Democratizing Algo-Trading
+
+Goal: make the v3 engine safe and intelligible for non-expert retail users
+($500–$10K accounts) without removing any of the intelligence. Every
+feature stays on at full strength; we change defaults, explanations, and
+safety rails around it.
+
+### Sprint 5 — Protect the Capital
+- **UserProfile system** (`core/user_profile.py`) — Beginner / Hobbyist /
+  Learner tiers scale `BASE_POSITION_PCT`, `KELLY_FRACTION`,
+  `MAX_DAILY_LOSS_USD`, `MAX_TRADES_PER_DAY`, and `MAX_POSITIONS_OPEN`
+  with account size. Auto-detected at startup; downgrade always allowed.
+- **AlertManager wired into engine** — rejections, liquidations, broker
+  failures, daily DD halt, unauthorized external positions all fire alerts.
+- **Pre-trade liquidity gate** — skip trades when spread > 50 bps equity /
+  100 bps crypto.
+- **Intraday P&L circuit breaker** with dollar floors so a $800 account
+  doesn't lose 10% before halting.
+- **VaR-aware position cap** — per-trade VaR contribution capped at
+  1% (Beginner) / 2% (Hobbyist) / 3% (Learner) of equity.
+- **Paper → live promotion gate** in `config.py` — refuses `TRADING_MODE=live`
+  without 30+ days of paper history and max drawdown ≥ -3%.
+
+### Sprint 6 — Prove the Edge + Make It Clear
+- **Regime detector** (`core/regime_detector.py`) — classifies SPY 20-day
+  realized vol into `low_vol / normal / high_vol / crisis`. Mean-rev
+  strategies skip crisis; momentum skips low_vol.
+- **RL training fix** — 60/20/20 train/val/test split, 100K timesteps,
+  transaction costs in reward, warm-start between weekly retrains.
+- **RL state space 10→16 dim** — adds vol, vol-of-vol, volume z-score,
+  spread z-score, time-to-close, one-hot regime.
+- **Modifier A/B framework** (`analytics/modifier_ab.py`) — logs every
+  modifier's counterfactual delta per trade; weekly agent auto-disables
+  any modifier with ≤ 0 Sharpe contribution over ≥ 5 trades.
+- **OOS backtest harness** (`scripts/full_oos_backtest.py`) — 2-year full
+  pipeline run (router → modifiers → RL selector), per-regime metrics,
+  Monte Carlo trade-order shuffle, acceptance gate at OOS Sharpe ≥ 1.0.
+- **Strategy × regime sensitivity matrix** (`analytics/strategy_regime_matrix.py`)
+  — empirical hard-skip overrides that augment the hardcoded Sprint 6C
+  regime rules.
+- **Trade explainer** (`core/trade_explainer.py`) — plain-English one-liner
+  per trade ("Bought $15 of AAPL because the price dropped 2% below its
+  20-day average") stored alongside the raw signal reason.
+- **Dashboard v2** — Simple / Standard / Advanced views, protection-status
+  badge, regime tag, Monte Carlo framing box, notification center on the
+  Advanced tab.
+- **Honest expected-return framing** (`core/expected_returns.py`) — every
+  Sharpe / return number is wrapped with industry anchors so "Val Sharpe 2.65"
+  never appears naked.
+
+### Sprint 7 — Accessibility + Production-Grade
+- **CI gate** (`.github/workflows/ci.yml`) — ruff + pytest + 80% coverage
+  required on every PR.
+- **Structured JSON logging** (`utils/structured_log.py`) — structlog with
+  per-cycle trace IDs. Opt-in via `STRUCTURED_LOG=true`.
+- **Prometheus metrics** (`monitoring/metrics.py`) — `/metrics` endpoint
+  with equity/cash/trades/cycle duration. Opt-in via `METRICS_ENABLED=true`.
+  Stub objects when disabled = zero overhead.
+- **Sentry error tracking** (`monitoring/sentry.py`) — gated by `SENTRY_DSN`.
+- **Property-based tests** (`tests/test_risk_properties.py`) — hypothesis
+  strategies for trailing stop monotonicity, ATR non-negativity, vol
+  sizing bounds.
+- **Alpaca sandbox integration tests** (`tests/integration/test_alpaca_sandbox.py`)
+  — real API calls, skipped by default (`-m integration` to opt in).
+- **One-click deploy templates** — `.replit`, `railway.json`, and
+  `setup_wizard.py` (interactive CLI) for beginners who can't edit
+  dotenv files.
+- **Dashboard `/learn`** — 7 beginner mini-lessons explaining strategy,
+  RL, regime, trailing stops in plain language.
 
 ---
 
@@ -548,7 +648,10 @@ LLM_PATTERN_DISCOVERY_ENABLED=true
 # Train the initial model (needs historical data in Alpaca):
 ./bot.sh rl-train
 
-# If training succeeds (val Sharpe > 0.5), enable in .env:
+# Deploy gate is *test* Sharpe (out-of-sample), not val Sharpe.
+# Sprint 6B changed this because val Sharpe memorizes the val set — a
+# classic pitfall when the same split gates early stopping AND deploy.
+# See `core/expected_returns.py` for the reality-anchor framing.
 RL_STRATEGY_ENABLED=true
 ```
 
@@ -711,7 +814,7 @@ python main.py --status     # Show account status and recent trades
 ## Testing
 
 ```bash
-# Run full suite (1324 tests)
+# Run full suite (1914 tests)
 python -m pytest tests/ -x -q
 
 # Run with coverage report
@@ -724,7 +827,7 @@ python -m pytest tests/test_conviction_scorer.py -v
 python -m pytest tests/test_order_manager.py -v
 ```
 
-Current: **1324 tests, ~95% line coverage**.
+Current: **1914 tests, ~95% line coverage**.
 
 ---
 
@@ -805,7 +908,7 @@ algo-trader/
 │   ├── rl_models/                       # Trained DQN models
 │   └── history/                         # Daily archives
 │
-├── tests/                               # 1324 tests, ~95% coverage
+├── tests/                               # 1914 tests, ~95% coverage
 │   ├── conftest.py                      # Shared fixtures
 │   └── test_*.py                        # 45 test files
 │
@@ -866,7 +969,74 @@ The system is designed to **never fail due to a missing AI component**:
 | Database | SQLite (`trades.db`) |
 | Dashboard | Flask (port 5050) |
 | Console UI | Rich library |
-| Testing | pytest (1324 tests) |
+| Testing | pytest (1914 tests) |
+
+---
+
+## Expected Returns (honest version)
+
+Every Sharpe / return number produced by this bot — in logs, in the
+dashboard, in this README — is wrapped by `core/expected_returns.py` with
+an industry reality anchor. Naked "Val Sharpe 2.65" is never shown alone.
+
+**Industry heuristic for retail algo traders** (post-cost, small account):
+
+| Metric                 | Realistic range          |
+|------------------------|--------------------------|
+| Sharpe ratio           | 0.5 – 1.5                |
+| Annualized return      | -20% to +15%             |
+| Backtest-vs-live gap   | Backtest ÷ 2 is optimistic |
+
+If a backtest shows Sharpe 2.65, do NOT expect that live. Most retail
+algo traders lose money after costs. The Sprint 6B RL refactor explicitly
+separates validation (for early-stopping) from out-of-sample test (for
+deploy gating) to reduce this specific form of wishful thinking.
+
+## What This Bot Cannot Do
+
+A conservative list so expectations stay anchored:
+
+- Predict market crashes or black-swan events.
+- Guarantee positive returns — in any week, month, or year.
+- Replicate hedge-fund-scale edge with retail data feeds.
+- Beat buy-and-hold S&P on a small account after transaction costs.
+- Trade options, futures, forex, or leveraged instruments.
+- Act on inside information, rumors, or social-media sentiment directly.
+- Recover from a broker outage faster than a human (we watchdog, we don't guarantee).
+- Interpret your personal risk tolerance — you must still size positions you can afford to lose.
+
+If you deploy this with real money, start with the Beginner profile
+(≤ $2K) defaults and promote only after 30 days of paper trading history
+with max drawdown ≥ -3%. The paper→live gate in `config.py` enforces this;
+see Sprint 5G.
 | Containers | Docker Compose (3 services) |
 | Cron (Docker) | Supercronic (DST-aware) |
 | Scheduling | pmset wake + scheduled tasks |
+
+---
+
+## What I'd Do Differently With $1M to Deploy
+
+A candidly honest list of what this system would need to graduate from
+hobby to institutional. These are intentionally deferred — they don't
+add value at the $500-$10K retail scale this project targets.
+
+1. **Multi-region HA**: Hot-standby in AWS US-East + US-West behind a
+   Route53 failover. The engine is stateless enough (state reconstructs
+   from broker) that this is an ops problem, not a code problem.
+2. **HSM-backed key rotation**: Alpaca keys in AWS Secrets Manager with
+   90-day auto-rotation and CloudTrail audit.
+3. **Compliance-grade audit log**: MiFID II / FINRA-style transaction
+   journal with immutable append-only storage (S3 Object Lock) and
+   tamper-proof checksums.
+4. **Model registry with rollback**: MLflow tracking server for RL model
+   versions; one-click rollback if live Sharpe drops below threshold.
+5. **Options-derived signals**: Put/call ratio, IV skew, term structure —
+   powerful but requires a paid data subscription Alpaca doesn't provide.
+6. **Bayesian hyperparameter optimization**: Auto-tune Kelly fraction,
+   ATR multiplier, signal weights via Optuna on rolling OOS windows.
+7. **WebSocket order execution**: Ditch REST polling for Alpaca's
+   WebSocket stream — sub-second fill confirmations, no polling latency.
+8. **Dedicated database**: PostgreSQL (Supabase or RDS) instead of
+   SQLite — handles concurrent readers from dashboard + agents without
+   WAL lock contention.

@@ -25,6 +25,14 @@ def _make_returns(n=100):
     return {k: np.random.randn(n) * 0.001 for k in STRATEGY_KEYS}
 
 
+try:
+    import gymnasium  # noqa: F401
+    HAS_GYMNASIUM = True
+except ImportError:
+    HAS_GYMNASIUM = False
+
+
+@pytest.mark.skipif(not HAS_GYMNASIUM, reason="gymnasium not installed")
 class TestStrategySelectionEnv:
     def test_reset(self):
         from core.rl_environment import StrategySelectionEnv
@@ -32,7 +40,8 @@ class TestStrategySelectionEnv:
         env = StrategySelectionEnv(df, _make_returns())
 
         obs, info = env.reset()
-        assert obs.shape == (10,)
+        from core.rl_features import NUM_FEATURES  # Sprint 6E: 10→16
+        assert obs.shape == (NUM_FEATURES,)
         assert isinstance(info, dict)
 
     def test_step_returns_tuple(self):
@@ -42,7 +51,8 @@ class TestStrategySelectionEnv:
         env.reset()
 
         obs, reward, terminated, truncated, info = env.step(0)
-        assert obs.shape == (10,)
+        from core.rl_features import NUM_FEATURES  # Sprint 6E: 10→16
+        assert obs.shape == (NUM_FEATURES,)
         assert isinstance(reward, float)
         assert isinstance(terminated, bool)
         assert truncated is False
@@ -117,9 +127,11 @@ class TestStrategySelectionEnv:
         env.reset()
 
         obs, reward, _, _, _ = env.step(0)
-        assert obs.shape == (10,)
+        from core.rl_features import NUM_FEATURES  # Sprint 6E: 10→16
+        assert obs.shape == (NUM_FEATURES,)
 
 
+@pytest.mark.skipif(not HAS_GYMNASIUM, reason="gymnasium not installed")
 class TestCreateEnv:
     def test_factory(self):
         from core.rl_environment import create_env, StrategySelectionEnv

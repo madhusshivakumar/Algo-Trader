@@ -1,0 +1,53 @@
+# Sprint 5I: Minimal CI gate.
+# Runs lint + tests + coverage on every PR and push to main. Blocks merge on
+# any failure. Keeps it cheap: no integration tests against Alpaca sandbox here
+# (those run nightly in a separate workflow — see Sprint 7E).
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ruff pytest-cov
+
+      - name: Lint with ruff
+        run: |
+          # Fail on syntax errors / undefined names; warn on style.
+          # Keeps the gate strict enough to catch real bugs without forcing
+          # everyone to clean up every legacy lint nit in one PR.
+          ruff check --select=E9,F63,F7,F82 --output-format=github .
+
+      - name: Run pytest with coverage
+        env:
+          # Stub credentials so config validation passes — tests mock all real
+          # API calls, but Config.validate runs at import time.
+          ALPACA_API_KEY: stub_key_for_ci
+          ALPACA_SECRET_KEY: stub_secret_for_ci
+          TRADING_MODE: paper
+          ANTHROPIC_API_KEY: stub_anthropic_key
+        run: |
+          python -m pytest tests/ -q \
+            --cov=core --cov=strategies --cov=agents --cov=utils \
+            --cov-report=term-missing \
+            --cov-fail-under=80

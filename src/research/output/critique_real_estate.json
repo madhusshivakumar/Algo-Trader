@@ -1,0 +1,56 @@
+{
+    "sector": "real_estate",
+    "agent_name": "real_estate_judge",
+    "timestamp": "2026-04-04T14:00:00Z",
+    "overall_quality_score": 73,
+    "thesis_rigor_score": 72,
+    "risk_assessment_score": 70,
+    "data_quality_score": 76,
+    "contrarian_thinking_score": 65,
+    "actionability_score": 60,
+    "major_flaws": [
+        "WELL at 39x AFFO and 205% of NAV is correctly rated HOLD, showing the analyst can identify overvaluation. But then CEG at 26x (unregulated utility) and EQIX at elevated multiples are BUY. The standard for overvaluation is inconsistently applied.",
+        "The portfolio is 30% data centers (EQIX + DLR), creating massive concentration in a single thesis (AI infrastructure). If hyperscaler capex rationalizes, 30% of the portfolio underperforms simultaneously.",
+        "14 REITs are analyzed with recommendations spanning BUY, HOLD, and even implicit avoids -- but the scoring spread is narrow (5.8 to 8.1). This tight range suggests the scoring system lacks discrimination.",
+        "VICI at 6.7% yield with 3.5% FFO growth provides about 10% total return. That is adequate but not compelling in a 4.5% Treasury yield environment. The risk premium is only ~5.5% for gaming industry concentration risk. Is that enough?",
+        "Self-storage names (PSA, EXR) are both HOLD with declining FFO. Including them dilutes the report without adding value. If they are holds, remove them and focus the analysis."
+    ],
+    "missing_analysis": [
+        "No interest rate sensitivity analysis for any REIT. This is the single most important variable for REIT valuations and it is completely absent.",
+        "Data center overbuilding risk: EQIX plans to double capacity, DLR has record pipeline. What is the total industry capacity coming online vs. demand? Is there an overbuild risk similar to industrial REITs in 2022-2023?",
+        "No NAV analysis for any BUY-rated REIT. P/NAV is the fundamental valuation metric for REITs and it appears only once (WELL at 205% of NAV as a reason to hold).",
+        "AMT's CoreSite data center assets are mentioned as benefiting from AI demand but not quantified. What percentage of AMT's revenue or FFO comes from CoreSite? How fast is it growing?",
+        "Missing: Debt maturity schedule analysis. REITs are leveraged entities. Which picks have near-term refinancing needs at higher rates?",
+        "No analysis of construction cost inflation impact on development returns. EQIX and DLR both have massive development pipelines -- what are the yield-on-cost trends?",
+        "Apartment REITs (AVB, EQR, ESS) -- no analysis of rent regulation risk beyond generic mentions. What specific legislation is pending in their core markets?"
+    ],
+    "logical_fallacies": [
+        "The report argues that 'most higher-rate pain is already priced in' for REITs. But if rates go higher from here (not the base case but possible), the pain is NOT priced in. This is an asymmetric risk that is dismissed.",
+        "EQR is called 'undervalued at 24% discount to Morningstar fair value.' But Morningstar's model is based on assumptions. If those assumptions are wrong, the discount is earned. A single source's fair value estimate is not evidence of undervaluation.",
+        "The barbell strategy (50% growth, 30% income, 20% balanced) sounds well-constructed but the growth portion is 100% data center and the income portion spans gaming, net lease, and healthcare -- these are unrelated businesses with no portfolio synergy."
+    ],
+    "biases_detected": [
+        "NARRATIVE FALLACY: 'AI infrastructure supercycle' drives data center picks. 'Demographic tailwind' drives healthcare picks. 'Housing affordability crisis' drives apartment picks. Each subsector gets its own compelling narrative without integration.",
+        "RECENCY BIAS: Data center REITs have massively outperformed (21.3% FFO growth), and the report projects continued outperformance. But outperformance attracts capital and competition, eventually compressing returns.",
+        "ANCHORING BIAS: Historical average P/AFFO multiples are used as fair value anchors for AMT and PLD. But the interest rate environment has structurally changed. Are historical multiples relevant when yields are 200bps higher?",
+        "CONFIRMATION BIAS: EQIX's record bookings of $394M are highlighted. But EQIX also has 5x debt/EBITDA, which is high for a REIT. The leverage data is presented but not weighted in the analysis.",
+        "AUTHORITY BIAS: Morningstar fair value estimates, Cohen & Steers reports, and analyst consensus are cited without independent verification."
+    ],
+    "questions_to_answer": [
+        "If 10-year yields rise 50bps to 5.0%, what is the implied PE compression for each REIT subsector? What is the portfolio-level impact?",
+        "EQIX and DLR combined are doubling capacity by 2029. What is the total US data center capacity coming online vs. demand? Is there a supply glut risk?",
+        "AMT at 15.5x forward AFFO vs. 21.9x 10-year average -- is this discount driven by DISH churn (temporary) or structural tower industry changes (permanent)?",
+        "AVB projects apartment supply falling 60%+ from peak. What is the historical lag between supply trough and rent growth acceleration? Is this already priced in?",
+        "If hyperscalers shift to behind-the-meter power and self-built data centers, what percentage of EQIX and DLR demand is at risk?",
+        "VICI's 40-year average lease terms provide certainty but also lock in below-market rates over time. What is the mark-to-market opportunity (or lack thereof)?"
+    ],
+    "improvement_demands": [
+        "Add a comprehensive interest rate sensitivity table. Show P/AFFO at current yields, +50bps, +100bps, and -50bps for each pick.",
+        "Provide P/NAV analysis for every BUY-rated REIT. This is the most fundamental REIT valuation metric and it is almost entirely missing.",
+        "Add a data center supply-demand analysis. Quantify total planned capacity additions vs. projected demand growth.",
+        "Include debt maturity schedules for leveraged picks (EQIX at 5x, DLR at 5.2x, VTR at 5.5x). When do they need to refinance?",
+        "Separate 'signed contracts' from 'pipeline' in data center demand estimates. The distinction is critical for forecasting reliability.",
+        "Remove HOLD-rated names that add no value to the portfolio (PSA, EXR, ESS, CCI, SBAC, SPG, O) or upgrade them with clear catalysts."
+    ],
+    "verdict": "ACCEPTABLE"
+}

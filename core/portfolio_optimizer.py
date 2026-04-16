@@ -344,17 +344,36 @@ class PortfolioOptimizer:
         return result
 
     def get_kelly_size(self, symbol: str, equity: float,
-                       base_pct: float) -> float:
+                       base_pct: float,
+                       kelly_fraction: float | None = None,
+                       max_pct: float | None = None) -> float:
         """Get Kelly-adjusted position size for a symbol.
 
         Returns dollar amount. Falls back to base_pct if no Kelly data.
+
+        Args:
+            kelly_fraction: Optional override for the fractional-Kelly scaling. When
+                supplied, recomputes the adjusted fraction from the full Kelly so that
+                profile-tier fractions (e.g. 0.10 for Beginner) are honored at call
+                time rather than being baked into the cached KellyResult.
+            max_pct: Optional override for the single-position cap (defaults to
+                Config.MAX_SINGLE_POSITION_PCT — set this from profile for tier caps).
         """
         kelly = self._kelly_cache.get(symbol)
-        if kelly is None or not kelly.reliable or kelly.adjusted_fraction <= 0:
+        if kelly is None or not kelly.reliable:
             return equity * base_pct
 
-        max_pct = Config.MAX_SINGLE_POSITION_PCT
-        kelly_pct = min(kelly.adjusted_fraction, max_pct)
+        if kelly_fraction is not None:
+            # Re-scale the full Kelly fraction with the caller-supplied fraction
+            adjusted = kelly.full_kelly_fraction * kelly_fraction
+        else:
+            adjusted = kelly.adjusted_fraction
+
+        if adjusted <= 0:
+            return equity * base_pct
+
+        cap = max_pct if max_pct is not None else Config.MAX_SINGLE_POSITION_PCT
+        kelly_pct = min(adjusted, cap)
         return equity * kelly_pct
 
     @property

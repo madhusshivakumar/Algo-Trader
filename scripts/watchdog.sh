@@ -26,8 +26,41 @@ if $DOCKER ps --format '{{.Names}}' | grep -q "algo-engine"; then
     exit 0
 fi
 
-# Engine is NOT running — attempt restart
-echo "[$(timestamp)] WARNING: algo-engine is DOWN — attempting restart" >> "$LOG"
+# Engine is NOT running — decide whether to restart.
+#
+# Sprint 7 fix: don't revive the bot outside intended trading hours.
+# The shutdown plist stops everything at 13:30 PT; without this guard
+# the watchdog brings it back up at 13:45 and the schedule is meaningless.
+#
+# Allowed uptime window:
+#   - Weekdays (Mon-Fri) 06:00 – 13:30 PT
+#   - OR any time if sentinel `$DIR/.watchdog_always_on` exists
+#     (touch that file for 24/7 operation, e.g. once crypto ATR stops
+#     are validated per Sprint 0 plan)
+
+DOW=$(date +%u)      # 1=Monday … 7=Sunday
+HOUR=$(date +%H)     # 00–23
+MIN=$(date +%M)      # 00–59
+
+in_window() {
+    # Returns 0 (true) if now is inside the allowed uptime window.
+    [ -f "$DIR/.watchdog_always_on" ] && return 0
+    # Weekend
+    if [ "$DOW" -gt 5 ]; then return 1; fi
+    # Before 06:00
+    if [ "$HOUR" -lt 6 ]; then return 1; fi
+    # After 13:30 (13:30–13:59 and 14:00+)
+    if [ "$HOUR" -gt 13 ]; then return 1; fi
+    if [ "$HOUR" -eq 13 ] && [ "$MIN" -ge 30 ]; then return 1; fi
+    return 0
+}
+
+if ! in_window; then
+    echo "[$(timestamp)] Engine down but outside trading window — not restarting (DOW=$DOW ${HOUR}:${MIN}). Touch .watchdog_always_on for 24/7." >> "$LOG"
+    exit 0
+fi
+
+echo "[$(timestamp)] WARNING: algo-engine is DOWN in trading window — attempting restart" >> "$LOG"
 
 if [ -f "$DIR/scripts/startup.sh" ]; then
     bash "$DIR/scripts/startup.sh" >> "$LOG" 2>&1

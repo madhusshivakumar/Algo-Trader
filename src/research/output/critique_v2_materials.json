@@ -1,0 +1,43 @@
+{
+    "sector": "materials",
+    "v1_score": 66,
+    "v2_score": 85,
+    "improvement_delta": 19,
+    "thesis_rigor_score": 87,
+    "risk_assessment_score": 86,
+    "data_quality_score": 86,
+    "contrarian_thinking_score": 84,
+    "actionability_score": 82,
+    "feedback_addressed": [
+        "Added comprehensive commodity sensitivity tables for FCX (copper $3.50-$5.65/lb), NUE (HRC $650-$1,100/ton), ALB (lithium $10-$30/kg), NEM (gold $2,500-$5,000/oz), LIN (volume scenarios), CRH (infrastructure scenarios)",
+        "Added 2 SELL recommendations: MP Materials (unprofitable, -$0.22 EPS, reclassified from BUY) and ALB (realistic EPS $4-$5 vs consensus $7.87, lithium supply overhang)",
+        "Reconciled copper supply-demand contradiction: Goldman surplus vs ICSG deficit explicitly compared with base case of balanced market +/-50kt",
+        "Added cycle positioning analysis for copper (late), steel (policy-driven mid), lithium (early recovery), gold (late/momentum), construction materials (mid with fiscal tailwind), industrial gases (through-cycle)",
+        "Added position sizing reflecting commodity cyclicality: LIN 6%, CRH 5%, FCX 3.5%, NUE 2.5%, NEM 2.0%, ALB/MP 0%",
+        "Added cost curve analysis for FCX (Grasberg -$0.92/lb, Americas $2.45/lb) and NEM ($1,680/oz AISC, upper quartile)",
+        "Added LIN historical PE analysis: 33.5x is BELOW 10-year median of 33.85x, answering v1 question about whether premium is justified",
+        "Added CRH acquisition ROIC analysis: improved from 8.42% to 11.87%, confirming value creation",
+        "Added NUE tariff dependency analysis with 4 reversion scenarios and probability-weighted expected EPS of $8.65",
+        "Added ALB DLE technology analysis: pilot phase, no commercial scale economics, earliest deployment 2028-2029",
+        "Added Chinese rare earth impact on MP: restrictions suspended until Nov 2026, removing near-term catalyst",
+        "Added FCX Grasberg political risk: Indonesian royalty increases, 51% local ownership requirement, mud rush disruption",
+        "Downgraded NUE from BUY to HOLD, NEM from BUY to HOLD",
+        "Exposed ALB 1,096% growth as misleading base-effect distortion from $0.66 adjusted EPS"
+    ],
+    "feedback_ignored": [],
+    "remaining_flaws": [
+        "NEM HOLD at 2% weight with gold at $4,500+ is a position that benefits primarily in scenarios where the rest of the portfolio is declining -- the portfolio construction logic for this hedge position could be more precisely articulated",
+        "FCX position at 3.5% acknowledges late-cycle risk but the Grasberg mud rush recovery to only 85% in H2 2026 adds operational risk on top of commodity risk -- could warrant further reduction",
+        "The sector weight of 19% vs 2.5% XLB benchmark is a significant overweight that rests heavily on the infrastructure spending thesis; if IIJA disbursements disappoint, the overweight is exposed"
+    ],
+    "what_impressed": [
+        "MP Materials reclassification from BUY to SELL with the explicit statement that an unprofitable $8.5B company cannot receive the same rating as $220B Linde is exactly the correction demanded",
+        "ALB SELL with exposure of the 1,096% growth figure as base-effect distortion and realistic EPS of $4-$5 at current lithium prices demonstrates analytical integrity",
+        "Copper supply-demand reconciliation citing Goldman, ICSG, JP Morgan, and World Bank with balanced assessment is the objective analysis v1 lacked",
+        "NUE tariff dependency analysis with probability-weighted expected EPS ($8.65) vs current ($11) showing limited upside is genuine risk management",
+        "LIN PE analysis discovering that 33.5x is actually below the 10-year median contradicts the v1 premise that LIN was expensive -- intellectual honesty in reversing a prior assumption",
+        "CRH ROIC improvement from 8.42% to 11.87% directly answering whether acquisitions create or destroy value",
+        "Gold macro paradox note (gold >$4,500 implies equity decline 20-30%) shows sophisticated portfolio-level thinking"
+    ],
+    "verdict": "STRONG"
+}

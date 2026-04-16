@@ -151,5 +151,164 @@ class TestConstants:
         assert NUM_STRATEGIES == 9
 
     def test_num_features(self):
+        # Sprint 6E: state extended from 10 → 16 dims (see rl_features docstring).
         from core.rl_features import NUM_FEATURES
-        assert NUM_FEATURES == 10
+        assert NUM_FEATURES == 16
+
+
+# ── Sprint 6E: new helper behaviour ──────────────────────────────────────
+
+
+class TestTanhZscore:
+    def test_constant_series_is_zero(self):
+        from core.rl_features import _tanh_zscore
+        s = pd.Series([5.0] * 30)
+        # std is 0 → guarded return of 0.0, not NaN
+        assert _tanh_zscore(s) == 0.0
+
+    def test_empty_series_is_zero(self):
+        from core.rl_features import _tanh_zscore
+        assert _tanh_zscore(pd.Series(dtype=float)) == 0.0
+
+    def test_bounded_in_negative_one_one(self):
+        from core.rl_features import _tanh_zscore
+        # Extreme spike at the end
+        s = pd.Series(list(np.random.randn(100)) + [100.0])
+        val = _tanh_zscore(s)
+        assert -1.0 <= val <= 1.0
+
+    def test_monotonic_in_direction(self):
+        from core.rl_features import _tanh_zscore
+        # Last value below recent mean → negative z; above → positive z
+        s_below = pd.Series([100.0] * 20 + [95.0])
+        s_above = pd.Series([100.0] * 20 + [105.0])
+        assert _tanh_zscore(s_below) < 0
+        assert _tanh_zscore(s_above) > 0
+
+
+class TestRealizedVol:
+    def test_zero_for_flat_series(self):
+        from core.rl_features import _realized_vol
+        s = pd.Series([100.0] * 30)
+        assert _realized_vol(s, window=5) == 0.0
+
+    def test_positive_for_noisy_series(self):
+        from core.rl_features import _realized_vol
+        np.random.seed(7)
+        s = pd.Series(100 + np.cumsum(np.random.randn(40) * 0.5))
+        assert _realized_vol(s, window=20) > 0.0
+
+    def test_short_series_returns_zero(self):
+        from core.rl_features import _realized_vol
+        s = pd.Series([100.0, 101.0])
+        # Not enough data for 20-window
+        assert _realized_vol(s, window=20) == 0.0
+
+
+class TestVolOfVol:
+    def test_flat_series_is_zero(self):
+        from core.rl_features import _vol_of_vol
+        s = pd.Series([100.0] * 50)
+        assert _vol_of_vol(s) == 0.0
+
+    def test_non_flat_is_positive(self):
+        from core.rl_features import _vol_of_vol
+        np.random.seed(13)
+        s = pd.Series(100 + np.cumsum(np.random.randn(60) * 0.8))
+        assert _vol_of_vol(s) >= 0.0
+
+
+class TestSpreadProxyZ:
+    def test_missing_cols_returns_zero(self):
+        from core.rl_features import _spread_proxy_z
+        df = pd.DataFrame({"close": [100.0] * 30})
+        assert _spread_proxy_z(df) == 0.0
+
+    def test_bounded(self):
+        from core.rl_features import _spread_proxy_z
+        np.random.seed(19)
+        close = 100 + np.cumsum(np.random.randn(40) * 0.5)
+        df = pd.DataFrame({
+            "close": close,
+            "high": close + np.abs(np.random.randn(40)),
+            "low": close - np.abs(np.random.randn(40)),
+        })
+        val = _spread_proxy_z(df)
+        assert -1.0 <= val <= 1.0
+
+
+class TestTimeToClose:
+    def test_no_datetime_index_is_half(self):
+        from core.rl_features import _time_to_close
+        df = pd.DataFrame({"close": [100, 101, 102]})
+        # Integer index → 0.5 neutral
+        assert _time_to_close(df) == 0.5
+
+    def test_early_session_near_one(self):
+        from core.rl_features import _time_to_close
+        # 9:30 AM is close to session start — should be near 1.0
+        df = pd.DataFrame({"close": [100]},
+                          index=pd.DatetimeIndex(["2024-01-02 09:30"]))
+        val = _time_to_close(df)
+        assert 0.9 < val <= 1.0
+
+    def test_after_close_is_zero(self):
+        from core.rl_features import _time_to_close
+        df = pd.DataFrame({"close": [100]},
+                          index=pd.DatetimeIndex(["2024-01-02 17:00"]))
+        assert _time_to_close(df) == 0.0
+
+    def test_bounded(self):
+        from core.rl_features import _time_to_close
+        df = pd.DataFrame({"close": [100]},
+                          index=pd.DatetimeIndex(["2024-01-02 12:00"]))
+        val = _time_to_close(df)
+        assert 0.0 <= val <= 1.0
+
+
+class TestRegimeBits:
+    def test_no_regime_sets_bits_to_zero(self):
+        from core.rl_features import extract_features
+        df = _make_df()
+        features = extract_features(df, regime=None)
+        assert features[-2] == 0.0  # regime_stress
+        assert features[-1] == 0.0  # regime_crisis
+
+    def test_low_vol_and_normal_are_zero_bits(self):
+        from core.rl_features import extract_features
+        df = _make_df()
+        for regime in ("low_vol", "normal"):
+            features = extract_features(df, regime=regime)
+            assert features[-2] == 0.0
+            assert features[-1] == 0.0
+
+    def test_high_vol_sets_stress_only(self):
+        from core.rl_features import extract_features
+        df = _make_df()
+        features = extract_features(df, regime="high_vol")
+        assert features[-2] == 1.0  # stress
+        assert features[-1] == 0.0  # crisis still off
+
+    def test_crisis_sets_both_bits(self):
+        from core.rl_features import extract_features
+        df = _make_df()
+        features = extract_features(df, regime="crisis")
+        assert features[-2] == 1.0  # stress
+        assert features[-1] == 1.0  # crisis
+
+
+class TestFeatureShape16:
+    def test_sixteen_dim_output(self):
+        from core.rl_features import extract_features
+        df = _make_df()
+        features = extract_features(df)
+        assert features.shape == (16,)
+
+    def test_all_features_finite(self):
+        # A regression guard: extract_features must never emit NaN/Inf,
+        # regardless of regime input.
+        from core.rl_features import extract_features
+        df = _make_df()
+        for regime in (None, "low_vol", "normal", "high_vol", "crisis"):
+            features = extract_features(df, regime=regime)
+            assert np.isfinite(features).all(), f"NaN/Inf leaked with {regime=}"

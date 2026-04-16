@@ -1,0 +1,55 @@
+{
+    "sector": "healthcare",
+    "agent_name": "healthcare_judge",
+    "timestamp": "2026-04-04T14:00:00Z",
+    "overall_quality_score": 72,
+    "thesis_rigor_score": 75,
+    "risk_assessment_score": 70,
+    "data_quality_score": 78,
+    "contrarian_thinking_score": 60,
+    "actionability_score": 68,
+    "major_flaws": [
+        "All 7 conviction picks are rated HIGH conviction -- zero MODERATE or LOW among the top picks. The report identifies risks but then ignores them when assigning conviction levels, suggesting the risk assessment is performative rather than integrated.",
+        "LLY at 27x forward PE is called 'justified by the strongest growth profile' but no DCF backs this up. What if GLP-1 pricing pressure reduces revenue growth from 25% to 15%? What is fair value then?",
+        "The portfolio construction recommends 45% in large-cap pharma (LLY, ABBV, AZN) but no stress test on what happens if IRA pricing negotiations expand to include Skyrizi/Rinvoq or Mounjaro in future rounds.",
+        "ISRG at 65x forward earnings is listed as HIGH conviction with entry strategy of 'buy on market-wide corrections' -- that is not a strategy, that is hope. What price constitutes a correction worth buying?",
+        "The stop-loss guidance of '15% trailing stop on individual positions' is mentioned once in portfolio construction but not calibrated to any volatility analysis. LLY's 52-week range suggests 15% drawdowns happen routinely."
+    ],
+    "missing_analysis": [
+        "No analysis of GLP-1 competitive dynamics beyond Lilly vs Novo. Where is the analysis of Amgen MariTide, Roche CT-996, Viking Therapeutics, Tern Pharmaceuticals? The GLP-1 landscape is about to get crowded.",
+        "No quantification of IRA pricing impact on specific picks. Which drugs in the portfolio could be selected for negotiation in future rounds? What is the revenue at risk?",
+        "AbbVie's thesis hinges on Skyrizi/Rinvoq exceeding peak Humira -- but what are the patent expiration dates for these drugs? When does biosimilar competition begin?",
+        "No analysis of hospital capital budgets and their impact on ISRG da Vinci 5 placements. In a recession, hospitals cut capex first.",
+        "Missing comparative valuation table: How does LLY at 27x forward compare to NVO, AMGN, PFE, MRK on a PEG basis?",
+        "No analysis of manufacturing capacity constraints for GLP-1 drugs. Lilly has had well-documented supply shortages -- is this resolved?",
+        "TMO organic growth guidance of 3-4% is below historical average, yet it gets a 7/10 growth score. That scoring is generous given the data."
+    ],
+    "logical_fallacies": [
+        "The report claims AbbVie 'fully replaced Humira biosimilar losses' but Humira is still declining 26% operationally. The replacement is happening but is not yet complete -- stating it as fact when the transition is ongoing is misleading.",
+        "Vertex is praised for diversification beyond CF, but 95% CF market share means the vast majority of revenue still comes from one franchise. Saying the company is 'transforming' while CF dominance continues is aspirational, not analytical.",
+        "The argument that ISRG has an 'unassailable installed base moat' ignores that Medtronic Hugo and J&J Ottava are listed as risks in the same entry. Either the moat is unassailable or competitors threaten it -- not both simultaneously."
+    ],
+    "biases_detected": [
+        "RECENCY BIAS: GLP-1 enthusiasm dominates the analysis. LLY is #1 primarily because of Mounjaro/Zepbound momentum. But GLP-1 is a narrative that is already consensus -- where is the differentiated insight?",
+        "CONFIRMATION BIAS: AbbVie data focuses on Skyrizi/Rinvoq growth while downplaying that total company revenue growth is only 9.5% -- modest for a stock getting a 8.5 overall score.",
+        "ANCHORING BIAS: The scoring system weights moat at 30% and growth at 30%, yet the top picks are all high-moat, high-growth names. The 20% valuation weight means expensive stocks can still score highly, creating a systematic bias toward growth over value.",
+        "AUTHORITY BIAS: References to 'GF Value estimate of $1,278' and '28 analysts average target $537.64' are used as thesis support. Analyst consensus has historically been a lagging indicator in pharma."
+    ],
+    "questions_to_answer": [
+        "If Medicare Part D negotiates Mounjaro pricing down 40% (as happened with the first 10 IRA drugs), what happens to LLY's revenue trajectory? Model this explicitly.",
+        "AbbVie's Skyrizi/Rinvoq combined $31.6B guidance -- what is the patent cliff timeline for these drugs? When should investors start worrying about biosimilar competition?",
+        "ISRG da Vinci 5 costs $2-3M per system. How many hospitals globally can afford this? What is the realistic saturation point?",
+        "Vertex JOURNAVX 'prescriptions expected to more than triple' -- from what base? Tripling a small number is still a small number. What is the absolute dollar amount?",
+        "BSX paid $14.5B for Penumbra. What was the revenue multiple? What is the ROIC expectation and by when?",
+        "If GLP-1 drugs reduce obesity-related comorbidities, what is the impact on demand for AbbVie's immunology franchise? Are these drugs net positive or negative for the overall healthcare spending trajectory?"
+    ],
+    "improvement_demands": [
+        "Add a quantified IRA impact analysis for each pick -- dollars at risk, probability of selection for future negotiation rounds, timeline.",
+        "Include a competitive landscape matrix for GLP-1: Lilly vs Novo vs Amgen vs Roche vs smaller players, with differentiation factors and timeline.",
+        "Stress test each pick against a healthcare recession scenario: What if hospital capex drops 15%? What if biotech funding stalls again?",
+        "Provide explicit entry prices, not just 'accumulate on pullbacks.' At what PE does LLY become unattractive? Draw the line.",
+        "The scoring formula should be validated -- show the arithmetic for each pick's overall score to confirm it matches the stated formula weights.",
+        "Add at least 2 SELL recommendations from the universe of 20 companies analyzed. MRK at 6.5 and PFE at 5.8 are flagged but not formally rated SELL."
+    ],
+    "verdict": "NEEDS_WORK"
+}

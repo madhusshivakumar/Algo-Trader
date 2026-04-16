@@ -1,0 +1,57 @@
+{
+    "sector": "consumer_staples",
+    "agent_name": "consumer_staples_judge",
+    "timestamp": "2026-04-04T14:00:00Z",
+    "overall_quality_score": 68,
+    "thesis_rigor_score": 65,
+    "risk_assessment_score": 62,
+    "data_quality_score": 70,
+    "contrarian_thinking_score": 55,
+    "actionability_score": 45,
+    "major_flaws": [
+        "ALL 7 picks are rated BUY or STRONG_BUY. In a sector trading at 27.5x forward PE (15-30% above historical average), zero sell recommendations is analytical malpractice. The report identifies the valuation risk in the outlook but then ignores it in every individual pick.",
+        "COST at 52x forward PE is rated BUY with a valuation_score of only 4/10, yet it still gets an overall_score of 7.7. The formula (9*0.3+9*0.2+9*0.3+4*0.2) = 2.7+1.8+2.7+0.8 = 8.0, not 7.7. Math is wrong again.",
+        "WMT at 41x forward PE with 4.9% revenue growth is rated BUY. A 41x PE for a retailer growing revenue under 5% is historically extreme. The 'transformation' narrative is used to justify an unjustifiable multiple without rigorous comp analysis.",
+        "PM's debt_to_equity and roe_pct are listed as null. Missing fundamental data for a STRONG_BUY recommendation is a serious quality failure. How can you rate management and valuation without these metrics?",
+        "CL at 3% revenue growth gets a BUY rating. A Dividend Aristocrat growing 3% annually with a 2.1% yield delivers approximately 5% total return. That barely beats Treasury bonds. Where is the alpha thesis?"
+    ],
+    "missing_analysis": [
+        "No analysis of the sector's valuation premium relative to historical ranges. The outlook says 27.5x is elevated, but no pick-level analysis addresses whether current PEs are sustainable.",
+        "COST's membership model is praised but no analysis of membership fee elasticity. If they raise fees again, what is the churn risk? What was the churn from the last increase?",
+        "GLP-1 impact is mentioned as a sector risk but never quantified for any individual pick. What is the estimated revenue impact on PEP's Frito-Lay division if GLP-1 adoption reaches 10% of the US adult population?",
+        "PM's IQOS faces an FDA review -- what are the potential outcomes and their probability? The entire STRONG_BUY thesis rests on smoke-free transformation, so this binary risk needs probabilistic analysis.",
+        "No discussion of private label competition intensity by category. Which categories are most vulnerable? How much share has private label taken from PEP, KO, MDLZ in the last 2 years?",
+        "Missing: Input cost analysis. Cocoa is mentioned for MDLZ, but what about coffee (KO), corn/wheat (PEP), and tobacco leaf (PM)? No commodity price sensitivity analysis.",
+        "WMT advertising revenue (Walmart Connect) is a key thesis driver but no comparison to Amazon's advertising economics. At what scale does ad revenue meaningfully move WMT's operating margins?"
+    ],
+    "logical_fallacies": [
+        "The report argues staples are defensive plays in a recession but also argues they are growth stories (WMT transformation, PM smoke-free growth). You cannot have it both ways -- which is the thesis?",
+        "KO's $18B IRS tax dispute is listed as a risk but never quantified in the valuation. If KO loses, what is the per-share impact? Why is this not reflected in the valuation_score?",
+        "PEP at 18x is called 'best value in mega-cap staples' while growing revenue 2.3%. A low PE with declining growth is a value trap signal, not a value opportunity. The report conflates cheapness with value.",
+        "MDLZ's bull case argues cocoa costs will normalize, but the bear case says they may not. The thesis is entirely dependent on commodity mean reversion with no timeline."
+    ],
+    "biases_detected": [
+        "CONFIRMATION BIAS: Every pick's bull case is detailed and quantified while bear cases are qualitative and vague. PM's bear case mentions 'regulatory risk' without modeling the FDA scenario.",
+        "RECENCY BIAS: The sector is up 14% YTD and the report is writing buy recommendations at elevated levels. Where was this bullishness 6 months ago when staples were out of favor?",
+        "ANCHORING BIAS: COST at 52x is justified by historical premium. But 'historically expensive' does not mean 'fairly valued.' Amazon also traded at premium multiples before its 2022 correction.",
+        "NARRATIVE FALLACY: 'Defensive rotation' is a narrative that describes past price action, not future returns. If the recession feared by markets does not materialize, staples underperform dramatically.",
+        "SURVIVORSHIP BIAS: Only successful staples companies are analyzed. Where is the discussion of Kraft Heinz, Tyson Foods, or other staples companies that have struggled?"
+    ],
+    "questions_to_answer": [
+        "If the 'defensive rotation' narrative reverses and capital flows back to tech, what is the downside for a sector trading at 27.5x? Model a reversion to 22x.",
+        "COST membership renewal rates are 92%. What happens during a recession? Is there historical data from 2008-2009 on membership churn?",
+        "PM's ZYN has 61.5% US can volume share. What is the regulatory probability of nicotine pouch taxes or restrictions at the state level? How many states are considering such legislation?",
+        "WMT's e-commerce is 'now profitable at 11% incremental margins' -- is this a sustainable margin or a function of accounting allocation? What is the standalone e-commerce P&L?",
+        "If PEP's Frito-Lay North America continues losing market share, at what point does the franchise moat become impaired? What is the current trajectory?",
+        "KO's emerging market growth is strong, but currency headwinds persistently erode reported results. What is the FX-adjusted total return for the last 5 years?"
+    ],
+    "improvement_demands": [
+        "Add explicit SELL recommendations. At 27.5x sector PE, some names must be overvalued. Identify them.",
+        "Include a sector valuation heat map: current PE vs. 5-year average vs. 10-year average for each pick.",
+        "Quantify the GLP-1 impact on each pick with specific revenue-at-risk estimates.",
+        "Fix the missing financial data for PM (debt_to_equity, ROE). A STRONG_BUY without complete financials is indefensible.",
+        "Add entry and exit criteria for each pick. 'BUY' is not a strategy without price targets and stop-losses.",
+        "Provide a scenario analysis: What total return does each pick deliver in a bear market (sector PE compresses to 20x) vs. bull market (PE stays at 27.5x)?"
+    ],
+    "verdict": "NEEDS_WORK"
+}

@@ -1,0 +1,57 @@
+{
+    "sector": "industrials",
+    "agent_name": "industrials_judge",
+    "timestamp": "2026-04-04T14:00:00Z",
+    "overall_quality_score": 67,
+    "thesis_rigor_score": 70,
+    "risk_assessment_score": 60,
+    "data_quality_score": 72,
+    "contrarian_thinking_score": 48,
+    "actionability_score": 40,
+    "major_flaws": [
+        "The sector outlook explicitly warns that 'valuations have expanded materially' and names are 'trading at 30-50x earnings vs historical 15-25x averages.' Then every single pick is STRONG_BUY or BUY. The outlook contradicts the recommendations.",
+        "5 of 7 picks trade above 35x earnings (RTX 40x, GE 36x, PWR 42x, GEV 45x, TDG 37x). The report acknowledges this is expensive but hand-waves it with 'justified by growth.' The dot-com bust proved that growth at any price is a losing strategy.",
+        "No position sizing, no entry prices, no stop-losses, no exit criteria for any pick. These are analyst notes, not investment recommendations.",
+        "TDG has NEGATIVE equity (debt-to-equity listed as null). A STRONG_BUY recommendation for a company with negative equity and no dividend requires explicit justification of why the leverage is acceptable. The report praises TDG's business model but barely addresses the balance sheet.",
+        "GEV at 45x PE with 8.5% profit margins is rated BUY. The bull case argues for margin expansion to 11-13% EBITDA, but even at the high end of that range, a 45x PE implies the market expects much more. What PE is appropriate for an infrastructure company with 8.5% margins?",
+        "The report mentions Caterpillar's $2.6B tariff burden as a sector risk but CAT is not among the picks. Who among the picks faces tariff headwinds? This is mentioned generically but never applied to specific companies."
+    ],
+    "missing_analysis": [
+        "No analysis of defense budget sustainability. The report assumes $1.5T defense by 2027 but does not discuss the political dynamics of passing such a budget. What if fiscal hawks constrain spending to $1.0-1.2T?",
+        "PWR at 5.8% profit margins with 42x PE -- what is the path to margin expansion? The report provides no margin bridge analysis. If margins stay flat, what is the justified PE?",
+        "No analysis of the labor market for skilled tradespeople. The report mentions workforce shortages as a constraint but never quantifies the wage inflation impact on margins for PWR, CRH, or infrastructure-related picks.",
+        "Missing: Backlog conversion risk analysis. RTX $268B, GE $190B, GEV $150B, PWR $44B -- what percentage of these backlogs are firm orders vs. options/frameworks? What is the historical cancellation rate?",
+        "Eaton's data center order growth of '200%' -- from what base? A $10M pipeline growing to $30M is 200% but not meaningful. Quantify the absolute dollar impact on revenue.",
+        "No interest rate sensitivity analysis. These are capital-intensive businesses with significant debt. What happens to each pick if 10-year yields go to 5.5%?",
+        "TDG's 'regulatory scrutiny' on sole-source pricing is mentioned but not analyzed. What is the probability of GAO/DoD forced repricing? What is the EPS impact?"
+    ],
+    "logical_fallacies": [
+        "The report argues defense stocks are buys because of rising geopolitical tension, while also arguing infrastructure stocks are buys because of domestic economic strength. If there is a recession, infrastructure slows. If tensions de-escalate, defense slows. These are partially offsetting theses that the report treats as additive.",
+        "GE Aerospace 'hit its 2028 margin target three years early' is presented as bullish. But if the target is already achieved, what is the next catalyst? The stock may be priced for a target that was supposed to take 3 more years to reach.",
+        "LMT's 75% ROE is cited but this is primarily a function of massive share buybacks and leverage reducing the equity base. A high ROE with 2.5x D/E is not the same as a high ROE with 0.5x D/E. The metric is misleading without context."
+    ],
+    "biases_detected": [
+        "EXTREME RECENCY BIAS: The sector surged 27% in Q4 2025, and the report is recommending STRONG BUY at the top. Where was this bullishness before the 27% rally?",
+        "NARRATIVE FALLACY: 'Defense rearmament super-cycle,' 'AI-driven power boom,' 'commercial aerospace recovery' -- three separate narratives are stacked to justify buying everything. Each narrative individually is plausible; all three simultaneously is a goldilocks scenario.",
+        "ANCHORING BIAS: Record backlogs are used to justify premium valuations. But backlogs are lagging indicators of past demand, not leading indicators of future earnings. The market may already be pricing in the backlog.",
+        "CONFIRMATION BIAS: Every data point (backlogs, order growth, earnings beats) supports the bull thesis. Where are the warning signs? Book-to-bill declining? Order cancellations? Margin pressure?",
+        "AUTHORITY BIAS: Goldman Sachs projections, Rothschild upgrades, and analyst targets are cited as supporting evidence without questioning their reliability."
+    ],
+    "questions_to_answer": [
+        "If the defense budget comes in at $1.2T instead of $1.5T in 2027, what is the EPS impact on RTX and LMT?",
+        "GEV's wind energy business has historically been loss-making. What is the current burn rate? At what point does it become profitable? If never, why not divest it?",
+        "PWR at 42x earnings with 5.8% margins -- show me a comparable industrial services company that has sustained a 40x+ multiple for more than 3 years.",
+        "If AI capex rationalizes (as referenced in Eaton's bear case), what percentage of Eaton's data center order book is at risk? What is the cancellation clause?",
+        "TDG's M&A strategy depends on acquiring sole-source aerospace businesses. How many attractive targets remain? Is the pipeline thinning?",
+        "What is the correlation between these 7 picks and the broader Industrial Select Sector SPDR (XLI)? If it is above 0.9, this is a sector beta bet, not alpha generation."
+    ],
+    "improvement_demands": [
+        "Add valuation justification for every pick trading above 30x. What growth rate sustains a 40x PE for an industrial company? Show the math.",
+        "Include at least 2 SELL recommendations from the 20 companies analyzed. Which industrials are overvalued even with these tailwinds?",
+        "Add a scenario analysis: base case (current spending levels), bull case (accelerated spending), bear case (recession/sequestration). Price targets for each.",
+        "Provide explicit position sizing. If you recommend 7 stocks, how much in each? Equal weight? Conviction weight? Why?",
+        "Analyze backlog quality: firm orders vs. framework agreements vs. options. Not all backlog is created equal.",
+        "Add a defense budget risk table: probability-weighted scenarios for FY2027 budget levels and their impact on RTX and LMT earnings."
+    ],
+    "verdict": "NEEDS_WORK"
+}

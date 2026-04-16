@@ -68,11 +68,29 @@ class TestCycleErrorPaths:
     """Broker failures and API timeouts should not crash the engine."""
 
     def test_broker_get_account_failure_in_run_cycle(self):
+        """Sprint 5B: broker failures are tracked and alerted, not propagated.
+
+        A broker.get_account() exception should NOT crash the engine — it gets
+        logged, the consecutive-failure counter ticks up, and the cycle returns
+        early. This way transient API hiccups don't kill the trading loop.
+        """
         engine = _make_engine()
         engine.broker.get_account.side_effect = Exception("API timeout")
-        # run_cycle should not propagate the exception
-        with pytest.raises(Exception, match="API timeout"):
-            engine.run_cycle()
+        engine.alert_manager = MagicMock()
+
+        # Should NOT raise
+        engine.run_cycle()
+
+        # Consecutive failure counter was incremented
+        assert engine._consecutive_broker_failures.get("get_account") == 1
+        # Alert should not fire on first failure (threshold = 3)
+        engine.alert_manager.broker_api_failure.assert_not_called()
+
+        # Two more failures → threshold reached → alert fires
+        engine.run_cycle()
+        engine.run_cycle()
+        assert engine._consecutive_broker_failures.get("get_account") == 3
+        engine.alert_manager.broker_api_failure.assert_called_once()
 
     def test_single_symbol_failure_does_not_block_others(self):
         engine = _make_engine()

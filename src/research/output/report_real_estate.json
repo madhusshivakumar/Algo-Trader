@@ -1,0 +1,687 @@
+{
+  "sector": "Real Estate",
+  "report_date": "2026-04-04",
+  "analyst": "claude-research-agent",
+  "market_context": {
+    "sector_overview": "The U.S. REIT sector enters Q2 2026 with strong operational fundamentals, sound balance sheets, and stabilizing cap rates after the 2022-2024 rate shock. Institutional flows are returning to large-cap names as Treasury yields hover near 4.5%. Data center demand from AI hyperscalers is the dominant secular theme, while senior housing benefits from demographic tailwinds with 90%+ occupancy rates. Industrial logistics remains resilient with e-commerce growth, and residential REITs benefit from a widening rent-vs-buy gap. REIT leverage has stabilized at 30-35% debt-to-assets since 2016.",
+    "key_themes": [
+      "AI infrastructure driving unprecedented data center demand with hyperscaler capex at $500B+ in 2026",
+      "Senior housing occupancy at highest levels since 2017 (90%+) with new supply at lowest since 2012",
+      "Housing affordability crisis widening rent-vs-buy gap, supporting apartment REIT fundamentals",
+      "Industrial logistics benefiting from e-commerce and nearshoring despite modest supply growth",
+      "Interest rate sensitivity declining as cap rates have reset and most pain is priced in",
+      "REIT balance sheet quality strong with leverage below 40% since 2011"
+    ],
+    "interest_rate_environment": "10-year yields expected near current levels (~4.5%) with limited additional rate cuts in 2026. Cap rates have reset and most higher-rate pain already priced in. REITs with fixed-rate debt and longer maturities are better positioned.",
+    "sector_ffo_growth": "Data center REITs led with 21.3% YoY FFO growth in Q1 2025. Healthcare REITs posted double-digit FFO growth driven by senior housing. Industrial and residential REITs showing mid-single-digit growth."
+  },
+  "companies_analyzed": [
+    {
+      "ticker": "EQIX",
+      "name": "Equinix Inc",
+      "subsector": "Data Centers",
+      "market_cap_billions": 98.3,
+      "stock_price": 995.98,
+      "dividend_yield_pct": 2.14,
+      "ffo_per_share": 35.64,
+      "ffo_growth_pct": 11.0,
+      "forward_ffo_growth_pct": 10.0,
+      "occupancy_pct": 92.0,
+      "debt_to_ebitda": 4.95,
+      "development_pipeline": "$4-5B annual capex 2026-2029, doubling data center capacity by 2029",
+      "competitive_advantages": [
+        "270+ AI-ready data centers in 70+ metros globally",
+        "10,000+ customers with deep interconnection ecosystem",
+        "Network effects from colocation model create switching costs",
+        "Doubling capacity in 5 years vs 27 years historically"
+      ],
+      "risks": [
+        "High valuation premium relative to REIT peers",
+        "Elevated debt-to-EBITDA at ~5x",
+        "Capital intensity of expansion program",
+        "Potential hyperscaler self-build competition"
+      ],
+      "catalyst": "AI-driven demand creating unprecedented bookings momentum with record $394M annualized in Q3 2025, up 25% YoY",
+      "scores": {
+        "moat": 9,
+        "management": 9,
+        "growth": 9,
+        "valuation": 5
+      },
+      "overall_score": 8.1,
+      "recommendation": "BUY",
+      "thesis": "Equinix is the premier interconnection and colocation platform globally. The AI infrastructure supercycle is driving record bookings, and the company's plan to double capacity by 2029 with $4-5B annual capex positions it at the center of the most powerful secular growth trend in real estate. Despite elevated valuation, the growth trajectory and network-effect moat justify a premium."
+    },
+    {
+      "ticker": "DLR",
+      "name": "Digital Realty Trust",
+      "subsector": "Data Centers",
+      "market_cap_billions": 61.7,
+      "stock_price": 180.35,
+      "dividend_yield_pct": 2.72,
+      "ffo_per_share": 7.56,
+      "ffo_growth_pct": 13.0,
+      "forward_ffo_growth_pct": 8.0,
+      "occupancy_pct": 85.0,
+      "debt_to_ebitda": 5.2,
+      "development_pipeline": "$3.25-3.75B net development investment in 2026, 2026 backlog more than double 2025",
+      "competitive_advantages": [
+        "310+ data centers in 50+ metros globally",
+        "Leader in hyperscale-ready facilities for major cloud providers",
+        "AI accounts for 2/3 of total signings",
+        "Strong enterprise and hyperscale pipeline at record levels"
+      ],
+      "risks": [
+        "Higher leverage than Equinix",
+        "Hyperscale wholesale model has lower margins than colocation",
+        "Execution risk on massive development pipeline",
+        "Tenant concentration with hyperscalers"
+      ],
+      "catalyst": "AI demand driving record signings with 2026 backlog already more than doubling 2025, projected revenue of $6.6B in 2026",
+      "scores": {
+        "moat": 8,
+        "management": 8,
+        "growth": 8,
+        "valuation": 6
+      },
+      "overall_score": 7.6,
+      "recommendation": "BUY",
+      "thesis": "Digital Realty is the leading hyperscale data center provider benefiting from the AI infrastructure buildout. With AI accounting for two-thirds of signings and a pipeline doubling year-over-year, DLR offers strong growth at a more reasonable valuation than Equinix. The 13% core FFO growth demonstrates execution capability."
+    },
+    {
+      "ticker": "WELL",
+      "name": "Welltower Inc",
+      "subsector": "Healthcare - Senior Housing",
+      "market_cap_billions": 141.2,
+      "stock_price": 207.12,
+      "dividend_yield_pct": 1.5,
+      "ffo_per_share": 5.80,
+      "ffo_growth_pct": 28.0,
+      "forward_ffo_growth_pct": 15.0,
+      "occupancy_pct": 90.0,
+      "debt_to_ebitda": 4.8,
+      "development_pipeline": "$23B in transactions announced in 2025, acquiring 700+ senior housing communities",
+      "competitive_advantages": [
+        "Largest healthcare REIT by market cap globally",
+        "2,500+ senior and wellness housing communities",
+        "Technology-enabled operations driving margin expansion",
+        "Demographic tailwind from aging baby boomers"
+      ],
+      "risks": [
+        "Extremely high valuation at 39x AFFO and 205% of NAV",
+        "Labor cost pressures in senior housing operations",
+        "Execution risk on massive acquisition program",
+        "Significant downside if growth trajectory slows"
+      ],
+      "catalyst": "Senior housing occupancy at 90% (highest since 2017) with 20 straight quarters of growth. New construction supply at lowest level since 2012 at 2.3% of existing inventory.",
+      "scores": {
+        "moat": 8,
+        "management": 9,
+        "growth": 9,
+        "valuation": 3
+      },
+      "overall_score": 7.3,
+      "recommendation": "HOLD",
+      "thesis": "Welltower is executing superbly with decade-high FFO growth and transformative acquisitions, but the valuation at 39x AFFO is stretched even for best-in-class execution. The demographic tailwind is real and multi-decade, but much of the near-term upside is priced in. Wait for a pullback."
+    },
+    {
+      "ticker": "VTR",
+      "name": "Ventas Inc",
+      "subsector": "Healthcare - Senior Housing",
+      "market_cap_billions": 41.5,
+      "stock_price": 85.55,
+      "dividend_yield_pct": 2.65,
+      "ffo_per_share": 3.83,
+      "ffo_growth_pct": 8.0,
+      "forward_ffo_growth_pct": 8.0,
+      "occupancy_pct": 88.0,
+      "debt_to_ebitda": 5.5,
+      "development_pipeline": "$2.5B full-year investment target for 2026, $800M in senior housing acquisitions already closed YTD",
+      "competitive_advantages": [
+        "Diversified healthcare portfolio across senior housing, life science, and medical office",
+        "SHOP portfolio now exceeds 50% of annual NOI",
+        "Strong acquisition pipeline in senior housing",
+        "270 bps projected SHOP occupancy growth in 2026"
+      ],
+      "risks": [
+        "Higher leverage than Welltower",
+        "Smaller scale limits negotiating power",
+        "Operating cost pressures in senior housing",
+        "Medical office facing secular headwinds"
+      ],
+      "catalyst": "2026 guidance of $3.78-$3.88 normalized FFO per share represents 8% YoY growth, strong analyst consensus with 14 buy ratings and zero sells",
+      "scores": {
+        "moat": 7,
+        "management": 8,
+        "growth": 7,
+        "valuation": 7
+      },
+      "overall_score": 7.2,
+      "recommendation": "BUY",
+      "thesis": "Ventas offers exposure to the same senior housing demographic tailwind as Welltower but at a significantly more attractive valuation. The 8% FFO growth guidance is strong, the pivot to majority SHOP portfolio increases operating leverage, and analyst consensus is overwhelmingly bullish with a $92+ price target implying 11%+ upside."
+    },
+    {
+      "ticker": "PLD",
+      "name": "Prologis Inc",
+      "subsector": "Industrial - Logistics",
+      "market_cap_billions": 98.0,
+      "stock_price": 128.75,
+      "dividend_yield_pct": 3.18,
+      "ffo_per_share": 5.80,
+      "ffo_growth_pct": 4.9,
+      "forward_ffo_growth_pct": 5.0,
+      "occupancy_pct": 94.0,
+      "debt_to_ebitda": 4.5,
+      "development_pipeline": "Record 228M sq ft leases signed in 2025, development includes data centers, operations in 20 countries",
+      "competitive_advantages": [
+        "Largest industrial REIT with 1.3B sq ft across 5,900 buildings",
+        "Global reach in 20 countries vs US-focused rivals",
+        "Investment management platform generates fee income",
+        "Data center development diversification",
+        "Rent roll-ups of 22%+ above prior rates"
+      ],
+      "risks": [
+        "Elevated valuation at 27.6x forward AFFO",
+        "Modest near-term FFO growth of ~5%",
+        "E-commerce growth normalization post-pandemic",
+        "Potential tariff impacts on trade volumes"
+      ],
+      "catalyst": "Entering favorable cycle with tightening logistics fundamentals, rent mark-to-market of 22%+ providing embedded growth, plus data center development optionality",
+      "scores": {
+        "moat": 9,
+        "management": 8,
+        "growth": 6,
+        "valuation": 5
+      },
+      "overall_score": 7.1,
+      "recommendation": "HOLD",
+      "thesis": "Prologis has the widest moat in industrial logistics with unmatched global scale, but near-term FFO growth of ~5% does not support the 27.6x AFFO multiple. The 22%+ rent mark-to-market provides embedded growth, and data center development adds optionality. Best bought on dips."
+    },
+    {
+      "ticker": "AMT",
+      "name": "American Tower Corp",
+      "subsector": "Infrastructure - Cell Towers",
+      "market_cap_billions": 81.0,
+      "stock_price": 173.73,
+      "dividend_yield_pct": 3.97,
+      "ffo_per_share": 10.86,
+      "ffo_growth_pct": 2.0,
+      "forward_ffo_growth_pct": 5.0,
+      "occupancy_pct": 98.0,
+      "debt_to_ebitda": 5.0,
+      "development_pipeline": "CoreSite data center assets seeing double-digit growth from AI demand, global tower portfolio expanding",
+      "competitive_advantages": [
+        "225,000+ tower sites globally with multi-tenant model",
+        "Recurring revenue with long-term lease escalators",
+        "CoreSite data centers benefit from AI-driven demand",
+        "Critical 5G densification infrastructure",
+        "Sprint churn ending in 2026 frees growth"
+      ],
+      "risks": [
+        "DISH/EchoStar default creating churn headwind",
+        "Carrier consolidation reducing tenant count",
+        "International exposure to FX and political risk",
+        "Higher leverage constraining capital flexibility"
+      ],
+      "catalyst": "Trading at 15.5x forward AFFO vs 10-year average of 21.9x, representing significant discount. Sprint churn ending in 2026 and AI-driven CoreSite growth provide AFFO acceleration path.",
+      "scores": {
+        "moat": 9,
+        "management": 7,
+        "growth": 6,
+        "valuation": 8
+      },
+      "overall_score": 7.6,
+      "recommendation": "BUY",
+      "thesis": "American Tower is trading at a deep discount to historical multiples (15.5x vs 21.9x 10-year average) despite owning irreplaceable critical infrastructure. Sprint churn ends in 2026 unlocking organic growth, CoreSite data center assets benefit from AI demand, and 5G densification provides a multi-year tailwind. The 4% yield provides downside protection while waiting for multiple re-rating."
+    },
+    {
+      "ticker": "VICI",
+      "name": "VICI Properties Inc",
+      "subsector": "Specialty - Gaming",
+      "market_cap_billions": 33.0,
+      "stock_price": 29.00,
+      "dividend_yield_pct": 6.7,
+      "ffo_per_share": 2.45,
+      "ffo_growth_pct": 3.4,
+      "forward_ffo_growth_pct": 3.5,
+      "occupancy_pct": 100.0,
+      "debt_to_ebitda": 5.2,
+      "development_pipeline": "Selective acquisition opportunities in experiential real estate beyond gaming",
+      "competitive_advantages": [
+        "100% occupancy with 39.6-year average lease terms",
+        "Iconic Las Vegas Strip properties irreplaceable",
+        "Triple-net lease structure with CPI escalators",
+        "Sale-leaseback model avoids construction risk",
+        "Low 10.28x price-to-FFO ratio"
+      ],
+      "risks": [
+        "Concentrated exposure to gaming industry",
+        "Modest FFO growth of 3-4%",
+        "Limited organic growth in triple-net model",
+        "Regulatory risk in gaming jurisdictions"
+      ],
+      "catalyst": "Compelling 6.7% yield with 10.28x P/FFO ratio provides significant yield premium to REIT sector. Embedded CPI escalators protect against inflation. Strong Buy consensus from 16 of 23 analysts.",
+      "scores": {
+        "moat": 8,
+        "management": 7,
+        "growth": 4,
+        "valuation": 9
+      },
+      "overall_score": 6.9,
+      "recommendation": "BUY",
+      "thesis": "VICI Properties offers a rare combination of a 6.7% dividend yield, 100% occupancy, and nearly 40-year average lease terms at a compelling 10.28x P/FFO valuation. While growth is modest, the triple-net structure with CPI escalators provides inflation protection, and the irreplaceable Las Vegas Strip portfolio creates a durable moat. Ideal for income-focused allocation."
+    },
+    {
+      "ticker": "O",
+      "name": "Realty Income Corp",
+      "subsector": "Net Lease - Diversified",
+      "market_cap_billions": 60.5,
+      "stock_price": 64.92,
+      "dividend_yield_pct": 5.0,
+      "ffo_per_share": 4.40,
+      "ffo_growth_pct": 2.8,
+      "forward_ffo_growth_pct": 3.0,
+      "occupancy_pct": 98.7,
+      "debt_to_ebitda": 5.3,
+      "development_pipeline": "Continued acquisition pipeline across US and European single-tenant properties, 15,500+ properties globally",
+      "competitive_advantages": [
+        "15,500+ properties across 50 US states and 9 countries",
+        "31 consecutive years of dividend increases (Aristocrat)",
+        "Monthly dividend payment cadence",
+        "Diversified tenant base across 90+ industries",
+        "A-rated balance sheet"
+      ],
+      "risks": [
+        "Low organic growth of 2-3%",
+        "Retail tenant exposure to e-commerce disruption",
+        "Slight premium to 5-year average P/AFFO",
+        "Interest rate sensitivity as net lease REIT"
+      ],
+      "catalyst": "5% yield from a Dividend Aristocrat with 31 years of consecutive increases. International expansion into Europe provides new growth runway. 134th dividend increase recently announced.",
+      "scores": {
+        "moat": 8,
+        "management": 8,
+        "growth": 4,
+        "valuation": 7
+      },
+      "overall_score": 6.7,
+      "recommendation": "HOLD",
+      "thesis": "Realty Income is the gold standard of net lease REITs with an unmatched dividend track record, but growth is limited to 2-3% organically. The 5% yield is attractive for income investors, but total return potential is modest. The international expansion into Europe adds a growth vector but execution remains to be proven at scale."
+    },
+    {
+      "ticker": "SPG",
+      "name": "Simon Property Group",
+      "subsector": "Retail - Malls",
+      "market_cap_billions": 59.0,
+      "stock_price": 181.80,
+      "dividend_yield_pct": 4.84,
+      "ffo_per_share": 13.10,
+      "ffo_growth_pct": 3.5,
+      "forward_ffo_growth_pct": 3.1,
+      "occupancy_pct": 96.2,
+      "debt_to_ebitda": 5.0,
+      "development_pipeline": "Redevelopment and mixed-use transformation of existing mall properties, international premium outlet expansion",
+      "competitive_advantages": [
+        "Premium Class-A mall and outlet portfolio",
+        "Record FFO of $4.8B in 2025",
+        "Returned $3.5B to shareholders in 2025",
+        "Redevelopment optionality in mixed-use",
+        "International premium outlet brand"
+      ],
+      "risks": [
+        "Structural headwinds from e-commerce for retail",
+        "Tenant bankruptcies remain ongoing risk",
+        "Trading above 3-year median P/FFO",
+        "Limited growth in mature mall portfolio"
+      ],
+      "catalyst": "Record operational performance with $4.8B FFO in 2025, strong occupancy at 96.2%, and significant capital return program",
+      "scores": {
+        "moat": 7,
+        "management": 8,
+        "growth": 5,
+        "valuation": 6
+      },
+      "overall_score": 6.4,
+      "recommendation": "HOLD",
+      "thesis": "Simon Property owns the best-in-class mall portfolio and has demonstrated remarkable execution, but structural retail headwinds and modest growth limit total return potential. The 4.84% yield is attractive, but the stock trades above its 3-year median multiple."
+    },
+    {
+      "ticker": "AVB",
+      "name": "AvalonBay Communities",
+      "subsector": "Residential - Apartments",
+      "market_cap_billions": 32.0,
+      "stock_price": 163.50,
+      "dividend_yield_pct": 4.17,
+      "ffo_per_share": 11.20,
+      "ffo_growth_pct": 4.8,
+      "forward_ffo_growth_pct": 5.0,
+      "occupancy_pct": 96.5,
+      "debt_to_ebitda": 4.2,
+      "development_pipeline": "24 communities with 8,600 units under development, projecting 2,800 new homes delivered in 2026",
+      "competitive_advantages": [
+        "320 communities with 98,694 units in high-barrier coastal markets",
+        "Focus on supply-constrained urban coastal markets",
+        "Active development pipeline adds organic growth",
+        "Strong balance sheet with low debt-to-EBITDA"
+      ],
+      "risks": [
+        "Coastal market concentration limits diversification",
+        "New supply in select Sunbelt expansion markets",
+        "Rent regulation risk in urban coastal markets",
+        "Higher cost basis in coastal markets"
+      ],
+      "catalyst": "Housing affordability crisis widening rent-vs-buy gap to historic levels. Apartment supply deliveries falling 60%+ from recent peak. Analyst consensus Buy with $200+ target implying 22%+ upside.",
+      "scores": {
+        "moat": 7,
+        "management": 8,
+        "growth": 7,
+        "valuation": 7
+      },
+      "overall_score": 7.2,
+      "recommendation": "BUY",
+      "thesis": "AvalonBay is well-positioned to benefit from the housing affordability crisis as the rent-vs-buy gap widens to historic levels. With apartment supply deliveries falling 60%+ from recent peaks, the pricing environment should improve through 2026-2027. The active development pipeline, strong balance sheet, and coastal market focus provide a compelling growth profile at a reasonable valuation."
+    },
+    {
+      "ticker": "EQR",
+      "name": "Equity Residential",
+      "subsector": "Residential - Apartments",
+      "market_cap_billions": 30.0,
+      "stock_price": 78.50,
+      "dividend_yield_pct": 3.5,
+      "ffo_per_share": 3.95,
+      "ffo_growth_pct": 3.5,
+      "forward_ffo_growth_pct": 4.0,
+      "occupancy_pct": 96.0,
+      "debt_to_ebitda": 4.3,
+      "development_pipeline": "Repositioned portfolio toward high-growth urban coastal markets, sold out of inland and southern markets",
+      "competitive_advantages": [
+        "318 communities with 86,000+ units",
+        "Strategic repositioning to highest-barrier coastal markets",
+        "Morningstar fair value estimate of $80 implies 24% undervaluation",
+        "7 high-growth core markets: LA, SF, NYC, Boston, DC, Seattle, San Diego"
+      ],
+      "risks": [
+        "Concentrated in high-cost coastal markets",
+        "Rent regulation risk in key markets",
+        "Lower growth relative to Sunbelt-exposed peers",
+        "Tech employment sensitivity in SF and Seattle"
+      ],
+      "catalyst": "Trading at 24% discount to Morningstar fair value estimate of $80. Strategic market repositioning positions EQR to benefit from coastal market recovery and supply constraints.",
+      "scores": {
+        "moat": 7,
+        "management": 7,
+        "growth": 6,
+        "valuation": 8
+      },
+      "overall_score": 7.0,
+      "recommendation": "BUY",
+      "thesis": "Equity Residential trades at a meaningful discount to fair value while owning premium apartment assets in the highest-barrier US coastal markets. The strategic repositioning away from Sunbelt markets toward supply-constrained coastal cities positions EQR for strong rent growth as new supply falls off. Attractive entry point for long-term investors."
+    },
+    {
+      "ticker": "PSA",
+      "name": "Public Storage",
+      "subsector": "Self Storage",
+      "market_cap_billions": 58.0,
+      "stock_price": 329.00,
+      "dividend_yield_pct": 3.65,
+      "ffo_per_share": 16.68,
+      "ffo_growth_pct": -1.0,
+      "forward_ffo_growth_pct": 1.0,
+      "occupancy_pct": 91.0,
+      "debt_to_ebitda": 3.5,
+      "development_pipeline": "$10.5B all-stock acquisition of National Storage Affiliates announced March 2026, creating $77B combined enterprise value",
+      "competitive_advantages": [
+        "Largest self-storage operator by market cap",
+        "Brand recognition and pricing power",
+        "Fortress balance sheet with lowest leverage in REIT sector",
+        "NSA acquisition creates massive scale advantages"
+      ],
+      "risks": [
+        "Same-store revenue guided for 2.2% decline to flat in 2026",
+        "Oversupply concerns with 2.3% new supply as % of inventory",
+        "Execution risk on $10.5B NSA integration",
+        "Defensive sector with limited near-term growth"
+      ],
+      "catalyst": "NSA acquisition transforms PSA into self-storage behemoth with $77B combined enterprise value. Supply moderation expected in 2027+ should improve pricing power.",
+      "scores": {
+        "moat": 8,
+        "management": 7,
+        "growth": 4,
+        "valuation": 6
+      },
+      "overall_score": 6.3,
+      "recommendation": "HOLD",
+      "thesis": "Public Storage has the strongest balance sheet in the REIT sector and the NSA acquisition adds significant scale, but near-term fundamentals are challenged with guided revenue declines. Best positioned for 2027+ recovery as supply moderates."
+    },
+    {
+      "ticker": "EXR",
+      "name": "Extra Space Storage",
+      "subsector": "Self Storage",
+      "market_cap_billions": 34.0,
+      "stock_price": 132.49,
+      "dividend_yield_pct": 4.8,
+      "ffo_per_share": 8.20,
+      "ffo_growth_pct": -2.0,
+      "forward_ffo_growth_pct": 2.0,
+      "occupancy_pct": 92.0,
+      "debt_to_ebitda": 5.5,
+      "development_pipeline": "Manages 1,811 properties (most in industry), targeted capital deployment for growth inflection",
+      "competitive_advantages": [
+        "Largest property management platform in self-storage (1,811 properties)",
+        "Superior revenue management and technology platform",
+        "Third-party management fees provide recurring income",
+        "New customer rates turned positive for first time in 3 years"
+      ],
+      "risks": [
+        "Shares down 8.1% over 52 weeks",
+        "Higher leverage vs Public Storage",
+        "Near-term revenue headwinds from supply",
+        "Integration of Life Storage acquisition ongoing"
+      ],
+      "catalyst": "New customer rates have increased positively for the first time in three years, signaling a potential turning point. Baron Capital sees a 2026 inflection potential.",
+      "scores": {
+        "moat": 7,
+        "management": 7,
+        "growth": 5,
+        "valuation": 7
+      },
+      "overall_score": 6.5,
+      "recommendation": "HOLD",
+      "thesis": "Extra Space Storage may be approaching a fundamental inflection point as new customer rates turn positive for the first time in three years. However, until revenue trends firmly stabilize, caution is warranted. The 4.8% yield provides compensation for waiting."
+    },
+    {
+      "ticker": "ESS",
+      "name": "Essex Property Trust",
+      "subsector": "Residential - Apartments",
+      "market_cap_billions": 19.0,
+      "stock_price": 285.00,
+      "dividend_yield_pct": 3.45,
+      "ffo_per_share": 15.92,
+      "ffo_growth_pct": 2.2,
+      "forward_ffo_growth_pct": 3.0,
+      "occupancy_pct": 96.5,
+      "debt_to_ebitda": 4.8,
+      "development_pipeline": "West Coast focused portfolio with expansion opportunities, 32 consecutive annual dividend increases",
+      "competitive_advantages": [
+        "Dominant West Coast apartment position",
+        "32 consecutive annual dividend increases",
+        "Highest barrier-to-entry markets on US West Coast",
+        "Same-property NOI growth of 3.2% in 2025"
+      ],
+      "risks": [
+        "Concentrated West Coast exposure",
+        "California rent regulation headwinds",
+        "Flat 2026 core FFO guidance",
+        "Tech industry employment sensitivity"
+      ],
+      "catalyst": "West Coast expected to outperform US average. Supply constraints in California and Washington creating favorable pricing environment.",
+      "scores": {
+        "moat": 7,
+        "management": 7,
+        "growth": 5,
+        "valuation": 6
+      },
+      "overall_score": 6.3,
+      "recommendation": "HOLD",
+      "thesis": "Essex has a strong West Coast apartment franchise with 32 years of dividend growth, but flat 2026 FFO guidance and California-specific risks limit near-term upside."
+    },
+    {
+      "ticker": "CCI",
+      "name": "Crown Castle Inc",
+      "subsector": "Infrastructure - Cell Towers",
+      "market_cap_billions": 43.0,
+      "stock_price": 99.00,
+      "dividend_yield_pct": 6.31,
+      "ffo_per_share": 7.50,
+      "ffo_growth_pct": -3.0,
+      "forward_ffo_growth_pct": 1.0,
+      "occupancy_pct": 97.0,
+      "debt_to_ebitda": 6.0,
+      "development_pipeline": "Selling fiber and small-cell assets (closing H1 2026), pivoting to pure-play US tower model with debt repayment and buybacks",
+      "competitive_advantages": [
+        "40,000+ US tower sites in dense urban and suburban markets",
+        "Pure-play US tower model simplifies operations",
+        "Asset sale proceeds enable debt reduction and buybacks",
+        "6.3% yield for income investors"
+      ],
+      "risks": [
+        "DISH/EchoStar lease default creating $220M churn in 2026",
+        "Higher leverage than AMT",
+        "Transition uncertainty during fiber asset sale",
+        "US-only exposure limits growth options"
+      ],
+      "catalyst": "Fiber asset sale closing in H1 2026 provides capital for debt repayment and share buybacks. Pure-play tower simplification should improve investor clarity.",
+      "scores": {
+        "moat": 7,
+        "management": 5,
+        "growth": 4,
+        "valuation": 7
+      },
+      "overall_score": 5.8,
+      "recommendation": "HOLD",
+      "thesis": "Crown Castle is undergoing a significant transformation to pure-play towers, but DISH churn, elevated leverage, and transition uncertainty create near-term headwinds. The 6.3% yield is attractive but American Tower is the superior infrastructure REIT."
+    },
+    {
+      "ticker": "SBAC",
+      "name": "SBA Communications",
+      "subsector": "Infrastructure - Cell Towers",
+      "market_cap_billions": 24.0,
+      "stock_price": 222.00,
+      "dividend_yield_pct": 1.8,
+      "ffo_per_share": 12.07,
+      "ffo_growth_pct": 3.0,
+      "forward_ffo_growth_pct": 5.0,
+      "occupancy_pct": 96.0,
+      "debt_to_ebitda": 7.0,
+      "development_pipeline": "Millicom Central America acquisition contributing, exploring potential sale of entire company",
+      "competitive_advantages": [
+        "US and international tower portfolio",
+        "Leverage-driven AFFO per share growth model",
+        "New Verizon master lease agreement boosting 2026 activity",
+        "Potential sale premium if M&A materializes"
+      ],
+      "risks": [
+        "Highest leverage of any tower REIT at 7x debt/EBITDA",
+        "Sprint-related churn of $55-56M in 2026",
+        "Mixed analyst signals on growth trajectory",
+        "Execution risk if sale process fails"
+      ],
+      "catalyst": "Exploring potential sale with major infrastructure funds evaluating takeover interest. Verizon master lease agreement boosting domestic activity.",
+      "scores": {
+        "moat": 7,
+        "management": 6,
+        "growth": 5,
+        "valuation": 6
+      },
+      "overall_score": 6.1,
+      "recommendation": "HOLD",
+      "thesis": "SBA Communications has potential M&A upside as it explores a sale, but the highest leverage in the tower sector and Sprint churn headwinds create fundamental risk. Speculative hold for potential takeout premium."
+    }
+  ],
+  "top_picks": [
+    {
+      "rank": 1,
+      "ticker": "EQIX",
+      "name": "Equinix Inc",
+      "overall_score": 8.1,
+      "primary_reason": "Premier global interconnection platform at the epicenter of AI infrastructure supercycle with record bookings and capacity doubling plan"
+    },
+    {
+      "rank": 2,
+      "ticker": "DLR",
+      "name": "Digital Realty Trust",
+      "overall_score": 7.6,
+      "primary_reason": "Leading hyperscale data center provider with AI-driven pipeline doubling YoY at more reasonable valuation than Equinix"
+    },
+    {
+      "rank": 3,
+      "ticker": "AMT",
+      "name": "American Tower Corp",
+      "overall_score": 7.6,
+      "primary_reason": "Irreplaceable global tower infrastructure trading at deep discount to historical multiples with Sprint churn ending and CoreSite AI growth"
+    },
+    {
+      "rank": 4,
+      "ticker": "VTR",
+      "name": "Ventas Inc",
+      "overall_score": 7.2,
+      "primary_reason": "Senior housing demographic play at attractive valuation with 8% FFO growth and overwhelming analyst buy consensus"
+    },
+    {
+      "rank": 5,
+      "ticker": "AVB",
+      "name": "AvalonBay Communities",
+      "overall_score": 7.2,
+      "primary_reason": "Housing affordability crisis beneficiary with apartment supply falling 60%+ from peak and 22%+ analyst upside target"
+    },
+    {
+      "rank": 6,
+      "ticker": "EQR",
+      "name": "Equity Residential",
+      "overall_score": 7.0,
+      "primary_reason": "Premium coastal apartment assets trading at 24% discount to fair value with favorable supply-demand dynamics ahead"
+    },
+    {
+      "rank": 7,
+      "ticker": "VICI",
+      "name": "VICI Properties Inc",
+      "overall_score": 6.9,
+      "primary_reason": "Compelling 6.7% yield with 100% occupancy, 40-year lease terms, and CPI escalators at a low 10.28x P/FFO ratio for income allocation"
+    }
+  ],
+  "portfolio_allocation": {
+    "strategy": "Barbell approach combining high-growth data center and infrastructure REITs with income-generating value REITs",
+    "growth_allocation_pct": 50,
+    "growth_picks": ["EQIX", "DLR", "AMT"],
+    "value_income_allocation_pct": 30,
+    "value_picks": ["VTR", "VICI", "EQR"],
+    "balanced_allocation_pct": 20,
+    "balanced_picks": ["AVB"],
+    "notes": "Overweight data centers (30%) given AI secular tailwind. Include senior housing (15%) for demographic diversification. Apartments (20%) for housing shortage thesis. Tower REITs (15%) for value recovery. Gaming/net-lease (20%) for income stability."
+  },
+  "risk_factors": [
+    "Interest rate re-acceleration could compress REIT valuations across the board",
+    "AI capex cycle could slow if hyperscaler spending is pulled back",
+    "Senior housing labor cost inflation could compress NOI margins",
+    "Trade tariff escalation could impact industrial logistics volumes",
+    "Potential recession would impact occupancy rates across subsectors",
+    "Data center overbuilding risk as multiple REITs race to expand capacity",
+    "Carrier consolidation continuing to create churn headwinds for tower REITs"
+  ],
+  "methodology": {
+    "scoring_formula": "Overall = (Moat * 0.3) + (Management * 0.2) + (Growth * 0.3) + (Valuation * 0.2)",
+    "data_sources": [
+      "Company earnings reports and investor presentations (Q4 2025 / Q1 2026)",
+      "Nareit industry data and REIT market statistics",
+      "Wall Street analyst consensus estimates and price targets",
+      "SEC filings and proxy statements",
+      "Industry reports from Cohen & Steers, Morningstar, J.P. Morgan Research"
+    ],
+    "scoring_criteria": {
+      "moat": "Competitive advantages, market position, barriers to entry, pricing power, network effects",
+      "management": "Capital allocation track record, strategic vision, operational execution, shareholder returns",
+      "growth": "FFO/AFFO growth rate, development pipeline, secular tailwinds, same-store NOI growth",
+      "valuation": "Price-to-AFFO relative to history and peers, dividend yield, analyst price targets, margin of safety"
+    }
+  }
+}

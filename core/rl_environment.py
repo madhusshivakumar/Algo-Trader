@@ -2,6 +2,13 @@
 
 The agent selects one of 9 strategies at each timestep.
 Reward is based on rolling Sharpe ratio with a switching penalty.
+
+Sprint 6B: reward window raised from 20 → 252 bars to match the standard
+daily Sharpe horizon. A 20-bar window was lying to us — Sharpe over 20
+samples is extremely noisy, which is why the trainer was overfitting to
+short-run luck (val Sharpe 2.65 is not a real number, it's a 20-bar
+fluke). 252 makes the reward signal match the metric we actually care
+about.
 """
 
 import numpy as np
@@ -16,12 +23,17 @@ except ImportError:
 from core.rl_features import NUM_FEATURES, NUM_STRATEGIES, STRATEGY_KEYS, extract_features
 
 # Reward parameters
-SHARPE_WINDOW = 20
+# Sprint 6B: Match standard daily Sharpe horizon. Previous value (20) was
+# 20-sample variance — extremely noisy, biased toward short-run luck.
+SHARPE_WINDOW = 252
 SWITCHING_PENALTY = -0.001
 RISK_FREE_RATE = 0.0
 
+# Base class: gym.Env when gymnasium is installed, otherwise plain object
+_BaseEnv = gym.Env if HAS_GYMNASIUM else object
 
-class StrategySelectionEnv:
+
+class StrategySelectionEnv(_BaseEnv):
     """Gymnasium-compatible environment for RL strategy selection.
 
     State: 10-dimensional feature vector from rl_features
