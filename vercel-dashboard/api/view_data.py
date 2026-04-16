@@ -13,10 +13,12 @@ import sys
 import urllib.parse
 import urllib.request
 
-# Add the repo root so we can import core modules.
-_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if _ROOT not in sys.path:
-    sys.path.insert(0, _ROOT)
+# Vercel serverless functions can't reach the parent repo's core/ dir,
+# so we bundle dashboard_views as a sibling in this api/ folder and
+# import from there.
+_API_DIR = os.path.dirname(os.path.abspath(__file__))
+if _API_DIR not in sys.path:
+    sys.path.insert(0, _API_DIR)
 
 
 class handler(BaseHTTPRequestHandler):
@@ -28,7 +30,7 @@ class handler(BaseHTTPRequestHandler):
             view_mode = params.get("view", ["simple"])[0]
 
             # Lazy imports so cold-start is tolerable.
-            from core.dashboard_views import build_view_payload
+            from _dashboard_views import build_view_payload
 
             # Delegate to the aggregation helper.
             payload = build_view_payload(
@@ -129,16 +131,29 @@ def _read_json(path: str) -> dict | None:
 
 
 def _read_regime() -> str | None:
-    """Read the latest regime classification from the runtime state."""
-    state = _read_json(os.path.join(_ROOT, "data", "runtime_state.json"))
-    if state:
-        return state.get("regime")
+    """Read the latest regime classification from the runtime state.
+
+    On Vercel there is no local `data/` directory, so this returns None.
+    The dashboard UI handles missing regime gracefully (hides the tag).
+    """
+    # Vercel cold path: nothing to read. Kept so local flask dashboards
+    # can subclass + override if needed.
     return None
 
 
 def _read_framing() -> dict | None:
-    """Read the latest backtest framing from the most recent OOS run."""
-    oos_dir = os.path.join(_ROOT, "data", "backtest_oos")
+    """Read the latest backtest framing from the most recent OOS run.
+
+    Same Vercel caveat as _read_regime — returns None when data/ is absent.
+    """
+    # Discover candidate root(s) — local flask dashboard has /app/data/,
+    # Vercel has nothing reachable.
+    candidates = ["/app/data/backtest_oos",
+                  os.path.join(os.path.dirname(_API_DIR), "..",
+                               "data", "backtest_oos")]
+    oos_dir = next((c for c in candidates if os.path.isdir(c)), None)
+    if oos_dir is None:
+        return None
     if not os.path.isdir(oos_dir):
         return None
     # Find the newest timestamped directory.

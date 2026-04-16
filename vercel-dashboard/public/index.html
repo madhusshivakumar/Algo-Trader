@@ -80,8 +80,15 @@
   .notif-item:last-child { border-bottom: none; }
   .notif-level { font-weight: 700; text-transform: uppercase; font-size: 0.7rem; margin-right: 6px; }
 
-  /* View-mode section visibility */
+  /* View-mode section visibility.
+   * Real bug this fixes: JS previously toggled inline `style.display`, but
+   * setting `el.style.display = ''` REMOVES the inline style — it doesn't
+   * override `display:none` from the stylesheet. Result: "show" stayed
+   * hidden. Body-class approach lets CSS cascade do the work. */
   .view-standard, .view-advanced { display: none; }
+  body.mode-standard .view-standard { display: revert; }
+  body.mode-advanced .view-standard,
+  body.mode-advanced .view-advanced { display: revert; }
 
   /* Mobile responsive */
   @media (max-width: 768px) {
@@ -103,6 +110,13 @@
     <div class="subtitle" id="subtitle">Loading...</div>
   </div>
   <div class="updated" id="lastUpdate">Loading...</div>
+</div>
+
+<!-- Build marker so users can confirm they're on the latest version.
+     If the text below doesn't match what they expect, they've cached JS
+     and need to hard-refresh (Cmd+Shift+R / Ctrl+Shift+R). -->
+<div style="font-size:0.65rem; color:var(--text-dim); margin-bottom:10px; text-align:right">
+  Build: v4.advanced-cards
 </div>
 
 <!-- Sprint 6H: view mode toggle -->
@@ -130,6 +144,14 @@
   <div class="card"><div class="card-label">Cash</div><div class="card-value" id="cash">&mdash;</div></div>
   <div class="card"><div class="card-label">Total P&L</div><div class="card-value" id="totalPnl">&mdash;</div><div class="card-sub" id="pnlTrades"></div></div>
   <div class="card"><div class="card-label">Win Rate</div><div class="card-value" id="winRate">&mdash;</div><div class="card-sub" id="winLoss"></div></div>
+</div>
+
+<!-- Advanced-only: deep metrics row that makes Advanced visibly different from Standard -->
+<div class="grid view-advanced" id="advancedCards">
+  <div class="card"><div class="card-label">Avg Win</div><div class="card-value green" id="avgWin">&mdash;</div><div class="card-sub">per winning trade</div></div>
+  <div class="card"><div class="card-label">Avg Loss</div><div class="card-value red" id="avgLoss">&mdash;</div><div class="card-sub">per losing trade</div></div>
+  <div class="card"><div class="card-label">W/L Ratio</div><div class="card-value" id="wlRatio">&mdash;</div><div class="card-sub">avg win / |avg loss|</div></div>
+  <div class="card"><div class="card-label">Trades / Day</div><div class="card-value" id="tradesPerDay">&mdash;</div><div class="card-sub">rolling avg</div></div>
 </div>
 
 <!-- Standard + Advanced: equity chart -->
@@ -182,14 +204,18 @@ function fmtPct(n) { return n != null ? Number(n).toFixed(1) + '%' : '\u2014'; }
 function pnlClass(n) { return n > 0 ? 'pnl-pos' : n < 0 ? 'pnl-neg' : ''; }
 function pnlColor(n) { return n > 0 ? '#3fb950' : n < 0 ? '#f85149' : '#8b949e'; }
 
-/* Sprint 6H: progressive-disclosure view modes */
+/* Sprint 6H: progressive-disclosure view modes.
+ * The CSS (body.mode-standard .view-standard { display: revert; }) does
+ * all the show/hide work — we just flip one class on <body>. This avoids
+ * the `style.display = ''` trap where removing inline style lets the
+ * stylesheet's `display: none` win. */
 function setView(mode) {
+  if (!['simple', 'standard', 'advanced'].includes(mode)) mode = 'simple';
   currentView = mode;
-  localStorage.setItem('dashView', mode);
+  try { localStorage.setItem('dashView', mode); } catch (_) {}
+  document.body.classList.remove('mode-simple', 'mode-standard', 'mode-advanced');
+  document.body.classList.add('mode-' + mode);
   document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === mode));
-  // Show/hide sections
-  document.querySelectorAll('.view-standard').forEach(el => el.style.display = (mode === 'standard' || mode === 'advanced') ? '' : 'none');
-  document.querySelectorAll('.view-advanced').forEach(el => el.style.display = mode === 'advanced' ? '' : 'none');
 }
 setView(currentView); // Apply on load
 
@@ -284,6 +310,16 @@ async function refresh() {
     wrEl.textContent = fmtPct(stats.win_rate);
     wrEl.className = 'card-value ' + (stats.win_rate >= 50 ? 'green' : stats.win_rate > 0 ? 'red' : '');
     document.getElementById('winLoss').textContent = stats.wins + 'W / ' + stats.losses + 'L';
+
+    // Advanced-only cards (always populated — CSS hides the row in simple/standard)
+    document.getElementById('avgWin').textContent = fmt(stats.avg_win);
+    document.getElementById('avgLoss').textContent = fmt(stats.avg_loss);
+    const absLoss = Math.abs(stats.avg_loss || 0);
+    const wlRatio = absLoss > 0 ? (stats.avg_win / absLoss) : null;
+    document.getElementById('wlRatio').textContent = wlRatio ? wlRatio.toFixed(2) : '\u2014';
+    // Trades/day = total_trades / distinct days in the trade set (approx via equity curve length)
+    const tpd = (equity && equity.length > 0) ? (stats.total_trades / equity.length).toFixed(1) : '\u2014';
+    document.getElementById('tradesPerDay').textContent = tpd;
 
     // Positions
     const posDiv = document.getElementById('positions');
