@@ -76,8 +76,30 @@ MAX_RETRIES=3
 RETRY=0
 while [ $RETRY -lt $MAX_RETRIES ]; do
     log "Starting Docker Compose (attempt $((RETRY+1))/$MAX_RETRIES)..."
+    # Force a no-cache build if any tracked source file changed since the
+    # image was built. Prevents the Docker build-cache staleness bug that
+    # repeatedly shipped stale broker.py / engine.py into production
+    # (incidents Apr 15 and Apr 21). The guard only pays a cold-build
+    # cost when there's actually new code — no-op on repeat launches.
+    if [ -f "$DIR/.last_image_build_sha" ]; then
+        LAST_SHA=$(cat "$DIR/.last_image_build_sha" 2>/dev/null)
+    else
+        LAST_SHA=""
+    fi
+    CUR_SHA=$(cd "$DIR" && find core strategies agents utils analytics config.py main.py requirements.txt Dockerfile 2>/dev/null -type f -exec shasum {} \; 2>/dev/null | shasum | awk '{print $1}')
+    if [ "$CUR_SHA" != "$LAST_SHA" ]; then
+        log "Source changed since last build — running --no-cache (old=$LAST_SHA, new=$CUR_SHA)"
+        BUILD_FLAGS="--no-cache"
+    else
+        log "Source unchanged — reusing cached image"
+        BUILD_FLAGS=""
+    fi
+    if [ -n "$BUILD_FLAGS" ]; then
+        $DOCKER compose build $BUILD_FLAGS 2>&1 | tee -a "$LOG" || true
+    fi
     if $DOCKER compose up -d --build 2>&1 | tee -a "$LOG"; then
         log "Docker Compose started successfully"
+        echo "$CUR_SHA" > "$DIR/.last_image_build_sha"
         break
     fi
     RETRY=$((RETRY+1))

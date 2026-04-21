@@ -47,6 +47,9 @@ data/learnings.json
 # DB backups (created by ad-hoc cleanup scripts)
 trades.db.backup_*
 
+# Startup script's source-hash cache (per-machine, prevents stale Docker builds)
+.last_image_build_sha
+
 # IDE
 .idea/
 .vscode/
