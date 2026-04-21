@@ -444,6 +444,42 @@ class TradingEngine:
             now = datetime.now(Config.MARKET_TZ)
             log.info(f"Market closed ({now.strftime('%I:%M %p ET')}) — skipping equities")
 
+        # Sprint 8 (post-incident Apr 21): liveness heartbeat.
+        # The watchdog reads this file; if ts is stale during market hours
+        # the engine is zombied inside a "healthy" container — alert.
+        try:
+            from core.heartbeat import write_heartbeat
+            last_trade_ts = self._query_last_trade_ts() if hasattr(
+                self, "_query_last_trade_ts") else None
+            write_heartbeat(
+                cycle_count=self.cycle_count,
+                positions_evaluated=len(active_symbols),
+                signals_produced=0,  # room to plumb if needed later
+                last_trade_ts=last_trade_ts,
+                equity=equity,
+                halted=self.risk.halted,
+            )
+        except Exception as e:
+            # Never let observability break trading
+            if self.cycle_count % 60 == 0:
+                log.warning(f"Heartbeat write skipped: {e}")
+
+    def _query_last_trade_ts(self) -> str | None:
+        """Most recent trade timestamp from trades.db; None if DB unavailable."""
+        try:
+            import sqlite3
+            from utils.logger import DB_PATH
+            conn = sqlite3.connect(DB_PATH, timeout=1.0)
+            try:
+                row = conn.execute(
+                    "SELECT MAX(timestamp) FROM trades"
+                ).fetchone()
+            finally:
+                conn.close()
+            return row[0] if row and row[0] else None
+        except Exception:
+            return None
+
     def _get_total_exposure(self) -> float:
         """Get total dollar value of all open positions.
 

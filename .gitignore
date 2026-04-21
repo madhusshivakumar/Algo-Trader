@@ -71,6 +71,7 @@ data/sector_research/
 data/rl_models/train_log.json
 data/llm_analyst/.spend_log.lock
 data/runtime_state.json
+data/heartbeat.json
 monitoring/grafana/
 
 # Coverage

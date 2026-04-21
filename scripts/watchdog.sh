@@ -20,9 +20,37 @@ if ! $DOCKER info >/dev/null 2>&1; then
     exit 1
 fi
 
-# Check if engine container is running
+# Check if engine container is running.
+#
+# Sprint 8 (post-incident Apr 21): "container is running" is necessary
+# but NOT sufficient. On Mon Apr 20 the container stayed up while the
+# Python process inside stopped iterating for ~7 hours, and watchdog
+# reported green the whole time. Now we ALSO check the heartbeat file
+# during market hours and fire an alert if it's stale.
 if $DOCKER ps --format '{{.Names}}' | grep -q "algo-engine"; then
-    echo "[$(timestamp)] Engine is running" >> "$LOG"
+    # Container is up. During market hours, additionally verify the
+    # engine is actually iterating by inspecting the heartbeat.
+    DOW=$(date +%u); HOUR=$(date +%H); MIN=$(date +%M)
+    in_market_hours() {
+        [ "$DOW" -gt 5 ] && return 1
+        [ "$HOUR" -lt 6 ] && return 1
+        [ "$HOUR" -gt 13 ] && return 1
+        [ "$HOUR" -eq 13 ] && [ "$MIN" -ge 30 ] && return 1
+        return 0
+    }
+    if in_market_hours && [ -f "$DIR/scripts/check_heartbeat.py" ]; then
+        # Run the check; it will fire alerts on stale/missing.
+        # Timeout so a hung script can't block the watchdog.
+        HB_OUT=$(cd "$DIR" && python3 scripts/check_heartbeat.py 2>&1)
+        HB_RC=$?
+        if [ $HB_RC -eq 0 ]; then
+            echo "[$(timestamp)] Engine alive (container up, heartbeat fresh): $HB_OUT" >> "$LOG"
+        else
+            echo "[$(timestamp)] WARNING: Engine container up but heartbeat check failed (rc=$HB_RC): $HB_OUT" >> "$LOG"
+        fi
+    else
+        echo "[$(timestamp)] Engine is running (container up; heartbeat check skipped outside market hours)" >> "$LOG"
+    fi
     exit 0
 fi
 
