@@ -100,6 +100,75 @@ class DiscordChannel(AlertChannel):
             return False
 
 
+class WhatsAppChannel(AlertChannel):
+    """Sends alerts to WhatsApp via CallMeBot (free service).
+
+    Setup (one time, on your phone):
+      1. Add +34 644 51 95 23 as a contact.
+      2. Send it the message: "I allow callmebot to send me messages"
+      3. You receive an API key via WhatsApp.
+      4. Set CALLMEBOT_PHONE (your number with country code, no + or dashes)
+         and CALLMEBOT_APIKEY in .env.
+
+    CallMeBot rate-limits to ~1 message per minute per phone. That's
+    well within our alert budget (dedup window is 5 min, rate limit is
+    10/hour). If rate limited by CallMeBot we log and drop — AlertManager
+    has its own rate limit upstream.
+
+    Cost: $0. Service uptime is best-effort; if CallMeBot is down, other
+    channels still fire.
+    """
+
+    # Fixed CallMeBot endpoint. They've had this URL for years; if they
+    # ever change it, we surface a connection error loud and clear.
+    _ENDPOINT = "https://api.callmebot.com/whatsapp.php"
+
+    def __init__(self, phone: str, api_key: str):
+        # Normalize: strip + / spaces / dashes that users often paste in
+        self.phone = "".join(c for c in phone if c.isdigit())
+        self.api_key = api_key.strip()
+
+    def send(self, message: str, level: AlertLevel, data: dict | None = None) -> bool:
+        try:
+            import requests
+            # Plain text. WhatsApp supports a little markdown-ish
+            # formatting (*bold*, _italic_) but keep the body human.
+            body_lines = [f"*[{level.value.upper()}] Algo-Trader*", message]
+            if data:
+                body_lines.append("")
+                for k, v in data.items():
+                    body_lines.append(f"_{k}_: {v}")
+            text = "\n".join(body_lines)
+
+            # CallMeBot wants URL-encoded text in a query param. requests
+            # handles encoding via the params dict.
+            resp = requests.get(
+                self._ENDPOINT,
+                params={
+                    "phone": self.phone,
+                    "text": text,
+                    "apikey": self.api_key,
+                },
+                timeout=10,
+            )
+            # CallMeBot returns 200 with an HTML body on success; on
+            # rate-limit / bad-key it returns 200 with an error-containing
+            # body. We scan for specific failure tokens.
+            ok_body = resp.status_code == 200 and (
+                "Message queued" in resp.text
+                or "Message sent" in resp.text
+                or "sent successfully" in resp.text.lower()
+            )
+            if not ok_body:
+                log.warning(f"WhatsApp alert rejected: status={resp.status_code} "
+                            f"body={resp.text[:200]!r}")
+                return False
+            return True
+        except Exception as e:
+            log.warning(f"WhatsApp alert failed: {e}")
+            return False
+
+
 # ── Rate Limiting & Deduplication ────────────────────────────────────
 
 _DEDUP_WINDOW_SECONDS = 300   # 5 minutes
@@ -121,6 +190,15 @@ class AlertManager:
                 self.channels.append(SlackChannel(Config.SLACK_WEBHOOK_URL))
             if Config.DISCORD_WEBHOOK_URL:
                 self.channels.append(DiscordChannel(Config.DISCORD_WEBHOOK_URL))
+            # WhatsApp via CallMeBot (free tier). Requires BOTH phone and
+            # key — a phone without the key would silently fail at send time,
+            # which is worse than never being enabled.
+            if (getattr(Config, "CALLMEBOT_PHONE", "") and
+                    getattr(Config, "CALLMEBOT_APIKEY", "")):
+                self.channels.append(
+                    WhatsAppChannel(Config.CALLMEBOT_PHONE,
+                                    Config.CALLMEBOT_APIKEY)
+                )
 
     def _is_duplicate(self, event_key: str) -> bool:
         """Check if the same event was sent within the dedup window."""

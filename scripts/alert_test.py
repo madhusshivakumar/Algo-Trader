@@ -32,8 +32,9 @@ def main():
 
     am = AlertManager()
     if not am.channels:
-        log.warning("No alert channels configured. Set SLACK_WEBHOOK_URL or "
-                    "DISCORD_WEBHOOK_URL in .env.")
+        log.warning("No alert channels configured. Set SLACK_WEBHOOK_URL, "
+                    "DISCORD_WEBHOOK_URL, or CALLMEBOT_PHONE + CALLMEBOT_APIKEY "
+                    "in .env.")
         return 1
 
     log.info(f"Configured channels: {[c.__class__.__name__ for c in am.channels]}")
@@ -55,7 +56,7 @@ def main():
 
     # Alerts run in daemon threads — give them a beat to flush
     time.sleep(2)
-    log.info("Done. Check your Slack/Discord channels for the test alerts.")
+    log.info("Done. Check your Slack / Discord / WhatsApp for the test alerts.")
     return 0
 
 

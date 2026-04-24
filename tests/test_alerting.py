@@ -246,6 +246,8 @@ class TestAlertManager:
             mock_cfg.ALERTING_ENABLED = True
             mock_cfg.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test"
             mock_cfg.DISCORD_WEBHOOK_URL = ""
+            mock_cfg.CALLMEBOT_PHONE = ""
+            mock_cfg.CALLMEBOT_APIKEY = ""
             mgr = AlertManager()
         assert len(mgr.channels) == 1
         assert isinstance(mgr.channels[0], SlackChannel)
@@ -256,6 +258,8 @@ class TestAlertManager:
             mock_cfg.ALERTING_ENABLED = True
             mock_cfg.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test"
             mock_cfg.DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/test"
+            mock_cfg.CALLMEBOT_PHONE = ""
+            mock_cfg.CALLMEBOT_APIKEY = ""
             mgr = AlertManager()
         assert len(mgr.channels) == 2
 
@@ -265,6 +269,8 @@ class TestAlertManager:
             mock_cfg.ALERTING_ENABLED = True
             mock_cfg.SLACK_WEBHOOK_URL = ""
             mock_cfg.DISCORD_WEBHOOK_URL = ""
+            mock_cfg.CALLMEBOT_PHONE = ""
+            mock_cfg.CALLMEBOT_APIKEY = ""
             mgr = AlertManager()
         assert len(mgr.channels) == 0
 
@@ -400,3 +406,110 @@ class TestConvenienceMethods:
         ch.send.assert_called_once()
         level = ch.send.call_args[0][1]
         assert level == AlertLevel.INFO
+
+
+# ── WhatsAppChannel (CallMeBot) Tests ──────────────────────────────
+
+
+class TestWhatsAppChannel:
+    def _make_response(self, status: int, body: str):
+        mock = MagicMock()
+        mock.status_code = status
+        mock.text = body
+        return mock
+
+    def test_sends_get_to_callmebot(self):
+        from core.alerting import WhatsAppChannel, AlertLevel
+        ch = WhatsAppChannel("+1 555-123-4567", "abc123")
+        with patch("requests.get",
+                   return_value=self._make_response(200, "Message queued")) as g:
+            result = ch.send("hello", AlertLevel.INFO)
+        assert result is True
+        g.assert_called_once()
+        args, kwargs = g.call_args
+        assert args[0] == "https://api.callmebot.com/whatsapp.php"
+        # Phone must be normalized — digits only, no + or dashes
+        assert kwargs["params"]["phone"] == "15551234567"
+        assert kwargs["params"]["apikey"] == "abc123"
+        assert kwargs["timeout"] == 10
+
+    def test_payload_includes_level_and_data(self):
+        from core.alerting import WhatsAppChannel, AlertLevel
+        ch = WhatsAppChannel("15551234567", "abc")
+        with patch("requests.get",
+                   return_value=self._make_response(200, "Message queued")) as g:
+            ch.send("halt!", AlertLevel.CRITICAL, {"loss": "-$500"})
+        text = g.call_args[1]["params"]["text"]
+        assert "[CRITICAL]" in text
+        assert "halt!" in text
+        assert "loss" in text
+        assert "-$500" in text
+
+    def test_rate_limited_body_returns_false(self):
+        """CallMeBot returns 200 with error text when rate-limited."""
+        from core.alerting import WhatsAppChannel, AlertLevel
+        ch = WhatsAppChannel("15551234567", "abc")
+        with patch("requests.get",
+                   return_value=self._make_response(200,
+                       "ERROR: You are sending messages too fast")):
+            result = ch.send("test", AlertLevel.INFO)
+        assert result is False
+
+    def test_bad_key_returns_false(self):
+        from core.alerting import WhatsAppChannel, AlertLevel
+        ch = WhatsAppChannel("15551234567", "badkey")
+        with patch("requests.get",
+                   return_value=self._make_response(200,
+                       "ERROR: APIKey is invalid.")):
+            result = ch.send("test", AlertLevel.INFO)
+        assert result is False
+
+    def test_http_error_returns_false(self):
+        from core.alerting import WhatsAppChannel, AlertLevel
+        ch = WhatsAppChannel("15551234567", "abc")
+        with patch("requests.get",
+                   return_value=self._make_response(503, "Service Unavailable")):
+            result = ch.send("test", AlertLevel.INFO)
+        assert result is False
+
+    def test_exception_returns_false(self):
+        from core.alerting import WhatsAppChannel, AlertLevel
+        ch = WhatsAppChannel("15551234567", "abc")
+        with patch("requests.get", side_effect=ConnectionError("timeout")):
+            result = ch.send("test", AlertLevel.INFO)
+        assert result is False
+
+    def test_phone_normalization(self):
+        """+, spaces, dashes, parens all stripped."""
+        from core.alerting import WhatsAppChannel
+        ch = WhatsAppChannel("+1 (555) 123-4567", "abc")
+        assert ch.phone == "15551234567"
+
+    def test_alertmanager_wires_channel_when_both_config_fields_set(self,
+                                                                    monkeypatch):
+        from core.alerting import AlertManager, WhatsAppChannel
+        from config import Config
+        monkeypatch.setattr(Config, "ALERTING_ENABLED", True)
+        monkeypatch.setattr(Config, "SLACK_WEBHOOK_URL", "")
+        monkeypatch.setattr(Config, "DISCORD_WEBHOOK_URL", "")
+        monkeypatch.setattr(Config, "CALLMEBOT_PHONE", "15551234567",
+                            raising=False)
+        monkeypatch.setattr(Config, "CALLMEBOT_APIKEY", "abc123",
+                            raising=False)
+        mgr = AlertManager()
+        assert any(isinstance(c, WhatsAppChannel) for c in mgr.channels)
+
+    def test_alertmanager_skips_channel_when_only_one_field_set(self,
+                                                                 monkeypatch):
+        """Phone without key, or key without phone, should NOT wire the channel.
+        Half-configured would silently fail at send time — worse than disabled."""
+        from core.alerting import AlertManager, WhatsAppChannel
+        from config import Config
+        monkeypatch.setattr(Config, "ALERTING_ENABLED", True)
+        monkeypatch.setattr(Config, "SLACK_WEBHOOK_URL", "")
+        monkeypatch.setattr(Config, "DISCORD_WEBHOOK_URL", "")
+        monkeypatch.setattr(Config, "CALLMEBOT_PHONE", "15551234567",
+                            raising=False)
+        monkeypatch.setattr(Config, "CALLMEBOT_APIKEY", "", raising=False)
+        mgr = AlertManager()
+        assert not any(isinstance(c, WhatsAppChannel) for c in mgr.channels)
