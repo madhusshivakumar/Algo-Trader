@@ -88,6 +88,23 @@ if ! in_window; then
     exit 0
 fi
 
+# Sprint 8 Apr 24 fix: don't call startup.sh if launchd already is. Without
+# this, the watchdog races startup.sh's long --no-cache build window and
+# two parallel startup invocations corrupt the Docker build. startup.sh
+# itself also enforces a mkdir-based mutex (it exits 3 if another instance
+# holds the lock), but checking here first lets us log the skip rather
+# than even spawn a second startup.sh process.
+LOCKDIR="$DIR/.startup.lock.d"
+if [ -d "$LOCKDIR" ]; then
+    HOLDER_PID=$(cat "$LOCKDIR/pid" 2>/dev/null)
+    if [ -n "$HOLDER_PID" ] && kill -0 "$HOLDER_PID" 2>/dev/null; then
+        echo "[$(timestamp)] Engine down but startup.sh is already running (pid $HOLDER_PID) — not re-entering. Will re-check on next 15-min cycle." >> "$LOG"
+        exit 0
+    fi
+    # Stale lock dir — holder is dead. startup.sh's own acquire logic
+    # will reclaim it. Fall through to launching a new startup.
+fi
+
 echo "[$(timestamp)] WARNING: algo-engine is DOWN in trading window — attempting restart" >> "$LOG"
 
 if [ -f "$DIR/scripts/startup.sh" ]; then

@@ -10,12 +10,57 @@
 #    0 = all services up and healthy
 #    1 = partial failure (some services not healthy)
 #    2 = Docker not available after retries
+#    3 = Another startup.sh is already running (mutex contention)
 # ============================================================
 
 set -euo pipefail
 
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$DIR"
+
+# ── MUTEX: single-instance guarantee ─────────────────────────
+#
+# Why: Apr 24 incident. launchd fires startup at 06:00, which does a
+# compose down and begins a ~60-second --no-cache build. During that
+# build window, the container genuinely doesn't exist — so the watchdog's
+# 15-min check (which fires at 06:01) correctly observes "engine down in
+# trading window" and calls startup.sh AGAIN. Two startup.sh processes
+# then race on compose build/up, and the container that wins is
+# unpredictable (usually NOT the one the final verify step observed).
+#
+# macOS doesn't ship flock(1), so we use `mkdir` as the POSIX-standard
+# atomic primitive: only one process can successfully create a given
+# directory. The holder's PID is written inside. On startup we check if
+# the recorded PID is still alive; if not, we take over (stale lock
+# recovery).
+readonly LOCKDIR="$DIR/.startup.lock.d"
+acquire_mutex() {
+    if mkdir "$LOCKDIR" 2>/dev/null; then
+        echo $$ > "$LOCKDIR/pid"
+        return 0
+    fi
+    # Lock dir exists — check if holder is still alive
+    local holder_pid
+    holder_pid=$(cat "$LOCKDIR/pid" 2>/dev/null)
+    if [ -z "$holder_pid" ] || ! kill -0 "$holder_pid" 2>/dev/null; then
+        # Stale lock — holder is dead. Reclaim.
+        rm -rf "$LOCKDIR"
+        if mkdir "$LOCKDIR" 2>/dev/null; then
+            echo $$ > "$LOCKDIR/pid"
+            return 0
+        fi
+    fi
+    return 1
+}
+if ! acquire_mutex; then
+    ts=$(date '+%Y-%m-%d %H:%M:%S')
+    holder=$(cat "$LOCKDIR/pid" 2>/dev/null || echo 'unknown')
+    echo "[$ts] startup.sh aborting: another instance is running (pid $holder). The watchdog will retry on its next 15-min cycle if needed." \
+        >> "$DIR/logs/startup.log" 2>/dev/null || true
+    exit 3
+fi
+# Always release the lock on exit, even on errors or signals.
+trap 'rm -rf "$LOCKDIR"' EXIT INT TERM
 
 # Ensure Docker tools (including docker-credential-desktop) are in PATH
 export PATH="/Applications/Docker.app/Contents/Resources/bin:/usr/local/bin:$PATH"
