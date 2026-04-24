@@ -64,41 +64,72 @@ else
     log "Docker already running"
 fi
 
-# ── Step 2: Stop any stale containers ─────────────────────────
-if $DOCKER compose ps --quiet 2>/dev/null | grep -q .; then
-    log "Stopping stale containers from previous run..."
-    $DOCKER compose down --timeout 30 2>&1 | tee -a "$LOG"
-    sleep 2
-fi
+# Daemon warm-up race: `docker info` can return 0 before the socket is
+# fully accepting `exec`/`compose` calls. Probe with the specific
+# subcommands we're about to run.
+for PROBE in "ps" "compose version"; do
+    PROBE_WAIT=0
+    until $DOCKER $PROBE >/dev/null 2>&1; do
+        sleep 2
+        PROBE_WAIT=$((PROBE_WAIT + 2))
+        if [ $PROBE_WAIT -ge 30 ]; then
+            log "WARNING: '$DOCKER $PROBE' not responsive after 30s — continuing anyway"
+            break
+        fi
+    done
+done
+
+# ── Step 2: Stop any stale containers (unconditional + idempotent) ──
+# Previous guard used `compose ps --quiet | grep -q .` to detect
+# existing containers, but when the compose plugin is mid-warm-up
+# after Docker Desktop boot, that detector can silently fail and
+# skip cleanup. A bare `compose down` is a no-op when nothing is
+# running; running it unconditionally costs ~0.5s and eliminates
+# the skip-cleanup edge case.
+log "Stopping any existing containers (idempotent)..."
+$DOCKER compose down --timeout 30 2>&1 | tee -a "$LOG" || true
+sleep 2
 
 # ── Step 3: Start services with retry ─────────────────────────
+#
+# PERMANENT FIX for the 3-day stale-image recurrence (Apr 21/22/23):
+#   Before this, startup tried to skip rebuilds with a source-hash cache.
+#   That saved ~60s on warm starts but repeatedly shipped containers
+#   running April 14 source even though the image tag pointed at current
+#   code. Root cause: `docker compose up -d --build` rebuilds the image
+#   but does NOT recreate containers when it thinks the service config
+#   is unchanged, so the running container kept its old image handle.
+#
+# The fix has three layers, every one of which costs us nothing when
+# things are healthy and each of which independently closes the gap:
+#
+#   1. `docker compose build --no-cache` — fresh image every startup.
+#      Pays ~60–90s per day; eliminates buildkit staleness class of bug.
+#   2. `docker compose up -d --force-recreate` — tears down existing
+#      containers and creates new ones from the freshly built image.
+#      Without this flag, a stale container survives a new build.
+#   3. Post-startup verification script — runs `docker exec` to confirm
+#      the running engine has the expected current symbols. If it
+#      doesn't, exit 1 so launchd sees startup failed and the watchdog
+#      can attempt remediation (instead of reporting "healthy" on a
+#      silently broken deploy).
 MAX_RETRIES=3
 RETRY=0
 while [ $RETRY -lt $MAX_RETRIES ]; do
     log "Starting Docker Compose (attempt $((RETRY+1))/$MAX_RETRIES)..."
-    # Force a no-cache build if any tracked source file changed since the
-    # image was built. Prevents the Docker build-cache staleness bug that
-    # repeatedly shipped stale broker.py / engine.py into production
-    # (incidents Apr 15 and Apr 21). The guard only pays a cold-build
-    # cost when there's actually new code — no-op on repeat launches.
-    if [ -f "$DIR/.last_image_build_sha" ]; then
-        LAST_SHA=$(cat "$DIR/.last_image_build_sha" 2>/dev/null)
-    else
-        LAST_SHA=""
+    log "Building fresh image (--no-cache) — prevents buildkit staleness..."
+    if ! $DOCKER compose build --no-cache 2>&1 | tee -a "$LOG"; then
+        log "WARNING: --no-cache build failed on attempt $((RETRY+1))"
+        RETRY=$((RETRY+1))
+        [ $RETRY -lt $MAX_RETRIES ] && sleep 10 && continue
+        break
     fi
-    CUR_SHA=$(cd "$DIR" && find core strategies agents utils analytics config.py main.py requirements.txt Dockerfile 2>/dev/null -type f -exec shasum {} \; 2>/dev/null | shasum | awk '{print $1}')
-    if [ "$CUR_SHA" != "$LAST_SHA" ]; then
-        log "Source changed since last build — running --no-cache (old=$LAST_SHA, new=$CUR_SHA)"
-        BUILD_FLAGS="--no-cache"
-    else
-        log "Source unchanged — reusing cached image"
-        BUILD_FLAGS=""
-    fi
-    if [ -n "$BUILD_FLAGS" ]; then
-        $DOCKER compose build $BUILD_FLAGS 2>&1 | tee -a "$LOG" || true
-    fi
-    if $DOCKER compose up -d --build 2>&1 | tee -a "$LOG"; then
+    log "Recreating containers (--force-recreate) — ensures new image is actually used..."
+    if $DOCKER compose up -d --force-recreate 2>&1 | tee -a "$LOG"; then
         log "Docker Compose started successfully"
+        # Record the source hash purely for observability — it does not
+        # gate rebuilds anymore (we always rebuild).
+        CUR_SHA=$(cd "$DIR" && find core strategies agents utils analytics config.py main.py requirements.txt Dockerfile -type f -exec shasum {} \; 2>/dev/null | shasum | awk '{print $1}')
         echo "$CUR_SHA" > "$DIR/.last_image_build_sha"
         break
     fi
@@ -130,8 +161,13 @@ while [ $ENGINE_WAIT -lt $ENGINE_TIMEOUT ]; do
 done
 
 if [ $ENGINE_WAIT -ge $ENGINE_TIMEOUT ]; then
-    log "WARNING: Engine health check timed out after ${ENGINE_TIMEOUT}s"
+    log "FATAL: Engine health check timed out after ${ENGINE_TIMEOUT}s"
     log "Engine status: $($DOCKER inspect --format='{{.State.Health.Status}}' algo-engine 2>/dev/null || echo 'unknown')"
+    # Do not fall through to deploy-verification with an unhealthy
+    # container — previously this path logged WARNING and continued,
+    # which could pass step 5 (container `running`) against an
+    # unhealthy engine and mask the timeout.
+    exit 1
 fi
 
 # ── Step 5: Verify all containers are running ─────────────────
@@ -146,15 +182,36 @@ for SERVICE in algo-engine algo-dashboard algo-agents; do
     fi
 done
 
-if [ $FAILURES -eq 0 ]; then
-    log "=========================================="
-    log "STARTUP COMPLETE: All 3 services running"
-    log "Dashboard: http://localhost:5050"
-    log "=========================================="
-    exit 0
-else
+if [ $FAILURES -ne 0 ]; then
     log "=========================================="
     log "STARTUP WARNING: $FAILURES service(s) not running"
     log "=========================================="
     exit 1
 fi
+
+# ── Step 6: Verify the running container actually matches current source ──
+#
+# Layer 3 of the permanent fix: independent capability verification.
+# Even if build + force-recreate succeeded, something could still go
+# wrong (Docker Desktop bugs, weird cache states). This runs inside the
+# live container and confirms expected symbols exist. If it fails, exit
+# 1 so the failure is VISIBLE (launchd log, subsequent watchdog alert).
+log "Verifying deployed engine matches current source..."
+if [ -x "$DIR/scripts/verify_engine_deploy.sh" ]; then
+    if bash "$DIR/scripts/verify_engine_deploy.sh" 2>&1 | tee -a "$LOG"; then
+        log "  ✓ Deploy verification passed"
+    else
+        log "  ✗ DEPLOY VERIFICATION FAILED — engine is running stale code"
+        log "    This is the Apr 21/22/23 recurring stale-image bug."
+        log "    Investigate immediately; container is up but not running current fixes."
+        exit 1
+    fi
+else
+    log "  (verify_engine_deploy.sh not found — skipping verification)"
+fi
+
+log "=========================================="
+log "STARTUP COMPLETE: All 3 services running, deploy verified"
+log "Dashboard: http://localhost:5050"
+log "=========================================="
+exit 0
