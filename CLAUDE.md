@@ -109,3 +109,4 @@ python -m pytest tests/ --cov --cov-report=term-missing  # with coverage
 - Change the signal contract without updating all strategies and tests
 - Use `time.sleep()` in tests
 - Skip writing tests for new code
+- Add `Co-Authored-By:` trailers to commits unless the user explicitly asks for them
