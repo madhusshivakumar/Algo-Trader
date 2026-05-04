@@ -160,11 +160,51 @@ sleep 2
 #      silently broken deploy).
 MAX_RETRIES=3
 RETRY=0
+# Bug #4 (Apr 27 incident): docker compose build can hang for HOURS
+# silently — Apr 27 it ran 1h 33min before I manually killed it.
+# Wrap each build attempt in a hard 10-minute timeout. macOS doesn't
+# ship coreutils' `timeout` by default, so we provide a portable
+# Bash-only equivalent.
+BUILD_TIMEOUT_SEC=600
+build_with_timeout() {
+    local cmd_pid
+    # Run in background; capture PID; wait with timeout sentinel.
+    ($DOCKER compose build --no-cache 2>&1 | tee -a "$LOG") &
+    cmd_pid=$!
+    local elapsed=0
+    while kill -0 $cmd_pid 2>/dev/null; do
+        if [ $elapsed -ge $BUILD_TIMEOUT_SEC ]; then
+            log "FATAL: docker compose build exceeded ${BUILD_TIMEOUT_SEC}s — killing"
+            kill -TERM $cmd_pid 2>/dev/null
+            sleep 2
+            kill -KILL $cmd_pid 2>/dev/null
+            # Also kill any orphaned buildkit children
+            pkill -KILL -P $cmd_pid 2>/dev/null
+            return 124  # Match GNU timeout's exit code for time-out
+        fi
+        sleep 5
+        elapsed=$((elapsed + 5))
+    done
+    wait $cmd_pid
+    return $?
+}
 while [ $RETRY -lt $MAX_RETRIES ]; do
     log "Starting Docker Compose (attempt $((RETRY+1))/$MAX_RETRIES)..."
-    log "Building fresh image (--no-cache) — prevents buildkit staleness..."
-    if ! $DOCKER compose build --no-cache 2>&1 | tee -a "$LOG"; then
-        log "WARNING: --no-cache build failed on attempt $((RETRY+1))"
+    log "Building fresh image (--no-cache, ${BUILD_TIMEOUT_SEC}s timeout)..."
+    build_with_timeout
+    BUILD_RC=$?
+    if [ $BUILD_RC -eq 124 ]; then
+        log "WARNING: build attempt $((RETRY+1)) timed out after ${BUILD_TIMEOUT_SEC}s"
+        RETRY=$((RETRY+1))
+        if [ $RETRY -lt $MAX_RETRIES ]; then
+            log "Retrying in 10s (attempt $((RETRY+1))/$MAX_RETRIES)..."
+            sleep 10
+            continue
+        fi
+        break
+    fi
+    if [ $BUILD_RC -ne 0 ]; then
+        log "WARNING: --no-cache build failed (rc=$BUILD_RC) on attempt $((RETRY+1))"
         RETRY=$((RETRY+1))
         [ $RETRY -lt $MAX_RETRIES ] && sleep 10 && continue
         break
