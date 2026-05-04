@@ -205,6 +205,9 @@ class Config:
     # WhatsApp via CallMeBot. Both fields required to activate the channel.
     CALLMEBOT_PHONE = os.getenv("CALLMEBOT_PHONE", "")
     CALLMEBOT_APIKEY = os.getenv("CALLMEBOT_APIKEY", "")
+    # ntfy.sh push notifications. Topic alone activates; server is optional.
+    NTFY_TOPIC = os.getenv("NTFY_TOPIC", "")
+    NTFY_SERVER = os.getenv("NTFY_SERVER", "https://ntfy.sh")
     ALERT_ON_TRADE = os.getenv("ALERT_ON_TRADE", "true").lower() == "true"
     ALERT_ON_ERROR = os.getenv("ALERT_ON_ERROR", "true").lower() == "true"
 

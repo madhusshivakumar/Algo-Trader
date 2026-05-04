@@ -248,6 +248,8 @@ class TestAlertManager:
             mock_cfg.DISCORD_WEBHOOK_URL = ""
             mock_cfg.CALLMEBOT_PHONE = ""
             mock_cfg.CALLMEBOT_APIKEY = ""
+            mock_cfg.NTFY_TOPIC = ""
+            mock_cfg.NTFY_SERVER = "https://ntfy.sh"
             mgr = AlertManager()
         assert len(mgr.channels) == 1
         assert isinstance(mgr.channels[0], SlackChannel)
@@ -260,6 +262,8 @@ class TestAlertManager:
             mock_cfg.DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/test"
             mock_cfg.CALLMEBOT_PHONE = ""
             mock_cfg.CALLMEBOT_APIKEY = ""
+            mock_cfg.NTFY_TOPIC = ""
+            mock_cfg.NTFY_SERVER = "https://ntfy.sh"
             mgr = AlertManager()
         assert len(mgr.channels) == 2
 
@@ -271,6 +275,8 @@ class TestAlertManager:
             mock_cfg.DISCORD_WEBHOOK_URL = ""
             mock_cfg.CALLMEBOT_PHONE = ""
             mock_cfg.CALLMEBOT_APIKEY = ""
+            mock_cfg.NTFY_TOPIC = ""
+            mock_cfg.NTFY_SERVER = "https://ntfy.sh"
             mgr = AlertManager()
         assert len(mgr.channels) == 0
 
@@ -408,6 +414,96 @@ class TestConvenienceMethods:
         assert level == AlertLevel.INFO
 
 
+# ── NtfyChannel Tests (Bug #1b backup channel) ─────────────────────
+
+
+class TestNtfyChannel:
+    def _resp(self, status: int = 200):
+        m = MagicMock(); m.status_code = status; return m
+
+    def test_posts_to_ntfy_topic(self):
+        from core.alerting import NtfyChannel, AlertLevel
+        ch = NtfyChannel("my-topic")
+        with patch("requests.post", return_value=self._resp(200)) as mp:
+            ok = ch.send("test message", AlertLevel.INFO)
+        assert ok is True
+        args, kwargs = mp.call_args
+        assert args[0] == "https://ntfy.sh/my-topic"
+        assert kwargs["data"] == b"test message"
+        assert kwargs["timeout"] == 10
+
+    def test_topic_strips_leading_slash(self):
+        from core.alerting import NtfyChannel
+        assert NtfyChannel("/foo").topic == "foo"
+        assert NtfyChannel("  bar  ").topic == "bar"
+
+    def test_custom_server_used(self):
+        from core.alerting import NtfyChannel, AlertLevel
+        ch = NtfyChannel("topic", server="https://ntfy.example.com/")
+        with patch("requests.post", return_value=self._resp(200)) as mp:
+            ch.send("x", AlertLevel.INFO)
+        assert mp.call_args[0][0] == "https://ntfy.example.com/topic"
+
+    def test_critical_priority_5(self):
+        from core.alerting import NtfyChannel, AlertLevel
+        ch = NtfyChannel("topic")
+        with patch("requests.post", return_value=self._resp(200)) as mp:
+            ch.send("halt!", AlertLevel.CRITICAL)
+        assert mp.call_args[1]["headers"]["Priority"] == "5"
+        assert "CRITICAL" in mp.call_args[1]["headers"]["Title"]
+
+    def test_data_appended_to_body(self):
+        from core.alerting import NtfyChannel, AlertLevel
+        ch = NtfyChannel("topic")
+        with patch("requests.post", return_value=self._resp(200)) as mp:
+            ch.send("Engine stalled", AlertLevel.WARNING,
+                    {"cycle": 5, "equity": 1000})
+        body = mp.call_args[1]["data"].decode("utf-8")
+        assert "Engine stalled" in body
+        assert "cycle: 5" in body
+        assert "equity: 1000" in body
+
+    def test_non_200_returns_false(self):
+        from core.alerting import NtfyChannel, AlertLevel
+        ch = NtfyChannel("topic")
+        with patch("requests.post", return_value=self._resp(500)):
+            assert ch.send("x", AlertLevel.INFO) is False
+
+    def test_exception_returns_false(self):
+        from core.alerting import NtfyChannel, AlertLevel
+        ch = NtfyChannel("topic")
+        with patch("requests.post", side_effect=ConnectionError("down")):
+            assert ch.send("x", AlertLevel.INFO) is False
+
+    def test_alertmanager_wires_when_topic_set(self, monkeypatch):
+        from core.alerting import AlertManager, NtfyChannel
+        from config import Config
+        monkeypatch.setattr(Config, "ALERTING_ENABLED", True)
+        monkeypatch.setattr(Config, "SLACK_WEBHOOK_URL", "")
+        monkeypatch.setattr(Config, "DISCORD_WEBHOOK_URL", "")
+        monkeypatch.setattr(Config, "CALLMEBOT_PHONE", "", raising=False)
+        monkeypatch.setattr(Config, "CALLMEBOT_APIKEY", "", raising=False)
+        monkeypatch.setattr(Config, "NTFY_TOPIC", "algo-test", raising=False)
+        monkeypatch.setattr(Config, "NTFY_SERVER", "https://ntfy.sh",
+                            raising=False)
+        mgr = AlertManager()
+        ntfy = [c for c in mgr.channels if isinstance(c, NtfyChannel)]
+        assert len(ntfy) == 1
+        assert ntfy[0].topic == "algo-test"
+
+    def test_alertmanager_skips_when_topic_empty(self, monkeypatch):
+        from core.alerting import AlertManager, NtfyChannel
+        from config import Config
+        monkeypatch.setattr(Config, "ALERTING_ENABLED", True)
+        monkeypatch.setattr(Config, "SLACK_WEBHOOK_URL", "")
+        monkeypatch.setattr(Config, "DISCORD_WEBHOOK_URL", "")
+        monkeypatch.setattr(Config, "CALLMEBOT_PHONE", "", raising=False)
+        monkeypatch.setattr(Config, "CALLMEBOT_APIKEY", "", raising=False)
+        monkeypatch.setattr(Config, "NTFY_TOPIC", "", raising=False)
+        mgr = AlertManager()
+        assert not any(isinstance(c, NtfyChannel) for c in mgr.channels)
+
+
 # ── WhatsAppChannel (CallMeBot) Tests ──────────────────────────────
 
 
@@ -530,6 +626,8 @@ class TestAlertManagerFlush:
             mock_cfg.DISCORD_WEBHOOK_URL = ""
             mock_cfg.CALLMEBOT_PHONE = ""
             mock_cfg.CALLMEBOT_APIKEY = ""
+            mock_cfg.NTFY_TOPIC = ""
+            mock_cfg.NTFY_SERVER = "https://ntfy.sh"
             from core.alerting import AlertManager
             mgr = AlertManager()
         if channels is not None:

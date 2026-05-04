@@ -100,6 +100,68 @@ class DiscordChannel(AlertChannel):
             return False
 
 
+class NtfyChannel(AlertChannel):
+    """Sends alerts to ntfy.sh push notifications.
+
+    Why this exists (Bug #1b — Apr 28 incident): CallMeBot's free WhatsApp
+    tier exhausts after a daily/monthly quota with no warning. The first
+    sign was hours of silently-rejected alerts during a real incident.
+    ntfy.sh has no quota for personal use, no signup, and runs an open-
+    source server you can self-host later if needed.
+
+    Setup (one time):
+      1. Install the ntfy app on your phone (App Store / Play / F-Droid)
+         OR open ntfy.sh in a mobile browser
+      2. Subscribe to a topic — pick something hard to guess so randos
+         don't see your alerts (e.g. `algo-trader-mxs-7f3a9c`)
+      3. Set NTFY_TOPIC=<that topic> in .env
+      4. Optionally NTFY_SERVER=https://ntfy.sh (default) or your own host
+
+    Cost: $0. The topic is the URL: anyone with it can read AND send,
+    so treat it like a password. For production, self-host or use ntfy
+    Pro with auth tokens.
+    """
+
+    def __init__(self, topic: str, server: str = "https://ntfy.sh"):
+        self.topic = topic.strip().lstrip("/")
+        self.server = server.rstrip("/")
+
+    def send(self, message: str, level: AlertLevel, data: dict | None = None) -> bool:
+        try:
+            import requests
+            # ntfy.sh accepts plain text in the request body. Headers
+            # control title, priority, tags. Priority 4 = high
+            # (CRITICAL), 3 = default (WARNING), 2 = low (INFO).
+            priority_map = {
+                AlertLevel.CRITICAL: "5",  # max — bypasses Do Not Disturb
+                AlertLevel.WARNING: "4",   # high
+                AlertLevel.INFO: "3",      # default
+            }
+            tag_map = {
+                AlertLevel.CRITICAL: "rotating_light",
+                AlertLevel.WARNING: "warning",
+                AlertLevel.INFO: "information_source",
+            }
+            headers = {
+                "Title": f"Algo-Trader [{level.value.upper()}]",
+                "Priority": priority_map.get(level, "3"),
+                "Tags": tag_map.get(level, "robot"),
+            }
+            body = message
+            if data:
+                body += "\n\n" + "\n".join(f"{k}: {v}" for k, v in data.items())
+            resp = requests.post(
+                f"{self.server}/{self.topic}",
+                data=body.encode("utf-8"),
+                headers=headers,
+                timeout=10,
+            )
+            return resp.status_code == 200
+        except Exception as e:
+            log.warning(f"ntfy alert failed: {e}")
+            return False
+
+
 class WhatsAppChannel(AlertChannel):
     """Sends alerts to WhatsApp via CallMeBot (free service).
 
@@ -206,6 +268,17 @@ class AlertManager:
                 self.channels.append(
                     WhatsAppChannel(Config.CALLMEBOT_PHONE,
                                     Config.CALLMEBOT_APIKEY)
+                )
+            # ntfy.sh push notifications (Bug #1b — Apr 28 backup channel).
+            # No quota, no signup. Topic is required; server defaults to
+            # the public ntfy.sh instance.
+            if getattr(Config, "NTFY_TOPIC", ""):
+                self.channels.append(
+                    NtfyChannel(
+                        Config.NTFY_TOPIC,
+                        server=getattr(Config, "NTFY_SERVER",
+                                       "https://ntfy.sh"),
+                    )
                 )
 
     def _is_duplicate(self, event_key: str) -> bool:
