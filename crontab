@@ -33,3 +33,9 @@
 
 # Pattern discoverer — LLM-powered pattern discovery from prediction feedback (6:00 PM ET Sunday)
 0 18 * * 0 cd /app && python agents/pattern_discoverer.py >> /app/logs/agents.log 2>&1
+
+# Weekly health summary — Bug #10 (May 3 bug bash). 7 PM ET Sunday,
+# runs after pattern_discoverer. Sends one WhatsApp/ntfy message
+# summarising the past 7 days. Positive-confirmation channel: silence
+# means the alert pipeline is broken, not that nothing happened.
+0 19 * * 0 cd /app && python -m agents.weekly_summary >> /app/logs/agents.log 2>&1
