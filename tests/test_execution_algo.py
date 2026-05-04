@@ -723,3 +723,115 @@ class TestEngineIntegration:
         # Should still have only 1 plan (not 2)
         plans = engine.execution_manager.get_active_plans("AAPL")
         assert len(plans) == 1
+
+
+# ── Bug #2 (Apr 28): trailing-stop on TWAP partial fill ──────────
+
+
+class TestExecutionPlanStopRegistered:
+    def test_default_stop_registered_is_false(self):
+        plan = _make_plan(num_children=3)
+        assert plan.stop_registered is False
+
+    def test_stop_registered_settable(self):
+        plan = _make_plan(num_children=3)
+        plan.stop_registered = True
+        assert plan.stop_registered is True
+
+
+class TestRegisterStopsForPartialFills:
+    """Engine helper: register a trailing stop on the FIRST slice fill
+    so a stuck-mid-plan TWAP doesn't leave the broker holding an
+    unprotected position."""
+
+    def _make_engine_with_plan(self, num_children=3, fills=None):
+        """Build a minimal engine with one TWAP plan in given fill state.
+        fills = list of (qty, avg_price) tuples, len <= num_children."""
+        from core.engine import TradingEngine
+        engine = TradingEngine.__new__(TradingEngine)
+        engine.execution_manager = ExecutionAlgoManager()
+        engine.risk = MagicMock()
+
+        plan = engine.execution_manager.create_plan(
+            symbol="BAC", side="buy", total_notional=300.0,
+            algo="twap", current_price=20.0, num_slices=num_children,
+            interval_seconds=60,
+        )
+        if fills:
+            for i, (qty, price) in enumerate(fills):
+                plan.children[i].state = "filled"
+                plan.children[i].filled_qty = qty
+                plan.children[i].filled_avg_price = price
+                plan.children[i].filled_at = datetime.now()
+        return engine, plan
+
+    def test_no_fills_yet_no_registration(self):
+        engine, plan = self._make_engine_with_plan(num_children=3)
+        engine._register_stops_for_partial_fills()
+        engine.risk.register_entry.assert_not_called()
+        assert plan.stop_registered is False
+
+    def test_first_fill_registers_stop(self):
+        engine, plan = self._make_engine_with_plan(
+            num_children=3, fills=[(2.0, 20.50)],
+        )
+        engine._register_stops_for_partial_fills()
+        engine.risk.register_entry.assert_called_once_with("BAC", 20.50)
+        assert plan.stop_registered is True
+
+    def test_second_call_does_not_re_register(self):
+        """Idempotent: subsequent fills must NOT reset the trailing
+        high-water mark by re-registering."""
+        engine, plan = self._make_engine_with_plan(
+            num_children=3, fills=[(2.0, 20.50)],
+        )
+        engine._register_stops_for_partial_fills()
+        # Simulate second slice fill
+        plan.children[1].state = "filled"
+        plan.children[1].filled_qty = 2.0
+        plan.children[1].filled_avg_price = 21.10
+        engine._register_stops_for_partial_fills()
+        # register_entry called exactly once total — second time skipped
+        # because stop_registered is True.
+        engine.risk.register_entry.assert_called_once()
+
+    def test_no_execution_manager_returns_silently(self):
+        from core.engine import TradingEngine
+        engine = TradingEngine.__new__(TradingEngine)
+        engine.execution_manager = None
+        engine.risk = MagicMock()
+        # Must not raise
+        engine._register_stops_for_partial_fills()
+        engine.risk.register_entry.assert_not_called()
+
+    def test_completion_registration_is_safe_after_partial(self):
+        """After _register_stops_for_partial_fills sets the flag, the
+        completion handler still calls register_entry with the final
+        VWAP — RiskManager preserves the trailing high-water mark
+        across this re-registration so we don't lose the stop's
+        in-flight progress."""
+        engine, plan = self._make_engine_with_plan(
+            num_children=2, fills=[(2.0, 20.50)],
+        )
+        engine._register_stops_for_partial_fills()
+        # Engine call order: _register_stops_for_partial_fills first,
+        # then _handle_completed_executions on completion. Simulate.
+        plan.children[1].state = "filled"
+        plan.children[1].filled_qty = 2.0
+        plan.children[1].filled_avg_price = 21.10
+        plan.state = "completed"
+        engine._handle_completed_executions([plan])
+        # Two calls: one from partial-fill handler, one from completion.
+        # The latter uses VWAP (= (2*20.50 + 2*21.10)/4 = 20.80).
+        # Both are correct — RiskManager dedups internally.
+        assert engine.risk.register_entry.call_count >= 2
+
+    def test_register_stop_failure_swallowed_silently(self):
+        engine, plan = self._make_engine_with_plan(
+            num_children=3, fills=[(2.0, 20.50)],
+        )
+        engine.risk.register_entry.side_effect = RuntimeError("DB locked")
+        # Must not raise — observability error not control flow
+        engine._register_stops_for_partial_fills()
+        # Flag should NOT be set on failure so we retry next cycle
+        assert plan.stop_registered is False

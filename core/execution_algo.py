@@ -47,6 +47,14 @@ class ExecutionPlan:
     created_at: datetime
     children: list[ChildOrder] = field(default_factory=list)
     state: str = "active"  # active, completed, canceled, failed
+    # Bug #2 (Apr 28): track whether the engine has registered a trailing
+    # stop for this plan's filled position yet. Without this flag, the
+    # caller has no way to tell "first slice just filled, register stop
+    # NOW" apart from "subsequent slices filled, stop already exists".
+    # Set by the engine's execution handler after register_entry; checked
+    # before re-registering so the trailing high-water mark isn't reset
+    # by later slice fills.
+    stop_registered: bool = False
 
     @property
     def filled_notional(self) -> float:

@@ -323,6 +323,12 @@ class TradingEngine:
             try:
                 self.execution_manager.tick(self.broker)
                 completed = self.execution_manager.poll_children(self.broker)
+                # Bug #2 (Apr 28): register trailing stops on FIRST fill,
+                # not just when the whole plan completes. Otherwise stuck
+                # slices leave the broker holding a partial position with
+                # no stop in engine state — the BAC $52 / BTCUSD $49
+                # untracked-position alert pattern.
+                self._register_stops_for_partial_fills()
                 self._handle_completed_executions(completed)
                 # Clean up old plans every 100 cycles
                 if self.cycle_count % 100 == 0:
@@ -980,7 +986,61 @@ class TradingEngine:
                       avg_price,
                       f"{plan.algo.upper()} execution ({plan.filled_children} slices)",
                       strategy=get_strategy_key(plan.symbol))
+            # Stop may already be registered from the first slice fill
+            # (see _register_stops_for_partial_fills). register_entry on
+            # the same symbol updates the entry but RiskManager preserves
+            # the trailing high-water mark — safe to call again at plan
+            # completion to record the final volume-weighted entry price.
             self.risk.register_entry(plan.symbol, avg_price)
+            plan.stop_registered = True
+
+    def _register_stops_for_partial_fills(self):
+        """Register a trailing stop for any active plan with at least
+        one filled slice but no stop yet.
+
+        Bug #2 fix (Apr 28): closes the orphan-position window where a
+        TWAP plan starts filling, then some slices stick in 'submitted'
+        forever. Without this, the broker holds a partial position with
+        no stop in engine state — `position_reconciler.py` flags it as
+        `untracked_position` every cycle and (now that WhatsApp works)
+        the user gets paged repeatedly for the same drift.
+
+        Idempotent: the per-plan ``stop_registered`` flag prevents the
+        trailing high-water mark from being reset by subsequent slice
+        fills. Only the FIRST fill triggers registration; the entry
+        price used is that slice's fill price (not the running VWAP),
+        which is fine for trailing-stop math because the stop tracks
+        the highest_price seen, not the entry.
+        """
+        if not self.execution_manager:
+            return
+        for plan in self.execution_manager.get_active_plans():
+            if plan.stop_registered:
+                continue
+            if plan.filled_children == 0:
+                continue  # nothing filled yet — nothing to protect
+            # Find the first filled child to use its price as the entry
+            first_fill = next(
+                (c for c in plan.children if c.state == "filled"
+                 and c.filled_avg_price > 0),
+                None,
+            )
+            if first_fill is None:
+                continue
+            try:
+                self.risk.register_entry(plan.symbol, first_fill.filled_avg_price)
+                plan.stop_registered = True
+                log.info(
+                    f"  {plan.symbol}: trailing stop registered on "
+                    f"first fill (${first_fill.filled_avg_price:.2f}) — "
+                    f"plan {plan.plan_id} still has "
+                    f"{plan.pending_children} pending slice(s)"
+                )
+            except Exception as e:
+                log.warning(
+                    f"Failed to register stop on first fill for "
+                    f"{plan.symbol}: {e}"
+                )
 
     def _get_existing_position_dfs(self) -> dict[str, "pd.DataFrame"]:
         """Fetch recent bars for all open positions (for correlation checks)."""
