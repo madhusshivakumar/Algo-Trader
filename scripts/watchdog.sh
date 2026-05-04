@@ -10,7 +10,11 @@ DOCKER="${DOCKER:-docker}"
 
 export PATH="/Applications/Docker.app/Contents/Resources/bin:/usr/local/bin:$PATH"
 
-timestamp() { date "+%Y-%m-%d %H:%M:%S PT"; }
+# Bug #6 (Apr 27): hardcoded "PT" suffix lied. Under launchd the
+# script inherits TZ=UTC, so `date` returned UTC times labeled "PT".
+# Force the user's timezone explicitly so the label matches reality
+# regardless of how launchd, cron, or a shell invokes the script.
+timestamp() { TZ=America/Los_Angeles date "+%Y-%m-%d %H:%M:%S %Z"; }
 
 mkdir -p "$DIR/logs"
 
