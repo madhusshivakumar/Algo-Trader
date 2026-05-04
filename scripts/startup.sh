@@ -33,7 +33,15 @@ cd "$DIR"
 # directory. The holder's PID is written inside. On startup we check if
 # the recorded PID is still alive; if not, we take over (stale lock
 # recovery).
-readonly LOCKDIR="$DIR/.startup.lock.d"
+#
+# Bug #5 (Apr 27 hardening): use a GLOBAL lock at $HOME, not a
+# project-relative one. The previous $DIR-based lock had a hole: if
+# two startup.sh scripts existed at different paths (Apr 27 had a
+# stale Desktop copy AND ~/algo-trader/), each had its own lockdir
+# and the mutex was effectively useless. A $HOME-based lock means any
+# `bash startup.sh` invocation from any path competes for the same
+# lock — what we actually want for protecting Docker resources.
+readonly LOCKDIR="$HOME/.algo-trader-startup.lock.d"
 acquire_mutex() {
     if mkdir "$LOCKDIR" 2>/dev/null; then
         echo $$ > "$LOCKDIR/pid"
