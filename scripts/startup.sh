@@ -132,6 +132,37 @@ for PROBE in "ps" "compose version"; do
     done
 done
 
+# Bug #8 (Apr 28 hardening): assert that no other compose project is
+# tracking the same project name from a different working directory.
+# The Apr 28 stale-Desktop incident root cause was exactly this:
+# /Users/.../Desktop/Projects/algo-trader/docker-compose.yml had been
+# registered with Docker Compose (project name "algo-trader") and
+# every `compose up` we ran from ~/algo-trader/ was redirected to the
+# Desktop project's working directory. Stale code shipped for days.
+#
+# Now that the Desktop folder is gone this can't recur naturally, but
+# any future duplicate (clone for testing, fork copy, etc.) would
+# silently re-introduce the same bug. Fail loudly at startup if we
+# detect more than one project file or a project file at a path that
+# isn't $DIR/docker-compose.yml.
+COMPOSE_PROJECTS=$($DOCKER compose ls --format json 2>/dev/null \
+                   | python3 -c "import sys,json; data=json.load(sys.stdin); [print(p.get('ConfigFiles','')) for p in data if p.get('Name','')=='algo-trader']" 2>/dev/null \
+                   | grep -v '^$' || true)
+EXPECTED_COMPOSE="$DIR/docker-compose.yml"
+if [ -n "$COMPOSE_PROJECTS" ]; then
+    UNEXPECTED=$(echo "$COMPOSE_PROJECTS" | grep -v "^${EXPECTED_COMPOSE}$" || true)
+    if [ -n "$UNEXPECTED" ]; then
+        log "FATAL: docker compose has tracked algo-trader project at unexpected path(s):"
+        echo "$UNEXPECTED" | while IFS= read -r p; do log "  - $p"; done
+        log "Expected: $EXPECTED_COMPOSE"
+        log "This is the Apr 28 stale-Desktop incident pattern. Resolve by:"
+        log "  1. cd <unexpected path> && docker compose down"
+        log "  2. Remove the stale repo copy if it shouldn't exist"
+        log "  3. Re-run startup.sh"
+        exit 1
+    fi
+fi
+
 # ── Step 2: Stop any stale containers (unconditional + idempotent) ──
 # Previous guard used `compose ps --quiet | grep -q .` to detect
 # existing containers, but when the compose plugin is mid-warm-up
