@@ -294,6 +294,9 @@ class TradingEngine:
         """Run one trading cycle for all symbols."""
         self.cycle_count += 1
         self._cached_position_dfs = None  # Clear correlation cache each cycle
+        # Bug #7: per-cycle signal counter, reset here, incremented in
+        # _process_symbol_inner, read by the heartbeat write at end.
+        self._cycle_signal_count = 0
         try:
             account = self.broker.get_account()
             self._record_broker_success("get_account")
@@ -460,7 +463,10 @@ class TradingEngine:
             write_heartbeat(
                 cycle_count=self.cycle_count,
                 positions_evaluated=len(active_symbols),
-                signals_produced=0,  # room to plumb if needed later
+                # Bug #7 (Apr 28): real count, not 0. Reset at top of
+                # run_cycle, incremented in _process_symbol_inner each
+                # time the router returns a non-hold action.
+                signals_produced=getattr(self, "_cycle_signal_count", 0),
                 last_trade_ts=last_trade_ts,
                 equity=equity,
                 halted=self.risk.halted,
@@ -677,6 +683,15 @@ class TradingEngine:
         detector = getattr(self, "regime_detector", None)
         regime = detector.get_current_regime() if detector is not None else "normal"
         signal = route_signals(symbol, df, regime=regime)
+
+        # Bug #7 (Apr 28): track non-hold signals for heartbeat. The
+        # watchdog uses signals_produced=0 over an extended market-hours
+        # window to flag "engine alive but doing nothing" — which is a
+        # silent-degradation signal even when the cycle counter is
+        # advancing normally.
+        if signal.get("action") in ("buy", "sell"):
+            self._cycle_signal_count = getattr(
+                self, "_cycle_signal_count", 0) + 1
 
         if signal["action"] == "buy" and not position and not (
                 self.execution_manager and self.execution_manager.get_active_plans(symbol)):
