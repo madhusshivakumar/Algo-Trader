@@ -513,3 +513,107 @@ class TestWhatsAppChannel:
         monkeypatch.setattr(Config, "CALLMEBOT_APIKEY", "", raising=False)
         mgr = AlertManager()
         assert not any(isinstance(c, WhatsAppChannel) for c in mgr.channels)
+
+
+# ── Bug #1 (Apr 28): flush() prevents short-lived caller alert loss ──
+
+
+class TestAlertManagerFlush:
+    """flush() must wait for in-flight daemon threads so short-lived
+    callers (check_heartbeat, agent scripts) don't lose alerts when
+    they exit before the HTTP send completes."""
+
+    def _make_manager(self, channels=None):
+        with patch("core.alerting.Config") as mock_cfg:
+            mock_cfg.ALERTING_ENABLED = False  # don't auto-build channels
+            mock_cfg.SLACK_WEBHOOK_URL = ""
+            mock_cfg.DISCORD_WEBHOOK_URL = ""
+            mock_cfg.CALLMEBOT_PHONE = ""
+            mock_cfg.CALLMEBOT_APIKEY = ""
+            from core.alerting import AlertManager
+            mgr = AlertManager()
+        if channels is not None:
+            mgr.channels = channels
+        return mgr
+
+    def test_flush_with_no_inflight_returns_zero(self):
+        mgr = self._make_manager()
+        assert mgr.flush(timeout=1.0) == 0
+
+    def test_flush_waits_for_slow_channel(self):
+        """A channel that takes 200ms — flush(1.0) must wait, not skip."""
+        from core.alerting import AlertChannel, AlertLevel
+        import time
+
+        delivered = []
+
+        class SlowChannel(AlertChannel):
+            def send(self, msg, level, data=None):
+                time.sleep(0.2)
+                delivered.append(msg)
+                return True
+
+        mgr = self._make_manager(channels=[SlowChannel()])
+        mgr.alert("test_event", "msg", AlertLevel.INFO)
+        # Without flush this would race; with flush it waits.
+        assert mgr.flush(timeout=2.0) == 0
+        assert delivered == ["msg"]
+
+    def test_flush_returns_nonzero_when_thread_exceeds_timeout(self):
+        """Channel hangs longer than the flush budget — flush returns >0."""
+        from core.alerting import AlertChannel, AlertLevel
+        import time
+
+        class HangChannel(AlertChannel):
+            def send(self, msg, level, data=None):
+                time.sleep(2.0)
+                return True
+
+        mgr = self._make_manager(channels=[HangChannel()])
+        mgr.alert("e", "m", AlertLevel.INFO)
+        unfinished = mgr.flush(timeout=0.1)
+        assert unfinished == 1
+
+    def test_inflight_list_does_not_grow_unbounded(self):
+        """Repeated alert() calls prune completed threads, so the list
+        doesn't accumulate over a long-running engine session."""
+        from core.alerting import AlertChannel, AlertLevel
+
+        class FastChannel(AlertChannel):
+            def send(self, msg, level, data=None):
+                return True
+
+        mgr = self._make_manager(channels=[FastChannel()])
+        for i in range(20):
+            mgr.alert(f"event_{i}", f"msg {i}", AlertLevel.INFO)
+        mgr.flush(timeout=2.0)
+        # After flush, inflight should be empty (all threads completed)
+        assert all(not t.is_alive() for t in mgr._inflight)
+
+    def test_simulated_short_lived_caller_pattern(self):
+        """End-to-end pattern: alert + flush + exit. The 'exit' is just
+        the function returning. delivered must contain the message."""
+        from core.alerting import AlertChannel, AlertLevel
+        import time
+
+        delivered = []
+
+        class CountingChannel(AlertChannel):
+            def send(self, msg, level, data=None):
+                # Real-world delay (HTTP roundtrip).
+                time.sleep(0.05)
+                delivered.append((msg, level))
+                return True
+
+        def short_lived_caller():
+            mgr = self._make_manager(channels=[CountingChannel()])
+            mgr.alert("heartbeat_stale", "Engine 600s stale",
+                      AlertLevel.CRITICAL,
+                      {"cycle": 5})
+            unfinished = mgr.flush(timeout=2.0)
+            return unfinished
+
+        # Without flush this would intermittently lose the alert.
+        assert short_lived_caller() == 0
+        assert len(delivered) == 1
+        assert delivered[0][0] == "Engine 600s stale"

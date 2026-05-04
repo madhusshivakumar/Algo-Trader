@@ -183,6 +183,14 @@ class AlertManager:
         self._dedup_cache: dict[str, float] = {}   # event_key -> last_sent_timestamp
         self._rate_window: deque[float] = deque()   # timestamps of recent alerts
         self._lock = threading.Lock()
+        # Bug #1 (Apr 28 incident): track in-flight daemon threads so
+        # short-lived callers (e.g. scripts/check_heartbeat.py) can flush
+        # before exit. Without this, the script returns immediately after
+        # `alert()`, the daemon thread is killed mid-HTTP-POST, and
+        # WhatsApp/Slack never receives anything — yet the log shows the
+        # alert "dispatched". The trading engine isn't affected because
+        # it's long-lived; only short-lived monitoring callers need flush.
+        self._inflight: list[threading.Thread] = []
 
         # Build channels from config
         if Config.ALERTING_ENABLED:
@@ -252,7 +260,41 @@ class AlertManager:
             daemon=True,
         )
         thread.start()
+        with self._lock:
+            self._inflight.append(thread)
+            # Trim completed threads opportunistically so the list doesn't
+            # grow unbounded over a long-running engine session.
+            self._inflight = [t for t in self._inflight if t.is_alive()]
         return True
+
+    def flush(self, timeout: float = 10.0) -> int:
+        """Wait for in-flight alert deliveries to complete.
+
+        Short-lived callers (the heartbeat watchdog script, agent scripts
+        that fire one alert and exit) MUST call this before exit, otherwise
+        the daemon dispatch thread gets killed mid-HTTP-request and the
+        alert is silently lost. Long-lived callers (the engine) can ignore
+        this — their threads have plenty of time to complete naturally.
+
+        Args:
+            timeout: Total time budget across all threads, seconds.
+
+        Returns:
+            Number of threads still alive after the timeout (0 = all
+            delivered cleanly, >0 = some channel calls timed out).
+        """
+        import time as _time
+        with self._lock:
+            threads = list(self._inflight)
+        deadline = _time.monotonic() + timeout
+        for t in threads:
+            remaining = deadline - _time.monotonic()
+            if remaining <= 0:
+                break
+            t.join(remaining)
+        with self._lock:
+            self._inflight = [t for t in self._inflight if t.is_alive()]
+            return len(self._inflight)
 
     def _send_to_all(self, message: str, level: AlertLevel, data: dict | None):
         """Send to all channels (runs in background thread)."""

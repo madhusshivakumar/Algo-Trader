@@ -100,7 +100,15 @@ def main(argv: list[str] | None = None) -> int:
 
 def _fire_alert(event_type: str, message: str, level: str,
                 data: dict | None = None) -> None:
-    """Best-effort AlertManager dispatch. Silent on any failure."""
+    """Best-effort AlertManager dispatch. Silent on any failure.
+
+    Bug #1 fix (Apr 28 incident): MUST call ``mgr.flush()`` before this
+    function returns. The dispatch happens on a daemon thread; without
+    flush, the script returns to caller, the script exits ~10ms later,
+    and the daemon thread is killed mid-POST. AlertManager logs
+    "dispatched" but no message reaches the channel. This silently lost
+    every heartbeat-stale alert during the Apr 28 incident.
+    """
     try:
         from core.alerting import AlertLevel, AlertManager
         mgr = AlertManager()
@@ -115,6 +123,15 @@ def _fire_alert(event_type: str, message: str, level: str,
             level=lvl_map.get(level, AlertLevel.WARNING),
             data=data,
         )
+        # Wait for the daemon thread to actually deliver. CallMeBot's
+        # WhatsApp endpoint usually responds in 1-3s; budget 10s to cover
+        # transient slowness without blocking the watchdog forever.
+        unfinished = mgr.flush(timeout=10.0)
+        if unfinished > 0:
+            # Re-raise into the swallow below so the caller sees it.
+            raise RuntimeError(
+                f"{unfinished} alert thread(s) timed out — channel likely down"
+            )
     except Exception:
         # We're a monitoring script — never let alerting errors mask the
         # underlying state we're trying to report.
