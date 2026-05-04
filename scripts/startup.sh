@@ -243,12 +243,21 @@ fi
 # 1 so the failure is VISIBLE (launchd log, subsequent watchdog alert).
 log "Verifying deployed engine matches current source..."
 if [ -x "$DIR/scripts/verify_engine_deploy.sh" ]; then
-    if bash "$DIR/scripts/verify_engine_deploy.sh" 2>&1 | tee -a "$LOG"; then
+    # Bug #3 hardening (Apr 28 silent-pass): require BOTH a clean exit
+    # code AND an explicit VERIFY:OK marker in the output. Either alone
+    # was insufficient — Apr 28 startup.sh logged "✓ passed" against a
+    # stale container, suggesting either the pipeline ate the exit code
+    # or the script never actually ran the checks. Two-way confirm
+    # makes silent-pass essentially impossible.
+    VERIFY_OUT=$(bash "$DIR/scripts/verify_engine_deploy.sh" 2>&1)
+    VERIFY_RC=$?
+    echo "$VERIFY_OUT" | tee -a "$LOG" >/dev/null
+    if [ $VERIFY_RC -eq 0 ] && echo "$VERIFY_OUT" | grep -q '^VERIFY:OK'; then
         log "  ✓ Deploy verification passed"
     else
-        log "  ✗ DEPLOY VERIFICATION FAILED — engine is running stale code"
-        log "    This is the Apr 21/22/23 recurring stale-image bug."
-        log "    Investigate immediately; container is up but not running current fixes."
+        log "  ✗ DEPLOY VERIFICATION FAILED (rc=$VERIFY_RC)"
+        log "    Last verify output: $(echo "$VERIFY_OUT" | tail -3 | tr '\n' '|')"
+        log "    Investigate immediately; container is up but may be running stale code."
         exit 1
     fi
 else

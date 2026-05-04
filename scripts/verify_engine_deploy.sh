@@ -35,6 +35,7 @@ VERBOSE=false
 
 FAIL=0
 INFRA_FAIL=0
+CHECKS_RAN=0
 
 # dexec <description> <command-string>
 #   Runs a command inside algo-engine via docker exec. Returns:
@@ -42,6 +43,7 @@ INFRA_FAIL=0
 #     1 — command exited non-zero inside container (symbol missing)
 #     2 — docker exec itself failed (infra error, not a symbol issue)
 dexec() {
+    CHECKS_RAN=$((CHECKS_RAN+1))
     local out
     out=$($DOCKER exec algo-engine sh -c "$2" 2>&1)
     local rc=$?
@@ -76,6 +78,7 @@ while [ $WAIT -lt $MAX_WAIT ]; do
 done
 if [ $WAIT -ge $MAX_WAIT ]; then
     echo "  ! INFRA container /app/main.py not accessible after ${MAX_WAIT}s"
+    echo "VERIFY:FAIL:readiness"
     exit 1
 fi
 
@@ -103,19 +106,40 @@ dexec "engine.py invokes write_heartbeat" \
 # Sanity: the check_heartbeat script the watchdog calls must be in
 # place on the host (we run it from the host, but failing here is a
 # good smoke test that the repo checkout is also current).
+CHECKS_RAN=$((CHECKS_RAN+1))
 if [ ! -f "$DIR/scripts/check_heartbeat.py" ]; then
     echo "  ✗ host: scripts/check_heartbeat.py missing"
     FAIL=$((FAIL+1))
 fi
 
+# Bug #3 hardening: assert checks actually ran. If CHECKS_RAN is 0 we
+# either short-circuited (e.g. readiness gate timed out) without
+# emitting a status, or the script was edited to drop checks but
+# kept the OK marker. Treat zero checks as a fail.
+if [ $CHECKS_RAN -eq 0 ]; then
+    echo "  ✗ verify ran zero checks — script is broken or container unreachable"
+    FAIL=$((FAIL+1))
+fi
+
 # ── Result ──────────────────────────────────────────────────
+# Bug #3 hardening (Apr 28 silent-pass): always emit an explicit
+# machine-readable status marker as the LAST stdout line. The startup
+# script will check both the exit code AND grep for this marker; if
+# they disagree, the pipeline is broken in a way the exit code alone
+# can't reveal (e.g. the script was killed mid-run by a signal, or
+# verify_engine_deploy.sh was replaced with an empty file).
 if [ $INFRA_FAIL -gt 0 ]; then
     echo "Infra error: $INFRA_FAIL check(s) could not run. Container/daemon issue."
+    echo "VERIFY:FAIL:infra"
     exit 1
 fi
 if [ $FAIL -gt 0 ]; then
     echo "Stale deploy: $FAIL check(s) failed. Running container has OLD source."
+    echo "VERIFY:FAIL:stale"
     exit 1
 fi
-$VERBOSE && echo "All checks passed."
+# Always print the OK marker (was previously gated on -v which made it
+# silent on success — so startup.sh's "✓ passed" message was the only
+# signal, indistinguishable from a script that exited 0 without running).
+echo "VERIFY:OK (${CHECKS_RAN} checks ran, all passed)"
 exit 0
