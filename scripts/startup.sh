@@ -163,6 +163,37 @@ if [ -n "$COMPOSE_PROJECTS" ]; then
     fi
 fi
 
+# Bug #9 (Apr 27 hardening): snapshot the existing engine container's
+# logs to a host file BEFORE compose-down deletes them. Without this,
+# every restart wipes the stdout history that contains crash reasons,
+# the last few cycle outputs, and any error stack traces. Apr 20 we
+# spent hours not knowing why the engine died because the new
+# container's logs replaced the old container's by the time we looked.
+#
+# We append (with a header) to a rolling file capped at ~10MB. If the
+# file grows past that, rotate to .1 (single backup, keep things simple).
+ENGINE_LOG_HISTORY="$DIR/logs/engine_history.log"
+if $DOCKER inspect algo-engine >/dev/null 2>&1; then
+    log "Snapshotting prior engine logs to $ENGINE_LOG_HISTORY..."
+    {
+        echo ""
+        echo "════════════════════════════════════════════════════════════"
+        echo "PRE-RESTART SNAPSHOT $(TZ=America/Los_Angeles date '+%Y-%m-%d %H:%M:%S %Z')"
+        echo "Container ID: $($DOCKER inspect algo-engine --format '{{.Id}}' 2>/dev/null)"
+        echo "Started:      $($DOCKER inspect algo-engine --format '{{.State.StartedAt}}' 2>/dev/null)"
+        echo "════════════════════════════════════════════════════════════"
+        $DOCKER logs --tail 500 algo-engine 2>&1
+    } >> "$ENGINE_LOG_HISTORY" 2>/dev/null || true
+    # Rotate if file > 10MB (10485760 bytes)
+    if [ -f "$ENGINE_LOG_HISTORY" ]; then
+        FSIZE=$(wc -c < "$ENGINE_LOG_HISTORY" 2>/dev/null || echo 0)
+        if [ "$FSIZE" -gt 10485760 ]; then
+            mv "$ENGINE_LOG_HISTORY" "${ENGINE_LOG_HISTORY}.1"
+            log "  Rotated engine_history.log (was ${FSIZE} bytes)"
+        fi
+    fi
+fi
+
 # ── Step 2: Stop any stale containers (unconditional + idempotent) ──
 # Previous guard used `compose ps --quiet | grep -q .` to detect
 # existing containers, but when the compose plugin is mid-warm-up
